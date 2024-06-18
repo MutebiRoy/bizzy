@@ -69,7 +69,7 @@ const config = {
     backgroundImage: {
       "chat-tile-light": "url('/bg-light.png')",
       "chat-tile-dark": "url('/bg-dark.png')",
-    }
+    },
 
 // Rest of the file ...
       borderRadius: {
