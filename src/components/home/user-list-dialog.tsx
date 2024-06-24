@@ -108,7 +108,7 @@ const UserListDialog = () => {
 				<DialogHeader>
 					{/* TODO: <DialogClose /> will be here */}
 					<DialogClose ref={dialogCloseRef} />
-					<DialogTitle>USERS</DialogTitle>
+					<DialogTitle>Contacts</DialogTitle>
 				</DialogHeader>
 
 				<DialogDescription>Start a new chat</DialogDescription>
