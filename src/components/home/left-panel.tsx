@@ -64,9 +64,9 @@ const LeftPanel = () => {
 
 				{conversations?.length === 0 && (
 					<>
-						<p className='text-center text-gray-500 text-sm mt-3'>No conversations yet</p>
+						<p className='text-center text-gray-500 text-sm mt-3'>No conversations yet!</p>
 						<p className='text-center text-gray-500 text-sm mt-3 '>
-							We understand {"you're"} an introvert, but {"you've"} got to start somewhere 😊
+							Click on any name to start a conversation
 						</p>
 					</>
 				)}
