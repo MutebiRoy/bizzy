@@ -2,7 +2,11 @@
 const nextConfig = {
 	images: {
 		remotePatterns: [
-			{ hostname: "good-anteater-372.convex.cloud" }
+			{ 
+				protocol: 'https',
+				pathname: '/api/storage/**',
+				hostname: "good-anteater-372.convex.cloud" 
+			}
 		],
 	},
 };
