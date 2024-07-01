@@ -3,7 +3,7 @@ import { IMessage, useConversationStore } from "@/store/chat-store";
 import ChatBubbleAvatar from "./chat-bubble-avatar";
 import DateIndicator from "./date-indicator";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription } from "../ui/dialog";
 import ReactPlayer from "react-player";
 import ChatAvatarActions from "./chat-avatar-actions";
@@ -25,22 +25,31 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 	const isMember = selectedConversation?.participants.includes(message.sender?._id) || false;
 	const isGroup = selectedConversation?.isGroup;
 	const fromMe = message.sender?._id === me._id;
-	// const fromAI = message.sender?.name === "ChatGPT";
 	const bgClass = fromMe ? "bg-green-chat" : "bg-white dark:bg-gray-primary";
 
 	console.log(message.sender);
 	const [open, setOpen] = useState(false);
 
 	const renderMessageContent = () => {
+		const [loading, setLoading] = useState(true);
+    	const [error, setError] = useState(null);
+
+		useEffect(() => {
+			setLoading(false); // After your media loading logic
+		}, [message.content]);
+	  
+		if (loading) return <p>Loading media...</p>;
+		if (error) return <p>Error loading media: {error.message}</p>;
+
 		switch (message.messageType) {
 			case "text":
-				return <TextMessage message={message} />;
+			  return <TextMessage message={message} />;
 			case "image":
-				return <ImageMessage message={message} handleClick={() => setOpen(true)} />;
+			  return <Image src={message.content} alt="Sent image" width={300} height={200} />;
 			case "video":
-				return <VideoMessage message={message} />;
+			  return <ReactPlayer url={message.content} width="100%" height="100%" controls={true} light={true} />;
 			default:
-				return null;
+			  return null;
 		}
 	};
 
