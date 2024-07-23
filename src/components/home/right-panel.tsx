@@ -10,7 +10,7 @@ const RightPanel = ({ conversation }) => {
     const { selectedConversation, setSelectedConversation } = useConversationStore();
     
     // Only attempt to fetch messages if a conversation is selected
-    const messages = conversation ? useQuery(api.messages.getMessages, { conversation: conversation._id }) : null;
+    const messages = useQuery(api.messages.getMessages, { conversation: conversation ? conversation._id : null });
     
     useEffect(() => {
         if (conversation) {
