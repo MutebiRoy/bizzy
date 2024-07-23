@@ -1,57 +1,38 @@
 "use client";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Video, X } from "lucide-react";
-import MessageInput from "./message-input";
-import MessageContainer from "./message-container";
-import ChatPlaceHolder from "@/components/home/chat-placeholder";
-import GroupMembersDialog from "./group-members-dialog";
+import { useEffect } from "react";
+import { useQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 import { useConversationStore } from "@/store/chat-store";
-import { useConvexAuth } from "convex/react";
+import MessageContainer from "./message-container";
+import MessageInput from "./message-input";
 
-const RightPanel = () => {
-	const { selectedConversation, setSelectedConversation } = useConversationStore();
-	const { isLoading } = useConvexAuth();
+const RightPanel = ({ conversation }) => {
+    const { selectedConversation, setSelectedConversation } = useConversationStore();
+    
+    // Only attempt to fetch messages if a conversation is selected
+    const messages = conversation ? useQuery(api.messages.getMessages, { conversation: conversation._id }) : null;
+    
+    useEffect(() => {
+        if (conversation) {
+            setSelectedConversation(conversation);
+        }
+    }, [conversation, setSelectedConversation]);
 
-	if (isLoading) return null;
-	if (!selectedConversation) return <ChatPlaceHolder />;
+    if (!conversation) {
+        return null;  // Return null if no conversation is selected
+    }
 
-	const conversationName = selectedConversation.groupName || selectedConversation.name;
-	const conversationImage = selectedConversation.groupImage || selectedConversation.image;
-
-	return (
-		<div className='w-3/4 flex flex-col'>
-			<div className='w-full sticky top-0 z-50'>
-				{/* Header */}
-				<div className='flex justify-between bg-gray-primary p-3'>
-					<div className='flex gap-3 items-center'>
-						<Avatar>
-							<AvatarImage src={conversationImage || "/placeholder.png"} className='object-cover' />
-							<AvatarFallback>
-								<div className='animate-pulse bg-gray-tertiary w-full h-full rounded-full' />
-							</AvatarFallback>
-						</Avatar>
-						<div className='flex flex-col'>
-							<p>{conversationName}</p>
-							{selectedConversation.isGroup && (
-								<GroupMembersDialog selectedConversation={selectedConversation} />
-							)}
-						</div>
-					</div>
-
-					<div className='flex items-center gap-7 mr-5'>
-						<a href='/video-call' target='_blank'>
-							<Video size={23} />
-						</a>
-						<X size={16} className='cursor-pointer' onClick={() => setSelectedConversation(null)} />
-					</div>
-				</div>
-			</div>
-			{/* CHAT MESSAGES */}
-			<MessageContainer />
-
-			{/* INPUT */}
-			<MessageInput />
-		</div>
-	);
+    return (
+        <div className='w-full'>
+            <div className='flex flex-col h-full'>
+                <div className='flex-grow overflow-hidden'>
+                    <MessageContainer messages={messages} />
+                </div>
+                <div className='flex-shrink-0 fixed bottom-0 left-0 right-0 z-10 '>
+                    <MessageInput conversation={conversation} />
+                </div>
+            </div>
+        </div>
+    );
 };
 export default RightPanel;
