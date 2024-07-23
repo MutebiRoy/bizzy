@@ -25,8 +25,10 @@ type ConversationStore = {
 };
 
 export const useConversationStore = create<ConversationStore>((set) => ({
-	selectedConversation: null,
-	setSelectedConversation: (conversation) => set({ selectedConversation: conversation }),
+  selectedConversation: null,
+  setSelectedConversation: (conversation) => set({ selectedConversation: conversation }),
+  isViewingConversation: false,
+  setIsViewingConversation: (isViewing) => set({ isViewingConversation: isViewing }),
 }));
 
 export interface IMessage {
