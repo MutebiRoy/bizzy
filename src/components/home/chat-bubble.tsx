@@ -89,9 +89,9 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 						onClickPreview={handleMediaClick}
 					/>
 					{/* Modal for the full-screen video */}
-					<Dialog open={open} onOpenChange={handleModalClose} className='h-[95%] w-full p-0'>
-						<DialogContent className="flex justify-center items-center h-full w-full p-0"> 
-							<DialogDescription className="w-full h-full relative">
+					<Dialog open={open} onOpenChange={handleModalClose} >
+						<DialogContent > 
+							<DialogDescription >
 							<ReactPlayer
 								url={message.content}
 								width="100%"
@@ -139,8 +139,8 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 					<Dialog open={open} onOpenChange={(isOpen) => {
 						if (!isOpen) setOpen(false);
 					}} className='h-[95%] w-full p-0'>
-						<DialogContent className="flex justify-center items-center h-full w-full p-0"> 
-							<DialogDescription className="w-full h-full relative">
+						<DialogContent > 
+							<DialogDescription >
 							{message.messageType === "image" && (
 								<Image
 								src={message.content}
@@ -201,10 +201,10 @@ const ImageMessage = ({ message, handleClick }: { message: IMessage; handleClick
 const ImageDialog = ({ src, onClose, open }: { open: boolean; src: string; onClose: () => void }) => {
 	return (
 	  <Dialog open={open} onOpenChange={onClose}>
-		<DialogContent className="flex justify-center items-center h-[95%] w-full p-0"> 
+		<DialogContent > 
 		  {/* Center the content within the modal */}
-		  <DialogDescription className="w-full h-full relative">
-			<Image src={src} alt="Image" fill className="rounded-lg object-contain" />
+		  <DialogDescription >
+			<Image src={src} alt="Image"/>
 		  </DialogDescription>
 		</DialogContent>
 	  </Dialog>
