@@ -68,8 +68,8 @@ const Conversation: React.FC<ConversationProps> = ({ conversation, onClick }) =>
           {conversation.isGroup && <Users size={16} />}
           {!lastMessage && "Say Hi!"}
           {lastMessageType === "text" ? (
-            lastMessage?.content.length > 30 ? (
-              <span>{lastMessage?.content.slice(0, 30)}...</span>
+            lastMessage?.content && lastMessage.content.length > 30 ? (
+              <span>{lastMessage.content.slice(0, 30)}...</span>
             ) : (
               <span>{lastMessage?.content}</span>
             )
