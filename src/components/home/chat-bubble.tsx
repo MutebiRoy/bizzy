@@ -138,7 +138,7 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 
 					<Dialog open={open} onOpenChange={(isOpen) => {
 						if (!isOpen) setOpen(false);
-					}} className='h-[95%] w-full p-0'>
+					}} >
 						<DialogContent > 
 							<DialogDescription >
 							{message.messageType === "image" && (
@@ -146,7 +146,7 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 								src={message.content}
 								alt="Sent Image"
 								fill
-								className="object-contain" 
+								 
 								/>
 							)}
 							{message.messageType === "video" && (
