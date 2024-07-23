@@ -7,16 +7,14 @@ import {
 	'/(.*)'
   ]);
   
-export default clerkMiddleware((auth, req) => {
-    if (!auth.userId && isProtectedRoute(req)) {
-        // Check for existing sign-in attempts
-        if (auth.isAuthenticating()) {
-            return Response.redirect(req.url, 307); // Retry current URL
-        } else {
-            return auth.redirectToSignIn(); 
-        }
-    }
-});
+  export default clerkMiddleware((auth, req) => {
+	if (!auth().userId && isProtectedRoute(req)) {
+  
+	  // Add custom logic to run before redirecting
+  
+	  return auth().redirectToSignIn();
+	}
+  });
   
   export const config = {
 	matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)'],
