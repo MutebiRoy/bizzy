@@ -64,14 +64,13 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 						alt="Sent Image"
 						width={thumbnailWidth} // Use thumbnailWidth state
 						height={thumbnailHeight} // Use thumbnailHeight state
-						className="cursor-pointer object-cover rounded"
 						onClick={handleMediaClick} 
 					/>
 					{/* Modal for the full-screen image */}
 					<Dialog open={open} onOpenChange={handleModalClose} >
 						<DialogContent > 
 							<DialogDescription >
-							<Image src={message.content} alt="Image" fill className="rounded-lg object-contain" />
+							<Image src={message.content} alt="Image" fill  />
 							</DialogDescription>
 						</DialogContent>
 					</Dialog>
@@ -190,7 +189,6 @@ const ImageMessage = ({ message, handleClick }: { message: IMessage; handleClick
 			<Image
 				src={message.content}
 				fill
-				className='cursor-pointer object-cover rounded'
 				alt='image'
 				onClick={handleClick}
 			/>
