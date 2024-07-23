@@ -12,17 +12,20 @@ interface ConversationProps {
     _id: string;
     groupImage?: string;
     image?: string;
-    groupName?: string;
+    participants: string[];
+    isGroup: boolean;
     name?: string;
-    lastMessage?: {
-      messageType?: string;
-      sender?: string;
-      content: string;
-      _creationTime: string;
-    };
+    groupName?: string;
     isOnline?: boolean;
-    isGroup?: boolean;
     _creationTime: string;
+    lastMessage?: {
+      _id: string;
+      conversation: string;
+      content: string;
+      sender: string;
+      _creationTime: string;
+      messageType?: string;
+    };
   };
   onClick: (conversation: any) => void;
 }
@@ -57,7 +60,7 @@ const Conversation: React.FC<ConversationProps> = ({ conversation, onClick }) =>
         <div className='flex items-center'>
           <h3 className='text-sm font-medium'>{conversationName}</h3>
           <span className='text-xs text-gray-500 ml-auto'>
-            {formatDate(lastMessage?._creationTime || conversation._creationTime)}
+            {formatDate(Number(lastMessage?._creationTime) || Number(conversation._creationTime))}
           </span>
         </div>
         <p className='text-[12px] mt-1 text-gray-500 flex items-center gap-1 '>
