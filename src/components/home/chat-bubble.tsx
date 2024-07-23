@@ -68,9 +68,9 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 						onClick={handleMediaClick} 
 					/>
 					{/* Modal for the full-screen image */}
-					<Dialog open={open} onOpenChange={handleModalClose} className='h-[95%] w-full p-0'>
-						<DialogContent className="flex justify-center items-center h-full w-full p-0"> 
-							<DialogDescription className="w-full h-full relative">
+					<Dialog open={open} onOpenChange={handleModalClose} >
+						<DialogContent > 
+							<DialogDescription >
 							<Image src={message.content} alt="Image" fill className="rounded-lg object-contain" />
 							</DialogDescription>
 						</DialogContent>
