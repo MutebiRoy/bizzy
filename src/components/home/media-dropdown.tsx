@@ -91,7 +91,7 @@ const MediaDropdown = () => {
 			<input
 				type='file'
 				ref={videoInput}
-				accept='video/mp4'
+				accept='video/mp4, video/mov, video/webm, video/avi, video/mkv, video/flv, video/wmv, video/3gp, video/ogg'
 				onChange={(e) => setSelectedVideo(e.target?.files![0])}
 				hidden
 			/>
