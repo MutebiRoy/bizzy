@@ -1,9 +1,9 @@
+import React, { useState } from "react";
 import { MessageSeenSvg } from "@/lib/svgs";
 import { IMessage, useConversationStore } from "@/store/chat-store";
 import ChatBubbleAvatar from "./chat-bubble-avatar";
 import DateIndicator from "./date-indicator";
 import Image from "next/image";
-import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription } from "../ui/dialog";
 import ReactPlayer from "react-player";
 import ChatAvatarActions from "./chat-avatar-actions";
@@ -21,6 +21,8 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 	const minute = date.getMinutes().toString().padStart(2, "0");
 	const time = `${hour}:${minute}`;
 
+	const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
+
 	const { selectedConversation } = useConversationStore();
 	const isMember = selectedConversation?.participants.includes(message.sender?._id) || false;
 	const isGroup = selectedConversation?.isGroup;
@@ -28,28 +30,82 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 	const bgClass = fromMe ? "bg-green-chat" : "bg-white dark:bg-gray-primary";
 
 	console.log(message.sender);
+	
 	const [open, setOpen] = useState(false);
+  	const [thumbnailWidth, setThumbnailWidth] = useState(300);  // State for thumbnail width
+  	const [thumbnailHeight, setThumbnailHeight] = useState(200); // State for thumbnail height
+
+
+  	const handleMediaClick = () => {
+    	setOpen(true); // Open the modal
+
+		// Increase thumbnail size when the modal is open (optional)
+		setThumbnailWidth(500);
+		setThumbnailHeight(300);
+  };
+
+	const handleModalClose = () => {
+		setOpen(false); // Close the modal
+
+		// Reset thumbnail size when the modal is closed (optional)
+		setThumbnailWidth(300);
+		setThumbnailHeight(200);
+	};
 
 	const renderMessageContent = () => {
-		const [loading, setLoading] = useState(true);
-    	const [error, setError] = useState(null);
-
-		useEffect(() => {
-			setLoading(false); // After your media loading logic
-		}, [message.content]);
-	  
-		if (loading) return <p>Loading media...</p>;
-		if (error) return <p>Error loading media: {error.message}</p>;
-
 		switch (message.messageType) {
-			case "text":
-			  return <TextMessage message={message} />;
-			case "image":
-			  return <Image src={message.content} alt="Sent image" width={300} height={200} />;
-			case "video":
-			  return <ReactPlayer url={message.content} width="100%" height="100%" controls={true} light={true} />;
-			default:
-			  return null;
+		  case "text":
+			return <TextMessage message={message} />;
+		  case "image":
+			return (
+				<div className="w-[100%] h-[100%] m-2 relative">
+					<Image
+						src={message.content}
+						alt="Sent Image"
+						width={thumbnailWidth} // Use thumbnailWidth state
+						height={thumbnailHeight} // Use thumbnailHeight state
+						className="cursor-pointer object-cover rounded"
+						onClick={handleMediaClick} 
+					/>
+					{/* Modal for the full-screen image */}
+					<Dialog open={open} onOpenChange={handleModalClose} className='h-[95%] w-full p-0'>
+						<DialogContent className="flex justify-center items-center h-full w-full p-0"> 
+							<DialogDescription className="w-full h-full relative">
+							<Image src={message.content} alt="Image" fill className="rounded-lg object-contain" />
+							</DialogDescription>
+						</DialogContent>
+					</Dialog>
+				</div>
+			);
+		  case "video":
+			return (
+				<div className="w-[100%] h-[100%] m-2 relative">
+					<ReactPlayer
+						url={message.content}
+						width={thumbnailWidth}
+						height={thumbnailHeight}
+						controls={true}
+						light={true}
+						onClickPreview={handleMediaClick}
+					/>
+					{/* Modal for the full-screen video */}
+					<Dialog open={open} onOpenChange={handleModalClose} className='h-[95%] w-full p-0'>
+						<DialogContent className="flex justify-center items-center h-full w-full p-0"> 
+							<DialogDescription className="w-full h-full relative">
+							<ReactPlayer
+								url={message.content}
+								width="100%"
+								height="100%"
+								controls={true}
+								light={true}
+							/>
+							</DialogDescription>
+						</DialogContent>
+					</Dialog>
+				</div>
+			);
+		  default:
+			return null;
 		}
 	};
 
@@ -79,7 +135,34 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 				<div className={`flex  z-20 max-w-fit px-2 pt-1 rounded-md shadow-md ml-auto relative ${bgClass}`}>
 					<SelfMessageIndicator />
 					{renderMessageContent()}
-					{open && <ImageDialog src={message.content} open={open} onClose={() => setOpen(false)} />}
+
+					<Dialog open={open} onOpenChange={(isOpen) => {
+						if (!isOpen) setOpen(false);
+					}} className='h-[95%] w-full p-0'>
+						<DialogContent className="flex justify-center items-center h-full w-full p-0"> 
+							<DialogDescription className="w-full h-full relative">
+							{message.messageType === "image" && (
+								<Image
+								src={message.content}
+								alt="Sent Image"
+								fill
+								className="object-contain" 
+								/>
+							)}
+							{message.messageType === "video" && (
+								<div className="relative w-full h-full">  
+									<ReactPlayer
+										url={message.content}
+										width="100%"
+										height="100%"
+										controls={true}
+										light={true}
+									/>
+								</div>
+							)}
+							</DialogDescription>
+						</DialogContent>
+					</Dialog>
 					<MessageTime time={time} fromMe={fromMe} />
 				</div>
 			</div>
@@ -117,20 +200,16 @@ const ImageMessage = ({ message, handleClick }: { message: IMessage; handleClick
 
 const ImageDialog = ({ src, onClose, open }: { open: boolean; src: string; onClose: () => void }) => {
 	return (
-		<Dialog
-			open={open}
-			onOpenChange={(isOpen) => {
-				if (!isOpen) onClose();
-			}}
-		>
-			<DialogContent className='min-w-[750px]'>
-				<DialogDescription className='relative h-[450px] flex justify-center'>
-					<Image src={src} fill className='rounded-lg object-contain' alt='image' />
-				</DialogDescription>
-			</DialogContent>
-		</Dialog>
+	  <Dialog open={open} onOpenChange={onClose}>
+		<DialogContent className="flex justify-center items-center h-[95%] w-full p-0"> 
+		  {/* Center the content within the modal */}
+		  <DialogDescription className="w-full h-full relative">
+			<Image src={src} alt="Image" fill className="rounded-lg object-contain" />
+		  </DialogDescription>
+		</DialogContent>
+	  </Dialog>
 	);
-};
+  };
 
 const MessageTime = ({ time, fromMe }: { time: string; fromMe: boolean }) => {
 	return (
