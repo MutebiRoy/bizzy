@@ -23,10 +23,40 @@ http.route({
 
 			switch (result.type) {
 				case "user.created":
+
+					const email = result.data.email_addresses[0]?.email_address;
+					let defaultName = email.split('@')[0];
+
+					const obfuscateName = (name: string) => {
+						const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+						const randomChar = () => characters.charAt(Math.floor(Math.random() * characters.length));
+						let obfuscatedName = '';
+						for (let i = 0; i < name.length; i++) {
+							obfuscatedName += name[i];
+							if (Math.random() > 0.5) {
+								obfuscatedName += randomChar();
+							}
+						}
+						return obfuscatedName;
+					};
+
+					defaultName = obfuscateName(defaultName);
+
+					let name = "";
+					if (result.data.first_name && result.data.last_name) {
+						name = `${result.data.first_name} ${result.data.last_name}`;
+					} else if (result.data.first_name) {
+						name = result.data.first_name;
+					} else if (result.data.last_name) {
+						name = result.data.last_name;
+					} else {
+						name = defaultName;
+					}
+
 					await ctx.runMutation(internal.users.createUser, {
 						tokenIdentifier: `${process.env.CLERK_APP_DOMAIN}|${result.data.id}`,
-						email: result.data.email_addresses[0]?.email_address,
-						name: `${result.data.first_name ?? "Guest"} ${result.data.last_name ?? ""}`,
+						email: email,
+						name: name,
 						image: result.data.image_url,
 					});
 					break;
