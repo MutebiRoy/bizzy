@@ -16,11 +16,9 @@ const ChatAvatarActions = ({ me, message }: ChatAvatarActionsProps) => {
 	const isMember = selectedConversation?.participants.includes(message.sender._id);
 	const kickUser = useMutation(api.conversations.kickUser);
 	const createConversation = useMutation(api.conversations.createConversation);
-	//const fromAI = message.sender?.name === "ChatGPT";
 	const isGroup = selectedConversation?.isGroup;
 
 	const handleKickUser = async (e: React.MouseEvent) => {
-		//if (fromAI) return;
 		e.stopPropagation();
 		if (!selectedConversation) return;
 		try {
@@ -39,7 +37,6 @@ const ChatAvatarActions = ({ me, message }: ChatAvatarActionsProps) => {
 	};
 
 	const handleCreateConversation = async () => {
-		//if (fromAI) return;
 
 		try {
 			const conversationId = await createConversation({
@@ -54,6 +51,7 @@ const ChatAvatarActions = ({ me, message }: ChatAvatarActionsProps) => {
 				isGroup: false,
 				isOnline: message.sender.isOnline,
 				image: message.sender.image,
+				_creationTime: new Date().toISOString(),
 			});
 		} catch (error) {
 			toast.error("Failed to create conversation");
