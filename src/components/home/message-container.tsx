@@ -19,15 +19,26 @@ const MessageContainer = () => {
 	}, [messages]);
 
 	return (
-		<div className='relative p-3 flex-1 overflow-auto bg-chat-tile-light dark:bg-chat-tile-dark '>
-			<div className='flex flex-col overflow-hidden w-full gap-3'>
-				{messages?.map((msg, idx) => (
-					<div key={msg._id} ref={lastMessageRef}>
-						<ChatBubble message={msg} me={me} previousMessage={idx > 0 ? messages[idx - 1] : undefined} />
-					</div>
-				))}
-			</div>
-		</div>
+		<div className='relative p-3 flex-1 overflow-auto bg-chat-tile-light dark:bg-chat-tile-dark'>
+            <div className='flex flex-col overflow-hidden w-full gap-3'>
+                {messages?.map((msg, idx) => (
+                    <div key={msg._id} ref={lastMessageRef}>
+                        {/* Convert _creationTime to ISO string before passing to ChatBubble */}
+                        <ChatBubble
+                            message={{
+                                ...msg,
+                                _creationTime: new Date(msg._creationTime).toISOString()
+                            }}
+                            me={me}
+                            previousMessage={idx > 0 ? {
+                                ...messages[idx - 1],
+                                _creationTime: new Date(messages[idx - 1]._creationTime).toISOString()
+                            } : undefined}
+                        />
+                    </div>
+                ))}
+            </div>
+        </div>
 	);
 };
 export default MessageContainer;
