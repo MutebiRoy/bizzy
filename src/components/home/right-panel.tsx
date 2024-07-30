@@ -2,16 +2,20 @@
 import { useEffect } from "react";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { useConversationStore } from "@/store/chat-store";
+import { useConversationStore, ConversationType } from "@/store/chat-store";
 import MessageContainer from "./message-container";
 import MessageInput from "./message-input";
 
-const RightPanel = ({ conversation }) => {
+interface RightPanelProps {
+    conversation: ConversationType | null;  // Use ConversationType or null
+}
+
+const RightPanel = ({ conversation }: RightPanelProps) => {
     const { selectedConversation, setSelectedConversation } = useConversationStore();
     
     // Only attempt to fetch messages if a conversation is selected
-    const messages = useQuery(api.messages.getMessages, { conversation: conversation ? conversation._id : null });
-    
+    //const messages = useQuery(api.messages.getMessages, { conversation: conversation ? conversation._id : null });
+    const messages = useQuery(api.messages.getMessages, { conversation: conversation?._id });
     useEffect(() => {
         if (conversation) {
             setSelectedConversation(conversation);
