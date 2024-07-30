@@ -1,29 +1,23 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ListFilter, Search, ChevronLeft } from "lucide-react";
 import { Input } from "../ui/input";
 import ThemeSwitch from "./theme-switch";
 import Conversation from "./conversation";
 import { UserButton } from "@clerk/nextjs";
-
 import UserListDialog from "./user-list-dialog";
 import { useConvexAuth, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { useEffect } from "react";
-import { useConversationStore } from "@/store/chat-store";
-import RightPanel from "./right-panel"; // Import RightPanel component
-
+import { useConversationStore, ConversationType } from "@/store/chat-store";
+import RightPanel from "./right-panel";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import GroupMembersDialog from "./group-members-dialog";
 
 const LeftPanel = () => {
     const { isAuthenticated, isLoading } = useConvexAuth();
     const conversations = useQuery(api.conversations.getMyConversations, isAuthenticated ? undefined : "skip");
-
     const { selectedConversation, setSelectedConversation } = useConversationStore();
-  
     const [isViewingConversation, setIsViewingConversation] = useState(false);
-
     const conversationName = selectedConversation?.groupName || selectedConversation?.name || "No conversation selected";
     const conversationImage = selectedConversation?.groupImage || selectedConversation?.image || "/default-avatar.png";
 
@@ -41,7 +35,7 @@ const LeftPanel = () => {
         setSelectedConversation(null);
     };
 
-    const handleConversationClick = (conversation) => {
+    const handleConversationClick = (conversation: ConversationType) => {
         setSelectedConversation(conversation);
         setIsViewingConversation(true);
     };
@@ -63,8 +57,8 @@ const LeftPanel = () => {
                         </Avatar>
                         <div className='flex flex-col ml-4'>
                             <p>{conversationName}</p>
-                            {selectedConversation.isGroup && (
-                            <GroupMembersDialog selectedConversation={selectedConversation} />
+                            {selectedConversation && selectedConversation.isGroup && (
+                                <GroupMembersDialog selectedConversation={selectedConversation} />
                             )}
                         </div>
                     </div>
@@ -93,16 +87,25 @@ const LeftPanel = () => {
                 )}
             </div>
             <div className={`my-3 flex flex-col gap-0 overflow-auto h-full pb-[44px] ${!isViewingConversation ? 'pt-[114px]' : 'pt-[78px]'}`}>
-                {!isViewingConversation &&
-                    conversations?.map((conversation, index) => (
+            {!isViewingConversation &&
+                conversations?.map((conversation, index) => (
                     <div className={index === 0 ? 'pt-[0px]' : ''} key={conversation._id}>
                         <Conversation
                             key={conversation._id}
-                            conversation={conversation}
+                            conversation={{
+                                ...conversation,
+                                _creationTime: conversation._creationTime.toString(), // Force string type
+                                lastMessage: conversation.lastMessage ? {
+                                    ...conversation.lastMessage,
+                                    _creationTime: conversation.lastMessage._creationTime.toString() // Force string type
+                                } : undefined
+                            }}
                             onClick={() => handleConversationClick(conversation)}
                         />
                     </div>
-                ))}
+                ))
+            }
+
                 {isViewingConversation && selectedConversation && (
                 <div className='overflow-auto h-full'>
                     <RightPanel conversation={selectedConversation} />
