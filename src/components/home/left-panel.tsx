@@ -13,6 +13,36 @@ import RightPanel from "./right-panel";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import GroupMembersDialog from "./group-members-dialog";
 
+interface LastMessage {
+    _id: string;
+    _creationTime: string;
+    conversation: string;
+    sender: string;
+    content: string;
+    messageType: "image" | "text" | "video";
+  }
+
+  interface Conversation {
+    _id: string;
+    _creationTime: string;
+    lastMessage?: LastMessage;
+    isGroup: boolean;
+    [key: string]: any;  // Additional properties as needed
+  }
+
+  function convertConversationTypes(conversation: Conversation): Conversation {
+    return {
+      ...conversation,
+      lastMessage: conversation.lastMessage ? {
+        ...conversation.lastMessage,
+        _creationTime: conversation.lastMessage._creationTime.toString() // Convert to string if not already
+      } : undefined
+    };
+  }
+  
+
+
+
 const LeftPanel = () => {
     const { isAuthenticated, isLoading } = useConvexAuth();
     const conversations = useQuery(api.conversations.getMyConversations, isAuthenticated ? undefined : "skip");
@@ -24,7 +54,7 @@ const LeftPanel = () => {
     useEffect(() => {
         const conversationIds = conversations?.map((conversation) => conversation._id);
         if (selectedConversation && conversationIds && !conversationIds.includes(selectedConversation._id)) {
-        setSelectedConversation(null);
+            setSelectedConversation(null);
         }
     }, [conversations, selectedConversation, setSelectedConversation]);
 
@@ -35,10 +65,10 @@ const LeftPanel = () => {
         setSelectedConversation(null);
     };
 
-    const handleConversationClick = (conversation: ConversationType) => {
-        setSelectedConversation(conversation);
+    const handleConversationClick = (conversation) => {
+        setSelectedConversation(convertConversationTypes(conversation));
         setIsViewingConversation(true);
-    };
+      };
 
     return (
         <div className='w-full overflow-hidden h-screen'>
@@ -92,14 +122,7 @@ const LeftPanel = () => {
                     <div className={index === 0 ? 'pt-[0px]' : ''} key={conversation._id}>
                         <Conversation
                             key={conversation._id}
-                            conversation={{
-                                ...conversation,
-                                _creationTime: conversation._creationTime.toString(), // Force string type
-                                lastMessage: conversation.lastMessage ? {
-                                    ...conversation.lastMessage,
-                                    _creationTime: conversation.lastMessage._creationTime.toString() // Force string type
-                                } : undefined
-                            }}
+                            conversation={convertConversationTypes(conversation)}
                             onClick={() => handleConversationClick(conversation)}
                         />
                     </div>
