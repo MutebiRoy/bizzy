@@ -83,6 +83,7 @@ const UserListDialog = () => {
 				image: isGroup ? renderedImage : users?.find((user) => user._id === selectedUsers[0])?.image,
 				name: conversationName,
 				admin: me?._id!,
+				_creationTime: new Date().toISOString()
 			});
 		} catch (err) {
 			toast.error("Failed to create conversation");
