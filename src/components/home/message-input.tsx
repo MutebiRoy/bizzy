@@ -4,13 +4,18 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { useConversationStore } from "@/store/chat-store";
+import { useConversationStore, ConversationType } from "@/store/chat-store";
 import toast from "react-hot-toast";
 import useComponentVisible from "@/hooks/useComponentVisible";
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import MediaDropdown from "./media-dropdown";
 
-const MessageInput = () => {
+
+interface MessageInputProps {
+	conversation: ConversationType;  // Ensure this matches how you have defined ConversationType
+}
+
+const MessageInput: React.FC<MessageInputProps> = ({ conversation }) => {
 	const [msgText, setMsgText] = useState("");
 	const { selectedConversation } = useConversationStore();
 	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
@@ -28,8 +33,8 @@ const MessageInput = () => {
 		}
 
 		if (msgText.length > 300) {
-		toast.error("Message should be less than 300 character!");
-		return; // Don't submit the form
+			toast.error("Message should be less than 300 character!");
+			return; // Don't submit the form
 		}
 		
 		try {
@@ -38,8 +43,9 @@ const MessageInput = () => {
 			  conversation: selectedConversation!._id, 
 			  sender: me!._id 
 			});
-			setMsgText("");
-			} catch (err: any) {
+				setMsgText("");
+		} 
+		catch (err: any) {
 			toast.error(err.message);
 			console.error(err);
 		}
