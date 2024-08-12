@@ -81,11 +81,11 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 			);
 		  case "video":
 			return (
-				<div className="w-[100%] h-[100%] m-2 relative">
+				<div className="flex flex-col items-center justify-center h-full">
 					<ReactPlayer
 						url={message.content}
-						width="100%"
-            			height="100%"
+						width="200px"
+    					height="150px"
 						controls={true}
 						light={true}
 						onClickPreview={handleMediaClick}
@@ -96,8 +96,8 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 							<DialogDescription style={{ width: '100vw', height: '90vh' }}>
 							<ReactPlayer
 								url={message.content}
-								width="100%"
-								height="100%"
+								width="80%"
+    							height="100%"
 								controls={true}
 								light={true}
 							/>
@@ -158,7 +158,7 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 									<ReactPlayer
 										// Sent and Recieved Videos
 										url={message.content}
-										width="100%"
+										width="80%"
 										height="100%"
 										controls={true}
 										light={true}
