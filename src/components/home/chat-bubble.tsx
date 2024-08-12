@@ -68,8 +68,12 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 					{/* Modal for the full-screen image */}
 					<Dialog open={open} onOpenChange={handleModalClose} >
 						<DialogContent > 
-							<DialogDescription >
-							<Image src={message.content} alt="Image" fill  />
+							<DialogDescription style={{ width: '100vw', height: '90vh' }}>
+							<Image 
+								src={message.content} 
+								alt="Image" 
+								layout="fill"  
+							/>
 							</DialogDescription>
 						</DialogContent>
 					</Dialog>
@@ -80,8 +84,8 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 				<div className="w-[100%] h-[100%] m-2 relative">
 					<ReactPlayer
 						url={message.content}
-						width={thumbnailWidth}
-						height={thumbnailHeight}
+						width="100%"
+            			height="100%"
 						controls={true}
 						light={true}
 						onClickPreview={handleMediaClick}
@@ -89,7 +93,7 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 					{/* Modal for the full-screen video */}
 					<Dialog open={open} onOpenChange={handleModalClose} >
 						<DialogContent > 
-							<DialogDescription >
+							<DialogDescription style={{ width: '100vw', height: '90vh' }}>
 							<ReactPlayer
 								url={message.content}
 								width="100%"
@@ -138,18 +142,21 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 						if (!isOpen) setOpen(false);
 					}} >
 						<DialogContent > 
-							<DialogDescription >
+							
+							<DialogDescription style={{ width: '100vw', height: '90vh' }}>
 							{message.messageType === "image" && (
 								<Image
-								src={message.content}
-								alt="Sent Image"
-								fill
+								// Sent and Recieved Images
+									src={message.content}
+									alt="Sent Image"
+									layout="fill" 
 								 
 								/>
 							)}
 							{message.messageType === "video" && (
 								<div className="relative w-full h-full">  
 									<ReactPlayer
+										// Sent and Recieved Videos
 										url={message.content}
 										width="100%"
 										height="100%"
@@ -172,8 +179,8 @@ export default ChatBubble;
 const VideoMessage = ({ message }: { message: IMessage }) => {
 	return <ReactPlayer 
 	url={message.content} 
-	width='100%' 
-	height='100%' 
+	//width='100%' 
+	//height='100%' 
 	controls={ true } 
 	light={ true } 
 	muted={ true } 
@@ -184,10 +191,10 @@ const VideoMessage = ({ message }: { message: IMessage }) => {
 
 const ImageMessage = ({ message, handleClick }: { message: IMessage; handleClick: () => void }) => {
 	return (
-		<div className='w-[100%] h-[100%] m-2 relative'>
+		<div className='w-[100%] h-[90%] m-2 relative'>
 			<Image
 				src={message.content}
-				fill
+				
 				alt='image'
 				onClick={handleClick}
 			/>
@@ -198,10 +205,14 @@ const ImageMessage = ({ message, handleClick }: { message: IMessage; handleClick
 const ImageDialog = ({ src, onClose, open }: { open: boolean; src: string; onClose: () => void }) => {
 	return (
 	  <Dialog open={open} onOpenChange={onClose}>
-		<DialogContent > 
+		<DialogContent> 
 		  {/* Center the content within the modal */}
 		  <DialogDescription >
-			<Image src={src} alt="Image"/>
+			<Image
+				src={src} 
+				alt="Image"
+				layout="fill"
+			/>
 		  </DialogDescription>
 		</DialogContent>
 	  </Dialog>
