@@ -52,7 +52,6 @@ function convertConversationTypes(conversation: Conversation): ConversationType 
   }
 
 
-
 const LeftPanel = () => {
   const { isAuthenticated, isLoading } = useConvexAuth();
   const conversations = useQuery(api.conversations.getMyConversations, isAuthenticated ? undefined : "skip");
@@ -126,7 +125,7 @@ const LeftPanel = () => {
           </div>
         )}
       </div>
-      <div className={`my-3 flex flex-col gap-0 overflow-auto h-full pb-[44px] ${!isViewingConversation ? 'pt-[114px]' : 'pt-[78px]'}`}>
+      <div className={`my-3 flex flex-col gap-0 overflow-auto h-full pb-[44px] ${!isViewingConversation ? 'pt-[136px]' : 'pt-[78px]'}`}>
         {!isViewingConversation &&
           conversations?.map((conversation, index) => (
             <div className={index === 0 ? 'pt-[0px]' : ''} key={conversation._id}>
