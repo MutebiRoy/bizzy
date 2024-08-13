@@ -247,13 +247,13 @@ const TextMessage = ({ message }: { message: IMessage }) => {
 				<a
 					href={message.content}
 					target='_blank'
-					rel='noopener noreferrer'
+					rel='text message'
 					className={`mr-2 text-sm font-light text-blue-400 underline`}
 				>
 					{message.content}
 				</a>
 			) : (
-				<p className={`mr-2 text-sm font-light`}>{message.content}</p>
+				<p className={`mr-2 pl-2 text-sm font-light`}>{message.content}</p>
 			)}
 		</div>
 	);
