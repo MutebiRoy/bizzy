@@ -41,7 +41,7 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 		// Increase thumbnail size when the modal is open (optional)
 		setThumbnailWidth(500);
 		setThumbnailHeight(300);
-  };
+  	};
 
 	const handleModalClose = () => {
 		setOpen(false); // Close the modal
@@ -57,6 +57,7 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 			return <TextMessage message={message} />;
 		  case "image":
 			return (
+				/* Received Images */
 				<div className="w-[100%] h-[100%] m-2 relative">
 					<Image
 						src={message.content}
@@ -81,7 +82,7 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 			);
 		  case "video":
 			return (
-				<div className="flex flex-col items-center justify-center h-full">
+				<div className="flex flex-col items-center justify-center h-full pb-2">
 					<ReactPlayer
 						url={message.content}
 						width="200px"
@@ -117,12 +118,14 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 				<DateIndicator message={message} previousMessage={previousMessage} />
 				<div className='flex gap-1 w-2/3'>
 					<ChatBubbleAvatar isGroup={isGroup} isMember={isMember} message={message} />
-					<div className={`flex flex-col z-20 max-w-fit px-2 pt-1 rounded-md shadow-md relative ${bgClass}`}>
+					<div className={`flex flex-col z-20 pt-3 pr-3 pb-2 relative ${bgClass} rounded-md shadow-md`}>
 						<OtherMessageIndicator />
 						{isGroup && <ChatAvatarActions message={message} me={me} />}
 						{renderMessageContent()}
 						{open && <ImageDialog src={message.content} open={open} onClose={() => setOpen(false)} />}
-						<MessageTime time={time} fromMe={fromMe} />
+						<MessageTime 
+							time={time} fromMe={fromMe}
+						/>
 					</div>
 				</div>
 			</>
@@ -132,9 +135,9 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 	return (
 		<>
 			<DateIndicator message={message} previousMessage={previousMessage} />
-
+			{/* Sent Image bubble. */}
 			<div className='flex gap-1 w-2/3 ml-auto'>
-				<div className={`flex  z-20 max-w-fit px-2 pt-1 rounded-md shadow-md ml-auto relative ${bgClass}`}>
+				<div className={`flex z-20 max-w-fit px-2 pt-1 rounded-md shadow-md ml-auto relative ${bgClass}`}>
 					<SelfMessageIndicator />
 					{renderMessageContent()}
 
@@ -150,7 +153,7 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 									src={message.content}
 									alt="Sent Image"
 									layout="fill" 
-								 
+								 	//objectFit="contain"
 								/>
 							)}
 							{message.messageType === "video" && (
@@ -221,7 +224,7 @@ const ImageDialog = ({ src, onClose, open }: { open: boolean; src: string; onClo
 
 const MessageTime = ({ time, fromMe }: { time: string; fromMe: boolean }) => {
 	return (
-		<p className='text-[10px] mt-2 self-end flex gap-1 items-center'>
+		<p className='text-[10px] mt-0 self-end flex gap-1 items-center pl-2'>
 			{time} {fromMe && <MessageSeenSvg />}
 		</p>
 	);
