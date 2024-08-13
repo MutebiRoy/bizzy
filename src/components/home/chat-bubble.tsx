@@ -118,7 +118,7 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 				<DateIndicator message={message} previousMessage={previousMessage} />
 				<div className='flex gap-1 w-2/3'>
 					<ChatBubbleAvatar isGroup={isGroup} isMember={isMember} message={message} />
-					<div className={`flex flex-col z-20 pt-3 pr-3 pb-2 relative ${bgClass} rounded-md shadow-md`}>
+					<div className={`flex flex-col z-20 pt-3 pr-4 pb-2 relative ${bgClass} rounded-md shadow-md`}>
 						<OtherMessageIndicator />
 						{isGroup && <ChatAvatarActions message={message} me={me} />}
 						{renderMessageContent()}
@@ -137,7 +137,7 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 			<DateIndicator message={message} previousMessage={previousMessage} />
 			{/* Sent Image bubble. */}
 			<div className='flex gap-1 w-2/3 ml-auto'>
-				<div className={`flex z-20 max-w-fit px-2 pt-1 rounded-md shadow-md ml-auto relative ${bgClass}`}>
+				<div className={`flex flex-col z-20 max-w-fit px-2 pt-1 pr-4 pb-1 rounded-md shadow-md ml-auto relative ${bgClass}`}>
 					<SelfMessageIndicator />
 					{renderMessageContent()}
 
