@@ -4,11 +4,13 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { useConversationStore, ConversationType } from "@/store/chat-store";
+import { useConversationStore } from "@/store/chat-store";
+import { ConversationType, UserType } from "@/utils/conversation_utils";
 import toast from "react-hot-toast";
 import useComponentVisible from "@/hooks/useComponentVisible";
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import MediaDropdown from "./media-dropdown";
+import { Id } from "../../../convex/_generated/dataModel";
 
 
 interface MessageInputProps {
@@ -17,11 +19,19 @@ interface MessageInputProps {
 
 const MessageInput: React.FC<MessageInputProps> = ({ conversation }) => {
 	const [msgText, setMsgText] = useState("");
-	const { selectedConversation } = useConversationStore();
-	const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
+	const { 
+		selectedConversation, 
+		setSelectedConversation 
+	} = useConversationStore();
+	const { 
+		ref, 
+		isComponentVisible, 
+		setIsComponentVisible 
+	} = useComponentVisible( false );
 
-	const me = useQuery(api.users.getMe);
+  	const me = useQuery(api.users.getMe);
 	const sendTextMsg = useMutation(api.messages.sendTextMessage);
+	const createConversation = useMutation(api.conversations.createConversation);
 
 	const handleSendTextMsg = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -36,20 +46,50 @@ const MessageInput: React.FC<MessageInputProps> = ({ conversation }) => {
 			toast.error("Message should be less than 300 character!");
 			return; // Don't submit the form
 		}
+
+		// Verify conversation and user data existence
+		if (!selectedConversation || !me) {
+			toast.error("Invalid conversation or user data.");
+			return;
+		}
 		
 		try {
-			await sendTextMsg({ 
-			  content: msgText, 
-			  conversation: selectedConversation!._id, 
-			  sender: me!._id 
+			let conversationId = selectedConversation?._id;
+	  
+			// Check if this is a temporary conversation
+			if (!conversationId) {
+				const participantIds = selectedConversation!.participants
+				.filter((user): user is UserType => user !== null)
+				.map((user) => user._id);
+			  	// Create a new conversation in the backend
+			  	const conversation = await createConversation({
+					participants: participantIds,
+					isGroup: false,
+				});
+
+			  	conversationId = conversation._id;
+			  
+			  	// Update selectedConversation
+				const updatedConversation: ConversationType = {
+					...selectedConversation!,
+					...conversation,
+					isTemporary: false, // Remove the temporary flag
+				};
+				setSelectedConversation(updatedConversation);
+			}
+	  
+			// Send the message
+			await sendTextMsg({
+				content: msgText,
+				conversationId: conversationId as Id<"conversations">,
+			  	sender: me!._id,
 			});
-				setMsgText("");
-		} 
-		catch (err: any) {
+			setMsgText("");
+		  } catch (err: any) {
 			toast.error(err.message);
 			console.error(err);
-		}
-	};
+		  }
+		};
 
 	return (
 		<div className="message-input-container">
