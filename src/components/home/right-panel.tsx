@@ -1,10 +1,10 @@
 "use client";
 import { useEffect } from "react";
 import { useQuery } from "convex/react";
-//import { api } from "../../../convex/_generated/api";
-import { useConversationStore, ConversationType } from "@/store/chat-store";
+import { useConversationStore } from "@/store/chat-store";
 import MessageContainer from "./message-container";
 import MessageInput from "./message-input";
+import { ConversationType} from "@/utils/conversation_utils";
 
 interface RightPanelProps {
     conversation: ConversationType | null;  // Use ConversationType or null
