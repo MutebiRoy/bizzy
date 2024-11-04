@@ -5,28 +5,11 @@ import { ImageIcon, Users, VideoIcon } from "lucide-react";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useConversationStore } from "@/store/chat-store";
+import { ConversationType } from "@/utils/conversation_utils";
 
 // Define the type for the conversation prop
 interface ConversationProps {
-  conversation: {
-    _id: string;
-    groupImage?: string;
-    image?: string;
-    participants: string[];
-    isGroup: boolean;
-    name?: string;
-    groupName?: string;
-    isOnline?: boolean;
-    _creationTime: string;
-    lastMessage?: {
-      _id: string;
-      conversation: string;
-      content: string;
-      sender: string;
-      _creationTime: string;
-      messageType?: string;
-    };
-  };
+  conversation: ConversationType;
   onClick: (conversation: any) => void;
 }
 
@@ -74,12 +57,13 @@ const Conversation: React.FC<ConversationProps> = ({ conversation, onClick }) =>
               <span>{lastMessage?.content}</span>
             )
           ) : null}
-          {lastMessageType === "image" && <ImageIcon size={16} />}
-          {lastMessageType === "video" && <VideoIcon size={16} />}
+          { lastMessageType === "image" && <ImageIcon size={16} /> }
+          { lastMessageType === "video" && <VideoIcon size={16} /> }
         </p>
       </div>
     </div>
   );
 };
+
 
 export default Conversation;
