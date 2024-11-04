@@ -1,26 +1,6 @@
+import { ConversationType } from "@/utils/conversation_utils";
 import { Id } from "../../convex/_generated/dataModel";
 import { create } from "zustand";
-
-export type ConversationType = {
-    _id: Id<"conversations">;
-    groupName?: string;
-    image?: string;
-    participants: Id<"users">[];
-    isGroup: boolean;
-    name?: string;
-	groupImage?: string;
-    admin?: Id<"users">;
-    isOnline?: boolean;
-    _creationTime: string;  // This should be string
-    lastMessage?: {
-        _id: Id<"messages">;
-        conversation: Id<"conversations">;
-        content: string;
-        sender: string;
-        _creationTime: string;
-        messageType: "image" | "text" | "video";
-    };
-};
 
 type ConversationStore = {
 	selectedConversation: ConversationType | null;
@@ -37,9 +17,13 @@ export const useConversationStore = create<ConversationStore>((set) => ({
   }));
 
 export interface IMessage {
-	_id: string;
+	//sender_id: Id<"users">;
+	//_id: string;
+	_id: Id<"messages">;
 	content: string;
-	_creationTime: string;
+	_creationTime: string | number;
+	//conversation: string;
+	conversation: Id<"conversations">;
 	messageType: "text" | "image" | "video";
 	sender: {
 		_id: Id<"users">;
@@ -47,7 +31,7 @@ export interface IMessage {
 		name?: string;
 		tokenIdentifier: string;
 		email: string;
-		_creationTime: string;
+		_creationTime: string | number;
 		isOnline: boolean;
 	};
 }
