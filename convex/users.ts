@@ -1,5 +1,17 @@
 import { ConvexError, v } from "convex/values";
 import { internalMutation, query } from "./_generated/server";
+import { Id } from "./_generated/dataModel";
+
+export const getUserById = query({
+	args: {
+	  userId: v.id("users"),
+	},
+	handler: async (ctx, { userId }) => {
+	  const user = await ctx.db.get(userId);
+	  if (!user) throw new Error("User not found");
+	  return user;
+	},
+});
 
 	
 export const createUser = internalMutation({
@@ -104,9 +116,12 @@ export const getMe = query({
 		return user;
 	},
 });
+  
 
 export const getGroupMembers = query({
-	args: { conversationId: v.id("conversations") },
+	args: { 
+		conversationId: v.id("conversations") 
+	},
 	handler: async (ctx, args) => {
 		const identity = await ctx.auth.getUserIdentity();
 
@@ -122,9 +137,23 @@ export const getGroupMembers = query({
 			throw new ConvexError("Conversation not found");
 		}
 
-		const users = await ctx.db.query("users").collect();
-		const groupMembers = users.filter((user) => conversation.participants.includes(user._id));
+		// Fetch participants from user_conversations
+		const participantsEntries = await ctx.db
+		.query("user_conversations")
+		.withIndex("by_conversation", (q) => q.eq("conversation", args.conversationId))
+		.collect();
 
-		return groupMembers;
+		const participantIds = participantsEntries.map((entry) => entry.user);
+		// Fetch participant details
+		const participants = await Promise.all(
+			participantIds.map(async (id) => {
+			  const user = await ctx.db.get(id);
+			  return user;
+			})
+		);
+		
+		//const groupMembers = users.filter((user) => conversation.participants.includes(user._id));
+		return participants;
+		//return groupMembers;
 	},
 });
