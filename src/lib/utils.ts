@@ -84,4 +84,3 @@ export const getRelativeDateTime = (message: any, previousMessage: any) => {
 		}
 	}
 };
-
