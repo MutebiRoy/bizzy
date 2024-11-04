@@ -7,6 +7,9 @@ import Image from "next/image";
 import { Dialog, DialogContent, DialogDescription } from "../ui/dialog";
 import ReactPlayer from "react-player";
 import ChatAvatarActions from "./chat-avatar-actions";
+import { api } from "../../../convex/_generated/api";
+import { useQuery } from "convex/react";
+import { ConversationType, UserType } from "@/utils/conversation_utils";
 
 type ChatBubbleProps = {
 	message: IMessage;
@@ -15,6 +18,7 @@ type ChatBubbleProps = {
 };
 
 const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
+	// const me = useQuery(api.users.getMe);
 	const date = new Date(message._creationTime);
 	const hour = date.getHours().toString().padStart(2, "0");
 	const minute = date.getMinutes().toString().padStart(2, "0");
@@ -23,7 +27,11 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 	const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
 
 	const { selectedConversation } = useConversationStore();
-	const isMember = selectedConversation?.participants.includes(message.sender?._id) || false;
+	const participants = (selectedConversation?.participants ?? []).filter((user): user is UserType => user !== null);
+	const participantIds = participants.map((user: UserType) => user._id);
+
+  // Check if the message sender is a member
+  	const isMember = participantIds.includes(message.sender?._id);
 	const isGroup = selectedConversation?.isGroup;
 	const fromMe = message.sender?._id === me._id;
 	const bgClass = fromMe ? "bg-green-chat" : "bg-white dark:bg-gray-primary";
