@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ConversationType, UserType } from "@/utils/conversation_utils";
 import {
 	Dialog,
 	DialogClose,
@@ -37,14 +38,21 @@ const UserListDialog = () => {
 	const { setSelectedConversation } = useConversationStore();
 
 	const handleCreateConversation = async () => {
+		if (!users) {
+			// Handle the case where users data hasn't loaded yet
+			toast.error("User data is loading in a moment.");
+			return;
+		}
+
 		if (selectedUsers.length === 0) return;
 		setIsLoading(true);
+
 		try {
 			const isGroup = selectedUsers.length > 1;
 
-			let conversationId;
+			let conversation;
 			if (!isGroup) {
-				conversationId = await createConversation({
+				conversation = await createConversation({
 					participants: [...selectedUsers, me?._id!],
 					isGroup: false,
 				});
@@ -59,7 +67,7 @@ const UserListDialog = () => {
 
 				const { storageId } = await result.json();
 
-				conversationId = await createConversation({
+				conversation = await createConversation({
 					participants: [...selectedUsers, me?._id!],
 					isGroup: true,
 					admin: me?._id!,
@@ -75,10 +83,13 @@ const UserListDialog = () => {
 
 			// TODO => Update a global state called "selectedConversation"
 			const conversationName = isGroup ? groupName : users?.find((user) => user._id === selectedUsers[0])?.name;
-
+			const participantObjects = selectedUsers.map((id) => {
+				return users.find((user) => user._id === id) || null;
+			});
+			
 			setSelectedConversation({
-				_id: conversationId,
-				participants: selectedUsers,
+				_id: conversation._id,
+				participants: participantObjects,
 				isGroup,
 				image: isGroup ? renderedImage : users?.find((user) => user._id === selectedUsers[0])?.image,
 				name: conversationName,
