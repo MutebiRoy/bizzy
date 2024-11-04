@@ -4,6 +4,7 @@ import { Ban, LogOut } from "lucide-react";
 import toast from "react-hot-toast";
 import { api } from "../../../convex/_generated/api";
 import React from "react";
+import { UserType } from "@/utils/conversation_utils";
 
 type ChatAvatarActionsProps = {
 	message: IMessage;
@@ -13,14 +14,20 @@ type ChatAvatarActionsProps = {
 const ChatAvatarActions = ({ me, message }: ChatAvatarActionsProps) => {
 	const { selectedConversation, setSelectedConversation } = useConversationStore();
 
-	const isMember = selectedConversation?.participants.includes(message.sender._id);
+	// First, ensure that participants is an array of UserType, filtering out nulls
+	const participantIds = selectedConversation?.participants
+	.filter((participant): participant is UserType => participant !== null)
+	.map((participant) => participant._id);
+
+	// Now, check if the message sender's ID is in the array of participant IDs
+	const isMember = participantIds?.includes(message.sender._id);
 	const kickUser = useMutation(api.conversations.kickUser);
 	const createConversation = useMutation(api.conversations.createConversation);
 	const isGroup = selectedConversation?.isGroup;
 
 	const handleKickUser = async (e: React.MouseEvent) => {
 		e.stopPropagation();
-		if (!selectedConversation) return;
+		if (!selectedConversation || !selectedConversation._id) return;
 		try {
 			await kickUser({
 				conversationId: selectedConversation._id,
@@ -29,7 +36,9 @@ const ChatAvatarActions = ({ me, message }: ChatAvatarActionsProps) => {
 
 			setSelectedConversation({
 				...selectedConversation,
-				participants: selectedConversation.participants.filter((id) => id !== message.sender._id),
+				participants: selectedConversation.participants
+				  .filter((participant): participant is UserType => participant !== null)
+				  .filter((participant) => participant._id !== message.sender._id),
 			});
 		} catch (error) {
 			toast.error("Failed to kick user");
@@ -39,13 +48,13 @@ const ChatAvatarActions = ({ me, message }: ChatAvatarActionsProps) => {
 	const handleCreateConversation = async () => {
 
 		try {
-			const conversationId = await createConversation({
+			const conversation = await createConversation({
 				isGroup: false,
 				participants: [me._id, message.sender._id],
 			});
 
 			setSelectedConversation({
-				_id: conversationId,
+				_id: conversation._id,
 				name: message.sender.name,
 				participants: [me._id, message.sender._id],
 				isGroup: false,
