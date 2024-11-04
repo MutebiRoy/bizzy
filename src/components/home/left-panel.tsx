@@ -4,16 +4,17 @@ import { ListFilter, Search, ChevronLeft } from "lucide-react";
 import { Input } from "../ui/input";
 import ThemeSwitch from "./theme-switch";
 import Conversation from "./conversation";
-import { UserButton } from "@clerk/nextjs";
+import { UserButton, useUser } from "@clerk/nextjs";
 import UserListDialog from "./user-list-dialog";
-import { useConvexAuth, useQuery } from "convex/react";
+import { useConvexAuth, useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { useConversationStore, ConversationType } from "@/store/chat-store";
+import { useConversationStore } from "@/store/chat-store";
 import RightPanel from "./right-panel";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import GroupMembersDialog from "./group-members-dialog";
-//import { Id } from "convex/dist/cjs-types/values/value";
 import { Id } from "../../../convex/_generated/dataModel";
+import SearchUsers from "./search_users";
+import { convertConversationTypes, ConversationType, UserType} from "@/utils/conversation_utils";
 
 interface LastMessage {
   _id: string;
@@ -25,44 +26,48 @@ interface LastMessage {
 }
 
 interface Conversation {
-  _id: string;
+  _id: string | null;
   _creationTime: string | number;
   lastMessage?: LastMessage;
   isGroup: boolean;
-  participants: string[];
-  [key: string]: any;  // Additional properties as needed
+  //participants: string[];
+  [key: string]: any; // Additional properties as needed
 }
-
-function convertConversationTypes(conversation: Conversation): ConversationType {
-    return {
-      ...conversation,
-      _id: conversation._id as Id<"conversations">, // Cast to correct Id type
-      _creationTime: conversation._creationTime.toString(),
-      participants: conversation.participants.map(id => id as Id<"users">), // directly map IDs
-      lastMessage: conversation.lastMessage ? {
-        ...conversation.lastMessage,
-        _id: conversation.lastMessage._id as Id<"messages">, // Ensure this casts to the correct Id type
-        conversation: conversation.lastMessage.conversation as Id<"conversations">, // Ensure this casts to the correct Id type
-        _creationTime: conversation.lastMessage._creationTime.toString(),
-        sender: conversation.lastMessage.sender,
-        content: conversation.lastMessage.content,
-        messageType: conversation.lastMessage.messageType,
-      } : undefined
-    };
-  }
-
 
 const LeftPanel = () => {
   const { isAuthenticated, isLoading } = useConvexAuth();
-  const conversations = useQuery(api.conversations.getMyConversations, isAuthenticated ? undefined : "skip");
-  const { selectedConversation, setSelectedConversation } = useConversationStore();
-  const [isViewingConversation, setIsViewingConversation] = useState(false);
-  const conversationName = selectedConversation?.groupName || selectedConversation?.name || "No conversation selected";
-  const conversationImage = selectedConversation?.groupImage || selectedConversation?.image || "/default-avatar.png";
+
+  // Use `getMe` query to get Convex user
+  const me = useQuery(
+    api.users.getMe,
+    isAuthenticated ? {} : "skip"
+  );
+
+  const currentUserId = me?._id;
+
+  const conversations = useQuery(
+    api.conversations.getMyConversations,
+    isAuthenticated ? {} : "skip"
+  );
+
+  const { selectedConversation, setSelectedConversation, isViewingConversation, setIsViewingConversation } = useConversationStore();
+
+  const conversationName =
+    selectedConversation?.groupName ||
+    selectedConversation?.name ||
+    "No conversation selected";
+  const conversationImage =
+    selectedConversation?.groupImage ||
+    selectedConversation?.image ||
+    "/default-avatar.png";
 
   useEffect(() => {
     const conversationIds = conversations?.map((conversation) => conversation._id);
-    if (selectedConversation && conversationIds && !conversationIds.includes(selectedConversation._id)) {
+    if (
+      selectedConversation &&
+      conversationIds &&
+      !conversationIds.includes(selectedConversation._id)
+    ) {
       setSelectedConversation(null);
     }
   }, [conversations, selectedConversation, setSelectedConversation]);
@@ -74,27 +79,30 @@ const LeftPanel = () => {
     setSelectedConversation(null);
   };
 
-  const handleConversationClick = (conversation: Conversation) => {
-    setSelectedConversation(convertConversationTypes(conversation));
+  const handleConversationClick = (conversation: ConversationType) => {
+    setSelectedConversation(conversation);
     setIsViewingConversation(true);
   };
-
+  
   return (
-    <div className='w-full overflow-hidden h-screen'>
-      <div className='fixed top-0 left-0 right-0 bg-left-panel z-10 '>
-        <div className='flex justify-between bg-gray-primary p-3'>
+    <div className="w-full overflow-hidden h-screen">
+      <div className="fixed top-0 left-0 right-0 bg-left-panel z-10 ">
+        <div className="flex justify-between bg-gray-primary p-3">
           {isViewingConversation ? (
-            <div className='flex items-center'>
+            <div className="flex items-center">
               <button onClick={handleBackClick}>
                 <ChevronLeft size={24} />
               </button>
-              <Avatar className='ml-4'>
-                <AvatarImage src={conversationImage || "/placeholder.png"} className='object-cover' />
+              <Avatar className="ml-4">
+                <AvatarImage
+                  src={conversationImage || "/placeholder.png"}
+                  className="object-cover"
+                />
                 <AvatarFallback>
-                  <div className='animate-pulse bg-gray-tertiary w-full h-full rounded-full' />
+                  <div className="animate-pulse bg-gray-tertiary w-full h-full rounded-full" />
                 </AvatarFallback>
               </Avatar>
-              <div className='flex flex-col ml-4'>
+              <div className="flex flex-col ml-4">
                 <p>{conversationName}</p>
                 {selectedConversation && selectedConversation.isGroup && (
                   <GroupMembersDialog selectedConversation={selectedConversation} />
@@ -104,49 +112,46 @@ const LeftPanel = () => {
           ) : (
             <UserButton />
           )}
-          <div className='flex items-center gap-3'>
+          <div className="flex items-center gap-3">
             {isAuthenticated && <UserListDialog />}
             <ThemeSwitch />
           </div>
         </div>
         {!isViewingConversation && (
-          <div className='p-3 flex items-center'>
-            <div className='relative h-10 mx-3 flex-1'>
-              <Search
-                className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 z-10'
-                size={18}
-              />
-              <Input
-                type='text'
-                placeholder='Search or start a new chat'
-                className='pl-10 py-2 text-sm w-full rounded shadow-sm bg-gray-primary focus-visible:ring-transparent'
-              />
-            </div>
+          <div className="p-3 flex items-center">
+           {/* Use the SearchUsers component here */}
+           <SearchUsers />
           </div>
         )}
       </div>
-      <div className={`my-3 flex flex-col gap-0 overflow-auto h-full pb-[44px] ${!isViewingConversation ? 'pt-[136px]' : 'pt-[78px]'}`}>
+      <div
+        className={`my-3 flex flex-col gap-0 overflow-auto h-full pb-[44px] ${
+          !isViewingConversation ? "pt-[136px]" : "pt-[78px]"
+        }`}
+      >
+        
         {!isViewingConversation &&
+        currentUserId &&
           conversations?.map((conversation, index) => (
-            <div className={index === 0 ? 'pt-[0px]' : ''} key={conversation._id}>
+            <div className={index === 0 ? "pt-[0px]" : ""} key={conversation._id}>
               <Conversation
                 key={conversation._id}
-                conversation={convertConversationTypes(conversation)}
-                onClick={() => handleConversationClick(conversation)}
+                conversation={convertConversationTypes(conversation, currentUserId)}
+                onClick={() => handleConversationClick(convertConversationTypes(conversation, currentUserId))}
               />
             </div>
           ))
         }
 
         {isViewingConversation && selectedConversation && (
-          <div className='overflow-auto h-full'>
+          <div className="overflow-auto h-full">
             <RightPanel conversation={selectedConversation} />
           </div>
         )}
         {conversations?.length === 0 && !isViewingConversation && (
           <>
-            <p className='text-center text-gray-500 text-sm mt-3'>No conversations yet!</p>
-            <p className='text-center text-gray-500 text-sm mt-3'>
+            <p className="text-center text-gray-500 text-sm mt-3">No conversations yet!</p>
+            <p className="text-center text-gray-500 text-sm mt-3">
               Click on any name to start a conversation
             </p>
           </>
