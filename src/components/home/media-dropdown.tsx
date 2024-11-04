@@ -9,25 +9,67 @@ import toast from "react-hot-toast";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useConversationStore } from "@/store/chat-store";
+import { ConversationType, UserType } from "@/utils/conversation_utils";
+import { Id } from "../../../convex/_generated/dataModel";
 
 const MediaDropdown = () => {
 	const imageInput = useRef<HTMLInputElement>(null);
-	const videoInput = useRef<HTMLInputElement>(null);
-	const [selectedImage, setSelectedImage] = useState<File | null>(null);
-	const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
+  	const videoInput = useRef<HTMLInputElement>(null);
+  	const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  	const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
 
-	const [isLoading, setIsLoading] = useState(false);
+  	const [isLoading, setIsLoading] = useState(false);
 
-	const generateUploadUrl = useMutation(api.conversations.generateUploadUrl);
-	const sendImage = useMutation(api.messages.sendImage);
-	const sendVideo = useMutation(api.messages.sendVideo);
-	const me = useQuery(api.users.getMe);
+  	const generateUploadUrl = useMutation(api.conversations.generateUploadUrl);
+  	const sendImage = useMutation(api.messages.sendImage);
+  	const sendVideo = useMutation(api.messages.sendVideo);
+  	const createConversation = useMutation(api.conversations.createConversation);
+	// const getConversationById = useQuery(api.conversations.getConversationById);
+  	const me = useQuery(api.users.getMe);
+  	const { selectedConversation, setSelectedConversation } = useConversationStore();
 
-	const { selectedConversation } = useConversationStore();
-
-	const handleSendImage = async () => {
+  	const handleSendImage = async () => {
+		if (!me) {
+			toast.error("User information is not available.");
+			return;
+		}
 		setIsLoading(true);
 		try {
+			// let conversationId = selectedConversation?._id;
+			let conversation = selectedConversation;
+			// Check if this is a temporary conversation
+			if (!conversation?._id) {
+				// Extract participant IDs, handling possible nulls
+				const participantIds = conversation!.participants
+				.filter((user): user is UserType => user !== null)
+				.map((user) => user._id);
+				
+				// Create a new conversation in the backend and get the full conversation data
+				conversation = await createConversation({
+					participants: participantIds,
+					isGroup: false,
+				});
+
+				// Ensure conversation is not null
+				if (!conversation) {
+					throw new Error("Failed to create conversation");
+				}
+
+				// Update the selectedConversation with the new conversation data
+				const updatedConversation: ConversationType = {
+					...selectedConversation!,
+					...conversation,
+					isTemporary: false, // Remove the temporary flag
+				};
+				setSelectedConversation(updatedConversation);
+			}
+
+			const conversationId = conversation._id;
+
+			if (!conversationId) {
+				throw new Error("Conversation ID is null");
+			}
+		
 			// Step 1: Get a short-lived upload URL
 			const postUrl = await generateUploadUrl();
 			// Step 2: POST the file to the URL
@@ -37,25 +79,67 @@ const MediaDropdown = () => {
 				body: selectedImage,
 			});
 
+			if (!result.ok) {
+				throw new Error(`Image upload failed with status ${result.status}`);
+			}
+
 			const { storageId } = await result.json();
 			// Step 3: Save the newly allocated storage id to the database
 			await sendImage({
-				conversation: selectedConversation!._id,
+				conversationId: conversationId as Id<"conversations">,
 				imgId: storageId,
 				sender: me!._id,
 			});
 
 			setSelectedImage(null);
-		} catch (err) {
-			toast.error("Failed to send image");
-		} finally {
+		} catch (err: any) {
+			toast.error(`Failed to send image: ${err.message}`);
+			console.error(err);
+		  } finally {
 			setIsLoading(false);
-		}
+		  }
 	};
 
 	const handleSendVideo = async () => {
+		if (!me) {
+			toast.error("User information is not available.");
+			return;
+		}
 		setIsLoading(true);
 		try {
+			let conversation = selectedConversation;
+
+			// Check if this is a temporary conversation
+			if (!conversation?._id) {
+				// Extract participant IDs, handling possible nulls
+				const participantIds = conversation!.participants
+				.filter((user): user is UserType => user !== null)
+				.map((user) => user._id);
+				// Create a new conversation in the backend
+				conversation = await createConversation({
+					participants: participantIds,
+					isGroup: false,
+				});
+
+				if (!conversation) {
+					throw new Error("Failed to create conversation");
+				}
+		
+				// Update the selectedConversation with the new conversation ID
+				const updatedConversation: ConversationType = {
+					...selectedConversation!,
+					...conversation,
+					isTemporary: false, // Remove the temporary flag
+				  };
+				  setSelectedConversation(updatedConversation);
+			}
+
+			const conversationId = conversation._id;
+			
+			if (!conversationId) {
+				throw new Error("Conversation ID is null");
+			}
+
 			const postUrl = await generateUploadUrl();
 			const result = await fetch(postUrl, {
 				method: "POST",
@@ -63,19 +147,25 @@ const MediaDropdown = () => {
 				body: selectedVideo,
 			});
 
+			if (!result.ok) {
+				throw new Error(`Video upload failed with status ${result.status}`);
+			}
+
 			const { storageId } = await result.json();
 
 			await sendVideo({
 				videoId: storageId,
-				conversation: selectedConversation!._id,
+				conversationId: conversationId as Id<"conversations">,
 				sender: me!._id,
 			});
 
 			setSelectedVideo(null);
-		} catch (error) {
-		} finally {
+		} catch (err: any) {
+			toast.error(`Failed to send Video: ${err.message}`);
+			console.error(err);
+		  } finally {
 			setIsLoading(false);
-		}
+		  }
 	};
 
 	return (
@@ -144,7 +234,13 @@ type MediaImageDialogProps = {
 	handleSendImage: () => void;
 };
 
-const MediaImageDialog = ({ isOpen, onClose, selectedImage, isLoading, handleSendImage }: MediaImageDialogProps) => {
+const MediaImageDialog = ({ 
+	isOpen, 
+	onClose, 
+	selectedImage, 
+	isLoading, 
+	handleSendImage 
+}: MediaImageDialogProps) => {
 	const [renderedImage, setRenderedImage] = useState<string | null>(null);
 
 	useEffect(() => {
@@ -181,10 +277,16 @@ type MediaVideoDialogProps = {
 	handleSendVideo: () => void;
 };
 
-const MediaVideoDialog = ({ isOpen, onClose, selectedVideo, isLoading, handleSendVideo }: MediaVideoDialogProps) => {
+const MediaVideoDialog = ({ 
+	isOpen, 
+	onClose, 
+	selectedVideo, 
+	isLoading, 
+	handleSendVideo 
+}: MediaVideoDialogProps) => {
 	const renderedVideo = URL.createObjectURL(new Blob([selectedVideo], { type: "video/mp4" }));
 
-	return (
+  	return (
 		<Dialog
 			open={isOpen}
 			onOpenChange={(isOpen) => {
