@@ -1,14 +1,19 @@
 import ChatBubble from "./chat-bubble";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { useConversationStore } from "@/store/chat-store";
+import { useConversationStore, IMessage  } from "@/store/chat-store";
 import { useEffect, useRef } from "react";
+import { ConversationType, UserType } from "@/utils/conversation_utils";
+
 
 const MessageContainer = () => {
 	const { selectedConversation } = useConversationStore();
-	const messages = useQuery(api.messages.getMessages, {
-		conversation: selectedConversation!._id,
-	});
+	const messages = useQuery(
+        api.messages.getMessages,
+        selectedConversation && selectedConversation._id
+          ? { conversation: selectedConversation._id }
+          : "skip"
+    );
 	const me = useQuery(api.users.getMe);
 	const lastMessageRef = useRef<HTMLDivElement>(null);
 
