@@ -13,9 +13,12 @@ import { User } from "@clerk/clerk-sdk-node";
 
 const SearchUsers = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const { setSelectedConversation, 
+  
+  const { 
+    setSelectedConversation, 
     setIsViewingConversation 
   } = useConversationStore();
+  
   const { 
     isAuthenticated 
   } = useQuery(api.users.getMe) ? { 
