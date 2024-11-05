@@ -6,7 +6,7 @@ import { Button } from "../ui/button";
 import Image from "next/image";
 import ReactPlayer from "react-player";
 import toast from "react-hot-toast";
-import { useMutation, useQuery } from "convex/react";
+import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useConversationStore } from "@/store/chat-store";
 import { ConversationType, UserType } from "@/utils/conversation_utils";
@@ -18,6 +18,7 @@ const MediaDropdown = () => {
   	const [selectedImage, setSelectedImage] = useState<File | null>(null);
   	const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
 
+	const { isAuthenticated } = useConvexAuth();
   	const [isLoading, setIsLoading] = useState(false);
 
   	const generateUploadUrl = useMutation(api.conversations.generateUploadUrl);
@@ -25,7 +26,16 @@ const MediaDropdown = () => {
   	const sendVideo = useMutation(api.messages.sendVideo);
   	const createConversation = useMutation(api.conversations.createConversation);
 	// const getConversationById = useQuery(api.conversations.getConversationById);
-  	const me = useQuery(api.users.getMe);
+	const me = useQuery(
+		api.users.getMe,
+		isAuthenticated ? {} : "skip"
+	);
+
+	if (!isAuthenticated || !me) {
+		// Show a loading state, redirect, or return null
+		return null;
+	}
+	
   	const { selectedConversation, setSelectedConversation } = useConversationStore();
 
   	const handleSendImage = async () => {
