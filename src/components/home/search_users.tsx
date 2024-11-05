@@ -18,16 +18,19 @@ const SearchUsers = () => {
     setSelectedConversation, 
     setIsViewingConversation 
   } = useConversationStore();
-  
-  const { 
-    isAuthenticated 
-  } = useQuery(api.users.getMe) ? { 
-    isAuthenticated: true 
-  } : { 
-    isAuthenticated: false 
-  };
 
-  const me = useQuery(api.users.getMe);
+  // const { 
+  //   isAuthenticated 
+  // } = useQuery(api.users.getMe) ? { 
+  //   isAuthenticated: true 
+  // } : { 
+  //   isAuthenticated: false 
+  // };
+  // Use useConvexAuth to get isAuthenticated
+  const { isAuthenticated } = useConvexAuth();
+
+  // Conditionally call useQuery based on authentication status
+  const me = useQuery(api.users.getMe, isAuthenticated ? {} : "skip");
   const currentUserId = me?._id;
 
   // Trimmed search term to handle whitespace input
@@ -36,13 +39,13 @@ const SearchUsers = () => {
   // Fetch search results
   const searchResults = useQuery(
     api.search.searchUsersByName,
-    trimmedSearchTerm ? { searchTerm: trimmedSearchTerm } : "skip"
+    isAuthenticated && trimmedSearchTerm ? { searchTerm: trimmedSearchTerm } : "skip"
   );
 
   const getMyConversations = useQuery(
     api.conversations.getMyConversations,
     isAuthenticated ? {} : "skip"
-    );
+  );
     
   const conversations = useQuery(
     api.conversations.getMyConversations,
@@ -59,9 +62,6 @@ const SearchUsers = () => {
     let existingConversation = conversations?.find((conversation) => {
       if (conversation.isGroup) return false;
       const participantIds = conversation.participants.map((p: UserType) => p._id);
-  //     const participantIds = conversation.participants
-  // .filter((p): p is UserType => p !== null)
-  // .map((p) => p._id);
       return participantIds.includes(currentUserId) && participantIds.includes(selectedUser._id);
     });
 
