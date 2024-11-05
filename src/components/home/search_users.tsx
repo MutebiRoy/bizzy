@@ -32,7 +32,7 @@ const SearchUsers = () => {
   // Fetch search results
   const searchResults = useQuery(
     api.search.searchUsersByName,
-    isAuthenticated && trimmedSearchTerm ? { searchTerm: trimmedSearchTerm } : "skip"
+    trimmedSearchTerm ? { searchTerm: trimmedSearchTerm } : "skip"
   );
 
   const getMyConversations = useQuery(
@@ -98,7 +98,7 @@ const SearchUsers = () => {
         onChange={(e) => setSearchTerm(e.target.value)}
         className="pl-10 py-2 text-sm w-full rounded shadow-sm bg-gray-primary focus-visible:ring-transparent"
       />
-      {isAuthenticated && trimmedSearchTerm && searchResults && (
+      {trimmedSearchTerm && searchResults && (
         <div className="absolute mt-1 w-full bg-white border rounded shadow z-20">
           {searchResults.map((user: UserType) => (
             <div
