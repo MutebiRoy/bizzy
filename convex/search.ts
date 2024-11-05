@@ -4,6 +4,11 @@ import { v } from "convex/values";
 export const searchUsersByName = query({
   args: { searchTerm: v.string() },
   handler: async (ctx, { searchTerm }) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthorized");
+    }
+    
     if (!searchTerm.trim()) return [];
 
     // Use the search index defined on the 'name' field in your 'users' table
