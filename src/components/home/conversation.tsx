@@ -23,15 +23,15 @@ const Conversation: React.FC<ConversationProps> = ({ conversation, onClick }) =>
     api.users.getMe,
     isAuthenticated ? {} : "skip"
   );
+  
+  const { setSelectedConversation, selectedConversation } = useConversationStore();
+  const activeBgClass = selectedConversation?._id === conversation._id;
 
   if (!isAuthenticated || !me) {
     // Show a loading state, redirect, or return null
     return null;
   }
   
-  const { setSelectedConversation, selectedConversation } = useConversationStore();
-  const activeBgClass = selectedConversation?._id === conversation._id;
-
   return (
     <div
       className={`flex gap-2 items-center p-3 hover:bg-chat-hover cursor-pointer
