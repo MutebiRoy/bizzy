@@ -2,7 +2,7 @@ import { Laugh, Mic, Plus, Send } from "lucide-react";
 import { Input } from "../ui/input";
 import { useState } from "react";
 import { Button } from "../ui/button";
-import { useMutation, useQuery } from "convex/react";
+import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useConversationStore } from "@/store/chat-store";
 import { ConversationType, UserType } from "@/utils/conversation_utils";
@@ -18,6 +18,7 @@ interface MessageInputProps {
 }
 
 const MessageInput: React.FC<MessageInputProps> = ({ conversation }) => {
+	const { isAuthenticated } = useConvexAuth();
 	const [msgText, setMsgText] = useState("");
 	const { 
 		selectedConversation, 
@@ -29,7 +30,15 @@ const MessageInput: React.FC<MessageInputProps> = ({ conversation }) => {
 		setIsComponentVisible 
 	} = useComponentVisible( false );
 
-  	const me = useQuery(api.users.getMe);
+	const me = useQuery(
+		api.users.getMe,
+		isAuthenticated ? {} : "skip"
+	);
+	
+	if (!isAuthenticated || !me) {
+		// Show a loading state, redirect, or return null
+		return null;
+	}
 	const sendTextMsg = useMutation(api.messages.sendTextMessage);
 	const createConversation = useMutation(api.conversations.createConversation);
 
