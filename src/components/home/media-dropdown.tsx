@@ -30,14 +30,14 @@ const MediaDropdown = () => {
 		api.users.getMe,
 		isAuthenticated ? {} : "skip"
 	);
+	
+  	const { selectedConversation, setSelectedConversation } = useConversationStore();
 
 	if (!isAuthenticated || !me) {
 		// Show a loading state, redirect, or return null
 		return null;
 	}
 	
-  	const { selectedConversation, setSelectedConversation } = useConversationStore();
-
   	const handleSendImage = async () => {
 		if (!me) {
 			toast.error("User information is not available.");
