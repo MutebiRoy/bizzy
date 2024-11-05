@@ -49,7 +49,7 @@ const SearchUsers = () => {
   
   // Handle user selection from search results
   // const handleSelectUser = async (selectedUser: any) => {
-    const handleSelectUser = async (selectedUser: UserType) => {  
+    const handleSelectUser = async (selectedUser: any) => {  
     if (!currentUserId) return;
 
     // Check if a conversation with the selected user already exists
@@ -100,7 +100,7 @@ const SearchUsers = () => {
       />
       {trimmedSearchTerm && searchResults && (
         <div className="absolute mt-1 w-full bg-white border rounded shadow z-20">
-          {searchResults.map((user: UserType) => (
+          {searchResults.map((user) => (
             <div
               key={user._id}
               className="flex items-center p-2 hover:bg-gray-100 cursor-pointer"
