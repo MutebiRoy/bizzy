@@ -1,5 +1,5 @@
 import ChatBubble from "./chat-bubble";
-import { useQuery } from "convex/react";
+import { useConvexAuth, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useConversationStore, IMessage  } from "@/store/chat-store";
 import { useEffect, useRef } from "react";
@@ -7,6 +7,7 @@ import { ConversationType, UserType } from "@/utils/conversation_utils";
 
 
 const MessageContainer = () => {
+    const { isAuthenticated } = useConvexAuth();
 	const { selectedConversation } = useConversationStore();
 	const messages = useQuery(
         api.messages.getMessages,
@@ -14,7 +15,17 @@ const MessageContainer = () => {
           ? { conversation: selectedConversation._id }
           : "skip"
     );
-	const me = useQuery(api.users.getMe);
+    
+	const me = useQuery(
+        api.users.getMe,
+        isAuthenticated ? {} : "skip"
+    );
+
+    if (!isAuthenticated || !me) {
+        // Show a loading state, redirect, or return null
+        return null;
+    }
+
 	const lastMessageRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
