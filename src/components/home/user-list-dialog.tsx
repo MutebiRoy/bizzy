@@ -15,12 +15,13 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { ImageIcon, MessageSquareDiff } from "lucide-react";
 import { Id } from "../../../convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
+import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import toast from "react-hot-toast";
 import { useConversationStore } from "@/store/chat-store";
 
 const UserListDialog = () => {
+	const { isAuthenticated } = useConvexAuth();
 	const [selectedUsers, setSelectedUsers] = useState<Id<"users">[]>([]);
 	const [groupName, setGroupName] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
@@ -32,7 +33,10 @@ const UserListDialog = () => {
 
 	const createConversation = useMutation(api.conversations.createConversation);
 	const generateUploadUrl = useMutation(api.conversations.generateUploadUrl);
-	const me = useQuery(api.users.getMe);
+	const me = useQuery(
+		api.users.getMe,
+		isAuthenticated ? {} : "skip"
+	);
 	const users = useQuery(api.users.getUsers);
 
 	const { setSelectedConversation } = useConversationStore();
