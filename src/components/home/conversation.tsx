@@ -2,7 +2,7 @@ import { formatDate } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { MessageSeenSvg } from "@/lib/svgs";
 import { ImageIcon, Users, VideoIcon } from "lucide-react";
-import { useQuery } from "convex/react";
+import { useConvexAuth, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useConversationStore } from "@/store/chat-store";
 import { ConversationType } from "@/utils/conversation_utils";
@@ -14,12 +14,21 @@ interface ConversationProps {
 }
 
 const Conversation: React.FC<ConversationProps> = ({ conversation, onClick }) => {
+  const { isAuthenticated } = useConvexAuth();
   const conversationImage = conversation.groupImage || conversation.image;
   const conversationName = conversation.groupName || conversation.name;
   const lastMessage = conversation.lastMessage;
   const lastMessageType = lastMessage?.messageType;
-  const me = useQuery(api.users.getMe);
+  const me = useQuery(
+    api.users.getMe,
+    isAuthenticated ? {} : "skip"
+  );
 
+  if (!isAuthenticated || !me) {
+    // Show a loading state, redirect, or return null
+    return null;
+  }
+  
   const { setSelectedConversation, selectedConversation } = useConversationStore();
   const activeBgClass = selectedConversation?._id === conversation._id;
 
