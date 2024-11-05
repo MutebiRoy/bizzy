@@ -19,13 +19,6 @@ const SearchUsers = () => {
     setIsViewingConversation 
   } = useConversationStore();
 
-  // const { 
-  //   isAuthenticated 
-  // } = useQuery(api.users.getMe) ? { 
-  //   isAuthenticated: true 
-  // } : { 
-  //   isAuthenticated: false 
-  // };
   // Use useConvexAuth to get isAuthenticated
   const { isAuthenticated } = useConvexAuth();
 
@@ -55,7 +48,8 @@ const SearchUsers = () => {
   const createConversation = useMutation(api.conversations.createConversation);
   
   // Handle user selection from search results
-  const handleSelectUser = async (selectedUser: any) => {
+  // const handleSelectUser = async (selectedUser: any) => {
+    const handleSelectUser = async (selectedUser: UserType) => {  
     if (!currentUserId) return;
 
     // Check if a conversation with the selected user already exists
@@ -90,28 +84,6 @@ const SearchUsers = () => {
 
     // Clear the search term to close the search results
     setSearchTerm("");
-  // Handle user selection from search results
-  // const handleSelectUser = async (selectedUser) => {
-  //   // Check if a conversation with the selected user already exists
-  //   let existingConversation = getMyConversations?.find((conversation) => {
-  //     if (conversation.isGroup) return false;
-  //     const participants = conversation.participants;
-  //     return participants.includes(selectedUser._id);
-  //   });
-
-  //   if (existingConversation) {
-  //     // Open existing conversation
-  //     setSelectedConversation(existingConversation);
-  //   } else {
-  //     // Create a new conversation
-  //     await createConversation({
-  //       participants: [selectedUser._id],
-  //       isGroup: false,
-  //     });
-  //   }
-
-  //   // Clear the search term
-  //   setSearchTerm("");
    };
 
   return (
@@ -126,9 +98,9 @@ const SearchUsers = () => {
         onChange={(e) => setSearchTerm(e.target.value)}
         className="pl-10 py-2 text-sm w-full rounded shadow-sm bg-gray-primary focus-visible:ring-transparent"
       />
-      {trimmedSearchTerm && searchResults && (
+      {isAuthenticated && trimmedSearchTerm && searchResults && (
         <div className="absolute mt-1 w-full bg-white border rounded shadow z-20">
-          {searchResults.map((user) => (
+          {searchResults.map((user: UserType) => (
             <div
               key={user._id}
               className="flex items-center p-2 hover:bg-gray-100 cursor-pointer"
