@@ -23,7 +23,9 @@ const SearchUsers = () => {
   const { isAuthenticated } = useConvexAuth();
 
   // Conditionally call useQuery based on authentication status
-  const me = useQuery(api.users.getMe, isAuthenticated ? {} : "skip");
+  const me = useQuery(
+    api.users.getMe, isAuthenticated ? {} : "skip"
+  );
   const currentUserId = me?._id;
 
   // Trimmed search term to handle whitespace input
@@ -32,7 +34,9 @@ const SearchUsers = () => {
   // Fetch search results
   const searchResults = useQuery(
     api.search.searchUsersByName,
-    trimmedSearchTerm ? { searchTerm: trimmedSearchTerm } : "skip"
+    isAuthenticated && trimmedSearchTerm ? { 
+      searchTerm: trimmedSearchTerm 
+    } : "skip"
   );
 
   const getMyConversations = useQuery(
@@ -98,9 +102,9 @@ const SearchUsers = () => {
         onChange={(e) => setSearchTerm(e.target.value)}
         className="pl-10 py-2 text-sm w-full rounded shadow-sm bg-gray-primary focus-visible:ring-transparent"
       />
-      {trimmedSearchTerm && searchResults && (
+      {isAuthenticated && trimmedSearchTerm && searchResults && (
         <div className="absolute mt-1 w-full bg-white border rounded shadow z-20">
-          {searchResults.map((user) => (
+          {searchResults.map((user: UserType) => (
             <div
               key={user._id}
               className="flex items-center p-2 hover:bg-gray-100 cursor-pointer"
