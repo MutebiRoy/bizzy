@@ -45,6 +45,11 @@ const LeftPanel = () => {
 
   const currentUserId = me?._id;
 
+  // if (!isAuthenticated || !me) {
+  //   // Show a loading state, redirect, or return null
+  //   return null;
+  // }
+
   const conversations = useQuery(
     api.conversations.getMyConversations,
     isAuthenticated ? {} : "skip"
