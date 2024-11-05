@@ -34,14 +34,15 @@ const MessageInput: React.FC<MessageInputProps> = ({ conversation }) => {
 		api.users.getMe,
 		isAuthenticated ? {} : "skip"
 	);
-	
+
+	const sendTextMsg = useMutation(api.messages.sendTextMessage);
+	const createConversation = useMutation(api.conversations.createConversation);
+
 	if (!isAuthenticated || !me) {
 		// Show a loading state, redirect, or return null
 		return null;
 	}
-	const sendTextMsg = useMutation(api.messages.sendTextMessage);
-	const createConversation = useMutation(api.conversations.createConversation);
-
+	
 	const handleSendTextMsg = async (e: React.FormEvent) => {
 		e.preventDefault();
 
