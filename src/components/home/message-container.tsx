@@ -15,16 +15,11 @@ const MessageContainer = () => {
           ? { conversation: selectedConversation._id }
           : "skip"
     );
-    
+
 	const me = useQuery(
         api.users.getMe,
         isAuthenticated ? {} : "skip"
     );
-
-    if (!isAuthenticated || !me) {
-        // Show a loading state, redirect, or return null
-        return null;
-    }
 
 	const lastMessageRef = useRef<HTMLDivElement>(null);
 
@@ -33,6 +28,11 @@ const MessageContainer = () => {
 			lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
 		}, 100);
 	}, [messages]);
+
+    if (!isAuthenticated || !me) {
+        // Show a loading state, redirect, or return null
+        return null;
+    }
 
 	return (
 		<div className='relative p-3 flex-1 overflow-auto bg-chat-tile-light dark:bg-chat-tile-dark'>
