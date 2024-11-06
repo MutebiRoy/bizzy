@@ -61,21 +61,22 @@ const LeftPanel = () => {
     selectedConversation?.groupName ||
     selectedConversation?.name ||
     "No conversation selected";
+
   const conversationImage =
     selectedConversation?.groupImage ||
     selectedConversation?.image ||
     "/default-avatar.png";
 
   useEffect(() => {
-    const conversationIds = conversations?.map((conversation) => conversation._id);
-    if (
-      selectedConversation &&
-      conversationIds &&
-      !conversationIds.includes(selectedConversation._id)
-    ) {
-      setSelectedConversation(null);
-    }
-  }, [conversations, selectedConversation, setSelectedConversation]);
+      const conversationIds = conversations?.map((conversation) => conversation._id);
+      if (
+        selectedConversation &&
+        conversationIds &&
+        !conversationIds.includes(selectedConversation._id)
+      ) {
+        setSelectedConversation(null);
+      }
+    }, [conversations, selectedConversation, setSelectedConversation]);
 
   if (isLoading) return null;
 
