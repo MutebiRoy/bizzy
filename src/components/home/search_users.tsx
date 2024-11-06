@@ -39,10 +39,10 @@ const SearchUsers = () => {
     } : "skip"
   );
 
-  const getMyConversations = useQuery(
-    api.conversations.getMyConversations,
-    isAuthenticated ? {} : "skip"
-  );
+  // const getMyConversations = useQuery(
+  //   api.conversations.getMyConversations,
+  //   isAuthenticated ? {} : "skip"
+  // );;
     
   const conversations = useQuery(
     api.conversations.getMyConversations,
