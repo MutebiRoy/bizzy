@@ -5,7 +5,7 @@ import { Input } from "../ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useConversationStore } from "@/store/chat-store";
 import { Search } from "lucide-react";
-import { ConversationType, UserType } from "@/utils/conversation_utils";
+import { ConversationType, UserType, convertConversationTypes } from "@/utils/conversation_utils";
 import { useConvexAuth } from "convex/react";
 import { Id } from "../../../convex/_generated/dataModel";
 import { User } from "@clerk/clerk-sdk-node";
@@ -38,11 +38,6 @@ const SearchUsers = () => {
       searchTerm: trimmedSearchTerm 
     } : "skip"
   );
-
-  // const getMyConversations = useQuery(
-  //   api.conversations.getMyConversations,
-  //   isAuthenticated ? {} : "skip"
-  // );;
     
   const conversations = useQuery(
     api.conversations.getMyConversations,
@@ -53,17 +48,17 @@ const SearchUsers = () => {
   
   // Handle user selection from search results
   // const handleSelectUser = async (selectedUser: any) => {
-    const handleSelectUser = async (selectedUser: any) => {  
-    if (!currentUserId) return;
+    const handleSelectUser = async (selectedUser: UserType) => {  
+      if (!currentUserId || !me) return;
 
     // Check if a conversation with the selected user already exists
     let existingConversation = conversations?.find((conversation) => {
       if (conversation.isGroup) return false;
-      const participantIds = conversation.participants.map((p: UserType) => p._id);
+      const participantIds = conversation.participants.map((p: UserType) => p._id.toString());
       return (
         participantIds.length === 2 &&
-        participantIds.includes(currentUserId!) &&
-        participantIds.includes(selectedUser._id)
+        participantIds.includes(currentUserId.toString()) &&
+        participantIds.includes(selectedUser._id.toString())
       );
     });
 
@@ -72,23 +67,30 @@ const SearchUsers = () => {
       setSelectedConversation(existingConversation);
       setIsViewingConversation(true);
     } else {
-      // Do not create a new conversation yet
-      // Instead, open the chat window with a temporary conversation state
-      const tempConversation: ConversationType = {
-        _id: null, // No backend ID yet
-        participants: [selectedUser, me],
-        isGroup: false,
-        name: selectedUser.name || selectedUser.email.split("@")[0],
-        image: selectedUser.image,
-        isOnline: selectedUser.isOnline,
-        _creationTime: Date.now().toString(), // Temporary timestamp
-        isTemporary: true, // Flag to indicate this is a temporary conversation
-      };
+      try {
+        // Create a new conversation in the backend
+        const newConversation = await createConversation({
+          participants: [currentUserId, selectedUser._id], // Include both users
+          isGroup: false,
+        });
+        // Compute name and image in the frontend
+        const conversationName = selectedUser.name || "Unknown User";
+        const conversationImage = selectedUser.image || "/placeholder.png";
 
+        // Set the conversation with name and image
+        const conversationWithDetails = {
+          ...newConversation,
+          name: conversationName,
+          image: conversationImage,
+        };
       // Set the temporary conversation as the selected conversation
-      setSelectedConversation(tempConversation);
+      setSelectedConversation(conversationWithDetails);
       setIsViewingConversation(true);
+    } catch (error) {
+      console.error("Error creating conversation:", error);
+      // Handle error appropriately, e.g., show a toast notification
     }
+  }
 
     // Clear the search term to close the search results
     setSearchTerm("");
