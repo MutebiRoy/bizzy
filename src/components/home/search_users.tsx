@@ -60,7 +60,11 @@ const SearchUsers = () => {
     let existingConversation = conversations?.find((conversation) => {
       if (conversation.isGroup) return false;
       const participantIds = conversation.participants.map((p: UserType) => p._id);
-      return participantIds.includes(currentUserId) && participantIds.includes(selectedUser._id);
+      return (
+        participantIds.length === 2 &&
+        participantIds.includes(currentUserId!) &&
+        participantIds.includes(selectedUser._id)
+      );
     });
 
     if (existingConversation) {
