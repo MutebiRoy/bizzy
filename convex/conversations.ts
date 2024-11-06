@@ -15,8 +15,10 @@ interface Conversation {
 	groupName?: string;
 	groupImage?: string;
 	admin?: Id<"users">;
-	participants: any[]; // Replace `any[]` with the appropriate type
-	_creationTime: number;
+	participants: any[];
+	_creationTime: number | string;
+	// name?: string; // Add this line
+  	// image?: string;
 }
   
 export const createConversation = mutation({
@@ -111,6 +113,19 @@ export const createConversation = mutation({
 		const participantDetails = await Promise.all(
 			participantIds.map((id) => ctx.db.get(id))
 		);
+
+		let conversationName = args.groupName;
+		let conversationImage = groupImage;
+	
+		if (!args.isGroup) {
+		  // For one-on-one conversations, set name and image to the other participant
+		  const otherParticipant = participantDetails.find(
+			//(p) => p._id.toString() !== user._id.toString()
+			(p) => p !== null && p._id.toString() !== user._id.toString()
+		  );
+		  conversationName = otherParticipant?.name || otherParticipant?.email || "Unknown User";
+		  conversationImage = otherParticipant?.image || "/placeholder.png";
+		}
 		
 		// Return the full conversation data
 		return {
@@ -120,6 +135,8 @@ export const createConversation = mutation({
 			groupImage,
 			admin: args.admin,
 			participants: participantDetails,
+			// name: conversationName,
+      		// image: conversationImage,
 			_creationTime: Date.now(),
 		};
 	},
@@ -166,6 +183,22 @@ export const getMyConversations = query(async ({ db, auth }) => {
 		const validConversations = conversations.filter(
 			(conversation) => conversation !== null
 		) as any[];
+
+		// Fetch conversations that have at least one message
+		const conversationsWithMessages = [];
+
+		for ( const conversation of validConversations ) {
+			const messageCounter = await db
+			  .query("messages")
+			  .withIndex("by_conversation", (q) => q.eq("conversation", conversation._id))
+			  .collect();
+			
+			const messageCounted = messageCounter.length;
+		
+			if (messageCounted > 0) {
+			  conversationsWithMessages.push(conversation);
+			}
+		}
 
 		// Optionally, fetch participants for each conversation
 		const conversationsWithDetails = await Promise.all(
