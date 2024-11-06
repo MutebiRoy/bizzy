@@ -171,50 +171,54 @@ export const getMyConversations = query(async ({ db, auth }) => {
 	// Extract conversation IDs
 	const conversationIds = userConversations.map((uc) => uc.conversation);
 
-	if (conversationIds.length === 0) {
-		return [];
-	}
-
-	// Fetch conversations
-	//const conversations = await db.getAll(...conversationIds);
-	const conversations = await getAll(db, conversationIds);
-	
-	// Filter out any nulls (in case of deleted conversations)
-	const validConversations = conversations.filter(
-		(conversation) => conversation !== null
-	) as any[];
-
-	// Fetch conversations that have at least one message
-	const conversationsWithMessages = [];
-
-	for (const conversation of validConversations) {
-		const messageCounter = await db
-		  .query("messages")
-		  .withIndex("by_conversation", (q) => q.eq("conversation", conversation._id))
-		  .collect();
-		
-		const messageCounted = messageCounter.length;
-	  
-		if (messageCounted > 0) {
-		  conversationsWithMessages.push(conversation);
+		if (conversationIds.length === 0) {
+			return [];
 		}
-	}
+
+		// Fetch conversations
+		//const conversations = await db.getAll(...conversationIds);
+		const conversations = await getAll(db, conversationIds);
+		
+		// Filter out any nulls (in case of deleted conversations)
+		const validConversations = conversations.filter(
+			(conversation) => conversation !== null
+		) as any[];
+
+		// Fetch conversations that have at least one message
+		const conversationsWithMessages = [];
+
+		for ( const conversation of validConversations ) {
+			const messageCounter = await db
+			  .query("messages")
+			  .withIndex("by_conversation", (q) => q.eq("conversation", conversation._id))
+			  .collect();
+			
+			const messageCounted = messageCounter.length;
+		
+			if (messageCounted > 0) {
+			  conversationsWithMessages.push(conversation);
+			}
+		}
+
 		// Optionally, fetch participants for each conversation
 		const conversationsWithDetails = await Promise.all(
-			conversationsWithMessages.map(async (conversation) => {
-				const participantsEntries = await db
+			validConversations.map(async (conversation) => {
+			  const participantsEntries = await db
 				.query("user_conversations")
-				.withIndex("by_conversation", (q) => q.eq("conversation", conversation._id))
+				.withIndex("by_conversation", (q) =>
+				  q.eq("conversation", conversation._id)
+				)
 				.collect();
 
-				const participantIds = participantsEntries.map((entry) => entry.user);
-				// Fetch participant details
-				const participantDetails = await Promise.all(
-					participantIds.map(async (id) => {
-					  const participant = await db.get(id);
-					  return participant;
-					})
-				);
+			const participantIds = participantsEntries.map((entry) => entry.user);
+			
+			// Fetch participant details
+			const participantDetails = await Promise.all(
+				participantIds.map(async (id) => {
+				  const participant = await db.get(id);
+				  return participant;
+				})
+			);
 
 			// Determine if any participant is online (excluding self)
 			const otherParticipants = participantDetails.filter(
@@ -256,7 +260,7 @@ export const getMyConversations = query(async ({ db, auth }) => {
 		})
   	);
  	
-	return conversationsWithDetails;
+  return conversationsWithDetails;
 });
 
 export const kickUser = mutation({
