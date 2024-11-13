@@ -78,10 +78,11 @@ const SearchUsers = () => {
         const conversationImage = selectedUser.image || "/placeholder.png";
 
         // Set the conversation with name and image
-        const conversationWithDetails = {
+        const conversationWithDetails: ConversationType = {
           ...newConversation,
           name: conversationName,
           image: conversationImage,
+          unreadMessageCount: 0,
         };
       // Set the temporary conversation as the selected conversation
       setSelectedConversation(conversationWithDetails);
