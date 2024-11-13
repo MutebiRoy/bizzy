@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useConversationStore } from "@/store/chat-store";
-import { ConversationType, UserType } from "@/utils/conversation_utils";
+import { ConversationType, UserType, convertConversationTypes } from "@/utils/conversation_utils";
 import { Id } from "../../../convex/_generated/dataModel";
 
 const MediaDropdown = () => {
@@ -49,29 +49,37 @@ const MediaDropdown = () => {
 			let conversation = selectedConversation;
 			// Check if this is a temporary conversation
 			if (!conversation?._id) {
+				
 				// Extract participant IDs, handling possible nulls
 				const participantIds = conversation!.participants
 				.filter((user): user is UserType => user !== null)
 				.map((user) => user._id);
 				
 				// Create a new conversation in the backend and get the full conversation data
-				conversation = await createConversation({
+				//Create a new conversation in the backend
+				const newConversation = await createConversation({
 					participants: participantIds,
 					isGroup: false,
 				});
 
 				// Ensure conversation is not null
-				if (!conversation) {
+				if (!newConversation) {
 					throw new Error("Failed to create conversation");
 				}
+
+				/// Convert the new conversation to ConversationType
+				const convertedConversation = convertConversationTypes(newConversation, me._id);
 
 				// Update the selectedConversation with the new conversation data
 				const updatedConversation: ConversationType = {
 					...selectedConversation!,
-					...conversation,
+					...convertedConversation,
 					isTemporary: false, // Remove the temporary flag
 				};
 				setSelectedConversation(updatedConversation);
+				
+				// Assign updatedConversation to conversation
+				conversation = updatedConversation;
 			}
 
 			const conversationId = conversation._id;
@@ -113,70 +121,79 @@ const MediaDropdown = () => {
 	const handleSendVideo = async () => {
 		if (!me) {
 			toast.error("User information is not available.");
-			return;
+		   return;
 		}
 		setIsLoading(true);
 		try {
-			let conversation = selectedConversation;
-
-			// Check if this is a temporary conversation
-			if (!conversation?._id) {
-				// Extract participant IDs, handling possible nulls
-				const participantIds = conversation!.participants
-				.filter((user): user is UserType => user !== null)
-				.map((user) => user._id);
-				// Create a new conversation in the backend
-				conversation = await createConversation({
-					participants: participantIds,
-					isGroup: false,
-				});
-
-				if (!conversation) {
-					throw new Error("Failed to create conversation");
-				}
-		
-				// Update the selectedConversation with the new conversation ID
-				const updatedConversation: ConversationType = {
-					...selectedConversation!,
-					...conversation,
-					isTemporary: false, // Remove the temporary flag
-				  };
-				  setSelectedConversation(updatedConversation);
-			}
-
-			const conversationId = conversation._id;
-			
-			if (!conversationId) {
-				throw new Error("Conversation ID is null");
-			}
-
-			const postUrl = await generateUploadUrl();
-			const result = await fetch(postUrl, {
-				method: "POST",
-				headers: { "Content-Type": selectedVideo!.type },
-				body: selectedVideo,
+		  let conversation = selectedConversation;
+	  
+		  // Check if this is a temporary conversation
+		  if (!conversation?._id) {
+			// Extract participant IDs, handling possible nulls
+			const participantIds = conversation!.participants
+			  .filter((user): user is UserType => user !== null)
+			  .map((user) => user._id);
+	  
+			// Create a new conversation in the backend
+			const newConversation = await createConversation({
+			  participants: participantIds,
+			  isGroup: false,
 			});
-
-			if (!result.ok) {
-				throw new Error(`Video upload failed with status ${result.status}`);
+	  
+			if (!newConversation) {
+			  throw new Error("Failed to create conversation");
 			}
-
-			const { storageId } = await result.json();
-
-			await sendVideo({
-				videoId: storageId,
-				conversationId: conversationId as Id<"conversations">,
-				sender: me!._id,
-			});
-
-			setSelectedVideo(null);
-		} catch (err: any) {
-			toast.error(`Failed to send Video: ${err.message}`);
-			console.error(err);
-		  } finally {
-			setIsLoading(false);
+	  
+			// Convert the new conversation to ConversationType
+			const convertedConversation = convertConversationTypes(newConversation, me._id);
+	  
+			// Update the selectedConversation with the new conversation data
+			const updatedConversation: ConversationType = {
+			  ...selectedConversation!,
+			  ...convertedConversation,
+			  isTemporary: false, // Remove the temporary flag
+			};
+			setSelectedConversation(updatedConversation);
+	  
+			// Assign updatedConversation to conversation
+			conversation = updatedConversation;
 		  }
+	  
+		  const conversationId = conversation._id;
+	  
+		  if (!conversationId) {
+			throw new Error("Conversation ID is null");
+		  }
+	  
+		  // Proceed with sending the video
+		  const postUrl = await generateUploadUrl();
+		  const result = await fetch(postUrl, {
+			method: "POST",
+			headers: { "Content-Type": selectedVideo!.type },
+			body: selectedVideo,
+		  });
+	  
+		  if (!result.ok) {
+			throw new Error(`Video upload failed with status ${result.status}`);
+		  }
+	  
+		  const { storageId } = await result.json();
+	  
+		  await sendVideo({
+			videoId: storageId,
+			conversationId: conversationId as Id<"conversations">,
+			sender: me!._id,
+		  });
+	  
+		  setSelectedVideo(null);
+		} catch (err: any) {
+		  toast.error(`Failed to send video: ${err.message}`);
+		  console.error(err);
+		} finally {
+		  setIsLoading(false);
+		}
 	};
+	  
 
 	return (
 		<>
