@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { ListFilter, Search, ChevronLeft } from "lucide-react";
+import { ListFilter, Search, ChevronLeft, ArrowLeft } from "lucide-react";
 import { Input } from "../ui/input";
 import ThemeSwitch from "./theme-switch";
 import Conversation from "./conversation";
@@ -43,12 +43,16 @@ const LeftPanel = () => {
     isAuthenticated ? {} : "skip"
   );
 
-  const currentUserId = me?._id;
-
+  // const conversations = useQuery(
+  //   api.conversations.getMyConversations,
+  //   isAuthenticated ? {} : "skip"
+  // );
   const conversations = useQuery(
     api.conversations.getMyConversations,
     isAuthenticated ? {} : "skip"
   );
+
+  const setConversationLastRead = useMutation(api.conversations.setConversationLastRead);
 
   const { selectedConversation, setSelectedConversation, isViewingConversation, setIsViewingConversation } = useConversationStore();
 
@@ -62,6 +66,8 @@ const LeftPanel = () => {
     selectedConversation?.image ||
     "/default-avatar.png";
 
+  const currentUserId = me?._id;
+
   useEffect(() => {
     const conversationIds = conversations?.map((conversation) => conversation._id);
     if (
@@ -74,15 +80,28 @@ const LeftPanel = () => {
   }, [conversations, selectedConversation, setSelectedConversation]);
 
   if (isLoading) return null;
+  if (!isAuthenticated || !me) return null;
 
   const handleBackClick = () => {
     setIsViewingConversation(false);
     setSelectedConversation(null);
   };
 
-  const handleConversationClick = (conversation: ConversationType) => {
+  // const handleConversationClick = (conversation: ConversationType) => {
+  //   setSelectedConversation(conversation);
+  //   setIsViewingConversation(true);
+  // };
+
+  const handleConversationClick = async (conversation: ConversationType) => {
     setSelectedConversation(conversation);
     setIsViewingConversation(true);
+
+    // Mark conversation as read
+    if (conversation._id) {
+      await setConversationLastRead({ conversationId: conversation._id });
+    } else {
+      console.error("Conversation ID is null");
+    }
   };
   
   return (
@@ -92,7 +111,7 @@ const LeftPanel = () => {
           {isViewingConversation ? (
             <div className="flex items-center">
               <button onClick={handleBackClick}>
-                <ChevronLeft size={24} />
+                <ArrowLeft size={24} />
               </button>
               <Avatar className="ml-4">
                 <AvatarImage
@@ -153,7 +172,7 @@ const LeftPanel = () => {
           <>
             <p className="text-center text-gray-500 text-sm mt-3">No conversations yet!</p>
             <p className="text-center text-gray-500 text-sm mt-3">
-              Click on any name to start a conversation
+              Select any name to start a conversation
             </p>
           </>
         )}
