@@ -71,6 +71,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ conversation }) => {
 				const participantIds = selectedConversation!.participants
 				.filter((user): user is UserType => user !== null)
 				.map((user) => user._id);
+
 			  	// Create a new conversation in the backend
 			  	const conversation = await createConversation({
 					participants: participantIds,
@@ -97,7 +98,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ conversation }) => {
 			setMsgText("");
 		  } catch (err: any) {
 			toast.error(err.message);
-			console.error(err);
+			toast.error("An unexpected error occurred. Please try again.");
 		  }
 		};
 
