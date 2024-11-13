@@ -55,12 +55,13 @@ const ChatAvatarActions = ({ me, message }: ChatAvatarActionsProps) => {
 
 			setSelectedConversation({
 				_id: conversation._id,
-				name: message.sender.name,
+				name: message.sender.name || "Unknown User",
 				participants: [me._id, message.sender._id],
 				isGroup: false,
 				isOnline: message.sender.isOnline,
-				image: message.sender.image,
+				image: message.sender.image || "/placeholder.png",
 				_creationTime: new Date().toISOString(),
+				unreadMessageCount: 0,
 			});
 		} catch (error) {
 			toast.error("Failed to create conversation");
