@@ -17,9 +17,78 @@ interface Conversation {
 	admin?: Id<"users">;
 	participants: any[];
 	_creationTime: number | string;
-	// name?: string; // Add this line
-  	// image?: string;
+	name: string;
+  	image: string;
+	initiator?: Id<"users">;
 }
+
+export const setConversationLastRead = mutation({
+	args: {
+	  conversationId: v.id("conversations"),
+	},
+	handler: async (ctx, { conversationId }) => {
+		const identity = await ctx.auth.getUserIdentity();
+		if (!identity) {
+			throw new Error("Authentication required");
+		}
+  
+	  	// Fetch the authenticated user
+		const user = await ctx.db
+		.query("users")
+		.withIndex("by_tokenIdentifier", (q) =>
+			q.eq("tokenIdentifier", identity.tokenIdentifier)
+		)
+		.unique();
+			
+	
+		if (!user) {
+			throw new Error("User not found");
+		}
+  
+	  	const timeNow = Date.now();
+  
+	  	// Check if a record already exists
+	  	const existingRecord = await ctx.db
+		.query("user_conversation_reads")
+		.withIndex("by_user_and_conversation", (q) =>
+		  q.eq("user", user._id).eq("conversation", conversationId)
+		)
+		.unique();
+  
+		if (existingRecord) {
+			// Update the existing record
+			await ctx.db.patch(existingRecord._id, {
+			lastReadTime: timeNow,
+			});
+		} else {
+			// Insert a new record
+			await ctx.db.insert("user_conversation_reads", {
+			user: user._id,
+			conversation: conversationId,
+			lastReadTime: timeNow,
+			});
+		}
+	  	// Fetch unread messages in this conversation that the user hasn't seen yet
+		// const unreadMessages = await ctx.db
+		// .query("messages")
+		// .withIndex("by_conversation", (q) => q.eq("conversation", conversationId))
+		// .filter((q) =>
+		// 	q.and(
+		// 	q.neq(q.field("sender"), user._id), // Exclude messages sent by the user
+		// 	q.not(q.includes(q.field("seenBy"), user._id)) // Messages not yet seen by the user
+		// 	)
+		// )
+		// .collect();
+
+		// // Update each message to add the current user to 'seenBy'
+		// for (const message of unreadMessages) {
+		// 	await ctx.db.patch(message._id, {
+		// 		seenBy: [...(message.seenBy || []), user._id],
+		// 	});
+		// }
+
+	},
+});
   
 export const createConversation = mutation({
 	args: {
@@ -76,25 +145,44 @@ export const createConversation = mutation({
 					// Existing conversation found
 					// Fetch full conversation data
 					const existingConversation = await getConversationById(ctx, { conversationId });
-
+					if (existingConversation) {
+						// Compute conversation name and image
+						let conversationName: string;
+						let conversationImage: string;
 					
-				  	return existingConversation;
+						// For one-on-one conversations, set name and image to the other participant
+						const otherParticipant = existingConversation.participants.find(
+						  (p) => p !== null && p._id.toString() !== user._id.toString()
+						);
+						conversationName = otherParticipant?.name || otherParticipant?.email || "Unknown User";
+						conversationImage = otherParticipant?.image || "/placeholder.png";
+					
+						// Return the existing conversation with 'name' and 'image'
+						return {
+						  ...existingConversation,
+						  name: conversationName,
+						  image: conversationImage,
+						} as Conversation;
+					}
 				}
 			}
 		}
 
-		let groupImage;
+		// let groupImage;
+		// Assign groupImageUrl
+		let groupImageUrl: string | undefined;
 
 		if (args.isGroup && args.groupImage) {
-			groupImage = (await ctx.storage.getUrl(args.groupImage)) as string;
+			groupImageUrl = (await ctx.storage.getUrl(args.groupImage)) as string;
 		}
 
 		// Insert the conversation
 		const conversationId = await ctx.db.insert("conversations", {
 			isGroup: args.isGroup,
 			groupName: args.groupName,
-			groupImage,
+			groupImage: groupImageUrl,
 			admin: args.admin,
+			initiator: user._id,
 		});
 	
 		// Insert into user_conversations for each participant
@@ -110,14 +198,33 @@ export const createConversation = mutation({
 		);
 
 		// Fetch participant details
+		// const participantDetails = await Promise.all(
+		// 	participantIds.map((id) => ctx.db.get(id))
+		// );
+		// Fetch participant details
 		const participantDetails = await Promise.all(
-			participantIds.map((id) => ctx.db.get(id))
+			participantIds.map(async (id) => {
+			  const participant = await ctx.db.get(id);
+			  return participant;
+			})
 		);
 
-		let conversationName = args.groupName;
-		let conversationImage = groupImage;
+		//let groupImageUrl: string | undefined;
+
+		// if (args.isGroup && args.groupImage) {
+		// 	groupImageUrl = (await ctx.storage.getUrl(args.groupImage)) as string;
+		// }
+
+		// let conversationName = args.groupName;
+		// let conversationImage = groupImage;
+		let conversationName: string;
+		let conversationImage: string;
 	
-		if (!args.isGroup) {
+		if (args.isGroup) {
+			// For group conversations, use the group name or default to "Unnamed Group"
+			conversationName = args.groupName || "Unnamed Group";
+			conversationImage = groupImageUrl || "/default-group-image.png";
+		} else {
 		  // For one-on-one conversations, set name and image to the other participant
 		  const otherParticipant = participantDetails.find(
 			//(p) => p._id.toString() !== user._id.toString()
@@ -132,11 +239,11 @@ export const createConversation = mutation({
 			_id: conversationId,
 			isGroup: args.isGroup,
 			groupName: args.groupName,
-			groupImage,
+			groupImage: groupImageUrl,
 			admin: args.admin,
 			participants: participantDetails,
-			// name: conversationName,
-      		// image: conversationImage,
+			name: conversationName,
+      		image: conversationImage,
 			_creationTime: Date.now(),
 		};
 	},
@@ -145,7 +252,8 @@ export const createConversation = mutation({
 export const getMyConversations = query(async ({ db, auth }) => {
 	const identity = await auth.getUserIdentity();
 	if (!identity) {
-	  throw new Error("Authentication required");
+		console.error("Authentication required: identity is null");
+	  	throw new Error("Authentication required");
 	}
 
 	// Fetch the user from the 'users' table
@@ -164,8 +272,7 @@ export const getMyConversations = query(async ({ db, auth }) => {
 
 	const userConversations = await db
     .query("user_conversations")
-    .withIndex("by_user", (q) => 
-	q.eq("user", userId))
+    .withIndex("by_user", (q) => q.eq("user", userId))
     .collect();
 
 	// Extract conversation IDs
@@ -185,25 +292,31 @@ export const getMyConversations = query(async ({ db, auth }) => {
 		) as any[];
 
 		// Fetch conversations that have at least one message
-		const conversationsWithMessages = [];
 
-		for ( const conversation of validConversations ) {
-			const messageCounter = await db
-			  .query("messages")
-			  .withIndex("by_conversation", (q) => q.eq("conversation", conversation._id))
-			  .collect();
+		// code filtering conversations without messages.
+		// const conversationsWithMessages = [];
+
+		// for ( const conversation of validConversations ) {
+		// 	const messageCounter = await db
+		// 	  .query("messages")
+		// 	  .withIndex("by_conversation", (q) => q.eq("conversation", conversation._id))
+		// 	  //.collect();
+		// 	  .take(1); // Check if at least one message exists
 			
-			const messageCounted = messageCounter.length;
+		// 	const messages = messageCounter.length;
 		
-			if (messageCounted > 0) {
-			  conversationsWithMessages.push(conversation);
-			}
-		}
+		// 	if (messages > 0) {
+		// 	  conversationsWithMessages.push(conversation);
+		// 	}
+		// }
 
 		// Optionally, fetch participants for each conversation
 		const conversationsWithDetails = await Promise.all(
+			// Allow Conversations without messages 
 			validConversations.map(async (conversation) => {
-			  const participantsEntries = await db
+			//conversationsWithMessages.map(async (conversation) => {
+				// Fetch participants
+				const participantsEntries = await db
 				.query("user_conversations")
 				.withIndex("by_conversation", (q) =>
 				  q.eq("conversation", conversation._id)
@@ -243,11 +356,94 @@ export const getMyConversations = query(async ({ db, auth }) => {
 				}
 			}
 
-			const lastMessage = await db
+			// Fetch last message including 'seenBy' field
+			const lastMessageArray = await db
 			.query("messages")
-			.withIndex("by_conversation", (q) => q.eq("conversation", conversation._id))
+			.withIndex("by_conversation", (q) =>
+			  q.eq("conversation", conversation._id)
+			)
 			.order("desc") // Assuming newer messages have higher _creationTime
 			.take(1);
+	
+		  	const lastMessage = lastMessageArray[0];
+
+			  	const otherParticipantsLastRead = await Promise.all(
+					otherParticipants.map(async (participant) => {
+					if (participant) {
+						const lastReadRecord = await db
+						.query("user_conversation_reads")
+						.withIndex("by_user_and_conversation", (q) =>
+							q.eq("user", participant._id).eq("conversation", conversation._id)
+						)
+						.unique();
+				
+						return {
+						userId: participant._id,
+						lastReadTime: lastReadRecord ? lastReadRecord.lastReadTime : 0,
+						};
+					} else {
+						// Handle the case where participant is null
+						return {
+						userId: null,
+						lastReadTime: 0,
+						};
+					}
+				})
+			);
+
+			// Determine if the last message has been seen by all other participants
+			let isLastMessageSeen = false;
+			if (lastMessage && lastMessage.sender === userId) {
+			  isLastMessageSeen = otherParticipantsLastRead.every(
+				(readInfo) => readInfo.lastReadTime >= lastMessage._creationTime
+			  );
+			}
+
+			// Ensure that 'seenBy' is included in 'lastMessage'
+			// const lastMessageWithSeenBy = lastMessage
+			// ? {
+			// 	...lastMessage,
+			// 	seenBy: lastMessage.seenBy || [],
+			//   }
+			// : null;
+
+			// Fetch last read time for the current user
+			const lastReadRecord = await db
+			.query("user_conversation_reads")
+			.withIndex("by_user_and_conversation", (q) =>
+			  q.eq("user", userId).eq("conversation", conversation._id)
+			)
+			.unique();
+	
+		  	const lastReadTime = lastReadRecord ? lastReadRecord.lastReadTime : 0;
+
+			// Count unread messages - After: Excluding messages sent by the user
+			// const unreadMessages = await db
+			// .query("messages")
+			// .withIndex("by_conversation", (q) => q.eq("conversation", conversation._id))
+			// .filter((q) =>
+			// 	q.and(
+			// 	q.gt(q.field("_creationTime"), lastReadTime),
+			// 	q.neq(q.field("sender"), userId)
+			// 	)
+			// )
+			// .collect();
+
+			// const unreadMessageCount = unreadMessages.length;
+			// Count unread messages for the current user
+			const unreadMessagesCounter = await db
+			.query("messages")
+			.withIndex("by_conversation", (q) =>
+			  q.eq("conversation", conversation._id)
+			)
+			.filter((q) =>
+			  q.and(
+				q.gt(q.field("_creationTime"), lastReadTime),
+				q.neq(q.field("sender"), userId)
+			  )
+			)
+			.collect();
+			const unreadMessageCount = unreadMessagesCounter.length;
 
 			return {
 				...conversation,
@@ -255,7 +451,9 @@ export const getMyConversations = query(async ({ db, auth }) => {
 				isAnyParticipantOnline,
 				name: conversationName,
   				image: conversationImage,
-				lastMessage: lastMessage[0] || null,
+				lastMessage: lastMessage || null,
+        		unreadMessageCount,
+        		isLastMessageSeen,
 			};
 		})
   	);
