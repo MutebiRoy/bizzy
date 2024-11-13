@@ -31,19 +31,18 @@ export type Conversation = {
   };
   name: string;
   image?: string;
-  // Include any additional properties as needed
+  isLastMessageSeen?: boolean;
+  unreadMessageCount?: number | undefined;
+  initiator?: string;
 };
 
 // Define the ConversationType expected in the frontend
 export type ConversationType = {
   _id: Id<"conversations"> | null;
-  //_id: string | null;
   groupName?: string;
-  image?: string;
   participants: Id<"users">[] | UserType[] | (UserType | null)[];
-  //participants: (UserType | null)[];
   isGroup: boolean;
-  name?: string;
+  
 	groupImage?: string;
   admin?: Id<"users">;
   isOnline?: boolean;
@@ -57,6 +56,11 @@ export type ConversationType = {
     _creationTime: number | string;
     messageType: "image" | "text" | "video";
   };
+  name: string;
+  image?: string;
+  unreadMessageCount: number;
+  isLastMessageSeen?: boolean;
+  initiator?: string;
 };
 
 export function convertConversationTypes(
@@ -66,9 +70,13 @@ export function convertConversationTypes(
   const convertedConversation: ConversationType = {
     _id: conversation._id as Id<"conversations">,
     _creationTime: conversation._creationTime.toString(),
-    participants: conversation.participants.map((p) => p._id as Id<"users">),
+    participants: conversation.participants
+    ? conversation.participants.map((p) => p._id as Id<"users">)
+    : [],
+
     isGroup: conversation.isGroup,
     admin: conversation.admin ? (conversation.admin as Id<"users">) : undefined,
+    initiator: conversation.initiator ? (conversation.initiator as Id<"users">) : undefined,
     lastMessage: conversation.lastMessage
       ? {
           _id: conversation.lastMessage._id as Id<"messages">,
@@ -81,6 +89,8 @@ export function convertConversationTypes(
       : undefined,
     name: conversation.name,
     image: conversation.image,
+    unreadMessageCount: conversation.unreadMessageCount || 0,
+    isLastMessageSeen: conversation.isLastMessageSeen || false,
   };
 
   // Set isOnline based on other participant for one-to-one conversations
