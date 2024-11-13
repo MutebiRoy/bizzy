@@ -86,7 +86,15 @@ const UserListDialog = () => {
 			setSelectedImage(null);
 
 			// TODO => Update a global state called "selectedConversation"
-			const conversationName = isGroup ? groupName : users?.find((user) => user._id === selectedUsers[0])?.name;
+			const conversationName: string = isGroup
+			? groupName || "Unnamed Group"
+			: users?.find((user) => user._id === selectedUsers[0])?.name || "Unknown User";
+
+			const conversationImage: string = isGroup
+			? renderedImage
+			: users?.find((user) => user._id === selectedUsers[0])?.image || "/placeholder.png";
+
+
 			const participantObjects = selectedUsers.map((id) => {
 				return users.find((user) => user._id === id) || null;
 			});
@@ -95,10 +103,12 @@ const UserListDialog = () => {
 				_id: conversation._id,
 				participants: participantObjects,
 				isGroup,
-				image: isGroup ? renderedImage : users?.find((user) => user._id === selectedUsers[0])?.image,
+				// image: isGroup ? renderedImage : users?.find((user) => user._id === selectedUsers[0])?.image,
+				image: conversationImage,
 				name: conversationName,
 				admin: me?._id!,
-				_creationTime: new Date().toISOString()
+				_creationTime: new Date().toISOString(),
+				unreadMessageCount: 0,
 			});
 		} catch (err) {
 			toast.error("Failed to create conversation");
