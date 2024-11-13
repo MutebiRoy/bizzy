@@ -18,6 +18,7 @@ export default defineSchema({
     groupName: v.optional(v.string()),
     groupImage: v.optional(v.string()),
     admin: v.optional(v.id("users")),
+    initiator: v.id("users"),
   }),
 
   user_conversations: defineTable({
@@ -36,5 +37,14 @@ export default defineSchema({
       v.literal("image"), 
       v.literal("video")
     ),
-  }).index("by_conversation", ["conversation"]),
+  })
+  .index("by_conversation", ["conversation"])
+  .index("by_sender", ["sender"]),
+
+  user_conversation_reads: defineTable({
+    user: v.id("users"),
+    conversation: v.id("conversations"),
+    lastReadTime: v.number(), // Store timestamp in milliseconds
+  })
+    .index("by_user_and_conversation", ["user", "conversation"]),
 });
