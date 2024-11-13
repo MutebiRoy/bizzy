@@ -35,11 +35,11 @@ const Conversation: React.FC<ConversationProps> = ({ conversation, onClick }) =>
   return (
     <div
       className={`flex gap-2 items-center p-3 hover:bg-chat-hover cursor-pointer
-                ${activeBgClass ? "bg-gray-tertiary" : ""}
+                ${activeBgClass ? "bg-gray-tertiary" : "" }
             `}
       onClick={() => onClick(conversation)}
     >
-      <Avatar className='border border-gray-900 overflow-visible relative'>
+      <Avatar className='border border-gray-900 overflow-visible relative mt-0'>
         {conversation.isOnline && (
           <div className='absolute top-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-foreground' />
         )}
@@ -48,27 +48,45 @@ const Conversation: React.FC<ConversationProps> = ({ conversation, onClick }) =>
           <div className='animate-pulse bg-gray-tertiary w-full h-full rounded-full'></div>
         </AvatarFallback>
       </Avatar>
-      <div className='w-full'>
-        <div className='flex items-center'>
+      <div className='w-full flex justify-between'>
+        <div className='flex flex-col'>
           <h3 className='text-sm font-medium'>{conversationName}</h3>
-          <span className='text-xs text-gray-500 ml-auto'>
-            {formatDate(Number(lastMessage?._creationTime) || Number(conversation._creationTime))}
-          </span>
-        </div>
-        <p className='text-[12px] mt-1 text-gray-500 flex items-center gap-1 '>
+          <p className='text-[12px] mt-1 text-gray-500 flex items-center gap-1'>
           {lastMessage?.sender === me?._id ? <MessageSeenSvg /> : ""}
           {conversation.isGroup && <Users size={16} />}
-          {!lastMessage && "Say Hi!"}
+          {!lastMessage && (
+            <span>
+            {conversation.isGroup
+              ? "Group created"
+              : conversation.initiator === me._id
+                ? "Say hi"
+                : "Searched your name"}
+            </span>
+          )}
           {lastMessageType === "text" ? (
             lastMessage?.content && lastMessage.content.length > 30 ? (
-              <span>{lastMessage.content.slice(0, 30)}...</span>
+              <span>{lastMessage.content.slice(0, 20)}...</span>
             ) : (
               <span>{lastMessage?.content}</span>
             )
           ) : null}
           { lastMessageType === "image" && <ImageIcon size={16} /> }
           { lastMessageType === "video" && <VideoIcon size={16} /> }
-        </p>
+          </p>
+        </div>
+        <div className='text-xs text-gray-500 flex flex-col items-end'>
+          <span className='text-xs text-gray-500 ml-auto'>
+            {formatDate(Number(lastMessage?._creationTime) || Number(conversation._creationTime))}
+          </span>
+          {lastMessage && lastMessage.sender !== me._id && conversation.unreadMessageCount > 0 && (
+            <span className='text-red-500 text-xs font-medium'>New</span>
+          )}
+          {lastMessage && lastMessage.sender === me._id && (
+            <span className='text-xs font-medium text-gray-500'>
+              {conversation.isLastMessageSeen ? 'Seen' : 'Sent'}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );
