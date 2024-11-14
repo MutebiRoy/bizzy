@@ -110,11 +110,11 @@ const SearchUsers = () => {
         className="pl-10 py-2 text-sm w-full rounded shadow-sm bg-gray-primary focus-visible:ring-transparent"
       />
       {isAuthenticated && trimmedSearchTerm && searchResults && (
-        <div className="absolute mt-1 w-full bg-white border rounded shadow z-20">
+        <div className="absolute mt-1 w-full bg-background border rounded shadow z-20">
           {searchResults.map((user: UserType) => (
             <div
               key={user._id}
-              className="flex items-center p-2 hover:bg-gray-100 cursor-pointer"
+              className="flex items-center p-2 hover:bg-accent cursor-pointer"
               onClick={() => handleSelectUser(user)}
             >
               <Avatar className="mr-2">
