@@ -1,10 +1,13 @@
+
+'use client';
+import { useState, useEffect } from 'react';
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
 import ConvexClientProvider from "@/providers/convex-client-provider";
 import { Toaster } from "react-hot-toast";
-import { useState, useEffect } from 'react';
+
 
 const inter = Inter({ subsets: ["latin"] });
 
