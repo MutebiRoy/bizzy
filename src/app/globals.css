@@ -96,3 +96,8 @@
         background-color: hsl(var(--container));
     }
 } */
+
+.app-container {
+  max-width: 100vw; /* 100% of viewport width */
+  margin: 0 auto; /* center horizontally */
+}
