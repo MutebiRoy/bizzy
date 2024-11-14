@@ -12,8 +12,7 @@ export const metadata: Metadata = {
 	description: "Get paid to chat",
 	viewport: {
 	  width: "device-width",
-	  initialScale: 1.0,
-	  maximumScale: 1.0,
+	  initialScale: 1.0
 	},
 };
 
