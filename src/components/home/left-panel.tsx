@@ -106,7 +106,7 @@ const LeftPanel = () => {
   
   return (
     // <div className="w-full overflow-hidden h-screen">
-    <div className="w-full h-full overflow-hidden">
+    <div className="w-full h-full overflow-hidden full-height flex flex-col">
 
       {/* Fixed Header */}
       <div className="fixed top-0 left-0 right-0 bg-left-panel z-10">
@@ -147,16 +147,18 @@ const LeftPanel = () => {
           </div>
         )}
       </div>
+      {/* Content Area */}
+      
       {/* <div
         className={`flex flex-col overflow-auto h-full pb-[44px] ${
           !isViewingConversation ? "pt-[136px]" : "pt-[78px]"
         }`}
       > */}
       <div
-    className={`flex-1 overflow-auto pt-[136px] pb-[60px] ${
-      isViewingConversation ? "pt-[78px]" : ""
-    }`}
-  >
+        className={`flex-1 overflow-auto pt-[136px] pb-[60px] ${
+          isViewingConversation ? "pt-[78px]" : ""
+        }`}
+      >
         
         {!isViewingConversation &&
         currentUserId &&
