@@ -98,7 +98,7 @@ const SearchUsers = () => {
    };
 
   return (
-    <div className="relative h-10 mx-3 flex-1 overflow-hidden">
+    <div className="relative h-10 mx-3 flex-1">
       <Search
         className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 z-10" size={18}
       />
@@ -107,14 +107,14 @@ const SearchUsers = () => {
         placeholder="Search users..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="pl-10 py-2  rounded shadow-sm bg-gray-primary focus-visible:ring-transparent"
+        className="pl-10 py-2 text-sm w-full max-w-full rounded shadow-sm bg-gray-primary focus-visible:ring-transparent"
       />
       {isAuthenticated && trimmedSearchTerm && searchResults && (
-        <div className="absolute mt-1 w-full bg-background border rounded shadow z-20">
+        <div className="absolute mt-1 w-full bg-white border rounded shadow z-20">
           {searchResults.map((user: UserType) => (
             <div
               key={user._id}
-              className="flex items-center p-2 hover:bg-accent cursor-pointer"
+              className="flex items-center p-2 hover:bg-gray-100 cursor-pointer"
               onClick={() => handleSelectUser(user)}
             >
               <Avatar className="mr-2">
