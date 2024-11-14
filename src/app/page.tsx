@@ -5,7 +5,7 @@ export default function Home() {
 	return (
 		<main className='w-full h-full overflow-hidden'>
 			{/* <div className='overflow-y-hidden h-screen mx-auto bg-left-panel'> */}
-			<div className='h-screen mx-auto bg-left-panel'>
+			<div className='full-height mx-auto bg-left-panel'>
 				<LeftPanel />
 			</div>
 		</main>
