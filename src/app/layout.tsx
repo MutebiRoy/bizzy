@@ -10,7 +10,13 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
 	title: "Bizmous",
 	description: "Get paid to chat",
+	viewport: {
+	  width: "device-width",
+	  initialScale: 1.0,
+	  maximumScale: 1.0,
+	},
 };
+
 
 export default function RootLayout({
 	children,
