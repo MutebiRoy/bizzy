@@ -104,7 +104,7 @@ const SearchUsers = () => {
       />
       <Input
         type="text"
-        placeholder="Search users..."
+        placeholder="Sehantu..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         className="pl-10 py-2 text-sm w-full max-w-full rounded shadow-sm bg-gray-primary focus-visible:ring-transparent"
