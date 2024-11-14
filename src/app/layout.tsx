@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
 import ConvexClientProvider from "@/providers/convex-client-provider";
 import { Toaster } from "react-hot-toast";
+import { useState, useEffect } from 'react';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,19 +21,27 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
 	children,
-}: Readonly<{
+  }: Readonly<{
 	children: React.ReactNode;
-}>) {
+  }>): JSX.Element {
+	const [width, setWidth] = useState(window.innerWidth);
+  
+	useEffect(() => {
+	  const handleResize = () => setWidth(window.innerWidth);
+	  window.addEventListener('resize', handleResize);
+	  return () => window.removeEventListener('resize', handleResize);
+	}, []);
+  
 	return (
-		<html lang='en'>
-			<body className={inter.className}>
-				<ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
-					<ConvexClientProvider>
-						{children}
-						<Toaster />
-					</ConvexClientProvider>
-				</ThemeProvider>
-			</body>
-		</html>
+	  <html lang='en'>
+		<body className={inter.className} style={{ maxWidth: width, margin: '0 auto' }}>
+		  <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
+			<ConvexClientProvider>
+			  {children}
+			  <Toaster />
+			</ConvexClientProvider>
+		  </ThemeProvider>
+		</body>
+	  </html>
 	);
-}
+  }
