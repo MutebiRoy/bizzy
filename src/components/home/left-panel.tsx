@@ -87,6 +87,11 @@ const LeftPanel = () => {
     setSelectedConversation(null);
   };
 
+  // const handleConversationClick = (conversation: ConversationType) => {
+  //   setSelectedConversation(conversation);
+  //   setIsViewingConversation(true);
+  // };
+
   const handleConversationClick = async (conversation: ConversationType) => {
     setSelectedConversation(conversation);
     setIsViewingConversation(true);
@@ -100,8 +105,11 @@ const LeftPanel = () => {
   };
   
   return (
-    <div className="w-full overflow-hidden h-screen">
-      <div className="fixed top-0 left-0 right-0 bg-left-panel z-10 ">
+    // <div className="w-full overflow-hidden h-screen">
+    <div className="w-full h-full overflow-hidden">
+
+      {/* Fixed Header */}
+      <div className="fixed top-0 left-0 right-0 bg-left-panel z-10">
         <div className="flex justify-between bg-gray-primary p-3">
           {isViewingConversation ? (
             <div className="flex items-center">
@@ -139,11 +147,16 @@ const LeftPanel = () => {
           </div>
         )}
       </div>
-      <div
-        className={`my-3 flex flex-col gap-0 overflow-auto h-full pb-[44px] ${
+      {/* <div
+        className={`flex flex-col overflow-auto h-full pb-[44px] ${
           !isViewingConversation ? "pt-[136px]" : "pt-[78px]"
         }`}
-      >
+      > */}
+      <div
+    className={`flex-1 overflow-auto pt-[136px] pb-[60px] ${
+      isViewingConversation ? "pt-[78px]" : ""
+    }`}
+  >
         
         {!isViewingConversation &&
         currentUserId &&
