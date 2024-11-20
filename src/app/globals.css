@@ -96,20 +96,3 @@
         background-color: hsl(var(--container));
     }
 } */
-
-.app-container {
-    max-width: 120px; /* 100% of viewport width */
-    margin: 0 auto; /* center horizontally */
-    border: 3px solid red;
-   
-  }
-
-  *,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-.full-height {
-    height: calc(var(--vh, 1vh) * 100);
-}
