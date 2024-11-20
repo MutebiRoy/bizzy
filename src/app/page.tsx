@@ -1,13 +1,13 @@
 import LeftPanel from "@/components/home/left-panel";
 import RightPanel from "@/components/home/right-panel";
 import { useTheme } from "next-themes";
+
 export default function Home() {
 	return (
-		<main className='w-full h-full overflow-hidden'>
-			{/* <div className='overflow-y-hidden h-screen mx-auto bg-left-panel'> */}
-			<div className='full-height mx-auto bg-left-panel'>
+		<main className='flex flex-col h-screen'>
+			{/* <div className='overflow-y-hidden h-screen mx-auto bg-left-panel bo'> */}
 				<LeftPanel />
-			</div>
+			{/* </div> */}
 		</main>
 	);
 }
