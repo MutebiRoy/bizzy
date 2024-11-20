@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
-import { ListFilter, Search, ChevronLeft, ArrowLeft } from "lucide-react";
+import { ListFilter, Search, ChevronLeft, ArrowLeft, UserCircle, Plus, Users, Settings } from "lucide-react";
 import { Input } from "../ui/input";
+import Link from 'next/link'
 import ThemeSwitch from "./theme-switch";
 import Conversation from "./conversation";
 import { UserButton, useUser } from "@clerk/nextjs";
@@ -106,17 +107,49 @@ const LeftPanel = () => {
   
   return (
     // <div className="w-full overflow-hidden h-screen">
-    <div className="w-full h-full overflow-hidden full-height flex flex-col">
+    <div className="flex flex-col h-full">
 
       {/* Fixed Header */}
-      <div className="fixed top-0 left-0 right-0 bg-left-panel z-10">
-        <div className="flex justify-between bg-gray-primary p-3">
-          {isViewingConversation ? (
-            <div className="flex items-center">
-              <button onClick={handleBackClick}>
-                <ArrowLeft size={24} />
-              </button>
-              <Avatar className="ml-4">
+      {!isViewingConversation ? (
+        <header className="flex items-center justify-between p-4">
+          {/* Left: Logged in Profile Picture */}
+          <div className="flex items-center">
+            <div className="w-8 h-8 rounded-full overflow-hidden">
+              <UserButton />
+            </div>
+          </div>
+    
+          {/* Right: Create Groups, Online Users, Theme Toggle */}
+          <div className="flex items-center space-x-4">
+
+            {/* View Online Users */}
+            <button
+              className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+              aria-label="View Online Users"  
+            >
+              <Users className="w-5 h-5" /> 
+            </button>
+
+            {/* Create Groups Icon /> */}
+            {isAuthenticated && <UserListDialog />}
+
+            {/* <ThemeSwitch /> */}
+            <ThemeSwitch />
+          </div>
+        </header>
+      ) : (
+        <header className="flex items-center justify-between p-4 text-white sticky top-0 z-10">
+          <div className="flex items-center space-x-2">
+            <button
+              className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+              aria-label="Go Back"
+              onClick={handleBackClick}
+            >
+              <ArrowLeft className="w-5 h-5 text-white" />
+            </button>
+            {/* Link to Profile Page */}
+            <Link href={`/profile/`} className="flex items-center space-x-3">
+              <Avatar className="ml-2 w-6 h-6">
                 <AvatarImage
                   src={conversationImage || "/placeholder.png"}
                   className="object-cover"
@@ -125,68 +158,84 @@ const LeftPanel = () => {
                   <div className="animate-pulse bg-gray-tertiary w-full h-full rounded-full" />
                 </AvatarFallback>
               </Avatar>
-              <div className="flex flex-col ml-4">
-                <p>{conversationName}</p>
-                {selectedConversation && selectedConversation.isGroup && (
-                  <GroupMembersDialog selectedConversation={selectedConversation} />
-                )}
-              </div>
-            </div>
-          ) : (
-            <UserButton />
-          )}
-          <div className="flex items-center gap-3">
+              <h1 className="text-lg font-sm">{conversationName}</h1>
+            </Link>
+            {selectedConversation && selectedConversation.isGroup && (
+              <GroupMembersDialog selectedConversation={selectedConversation} />
+            )}
+          </div>
+          <div className="flex items-center space-x-4">
+            {/* Create Groups Icon /> */}
             {isAuthenticated && <UserListDialog />}
+
+            {/* <ThemeSwitch /> */}
             <ThemeSwitch />
           </div>
-        </div>
-        {!isViewingConversation && (
-          <div className="p-3 flex items-center">
-           {/* Use the SearchUsers component here */}
-           <SearchUsers />
-          </div>
-        )}
-      </div>
-      {/* Content Area */}
-      
-      {/* <div
-        className={`flex flex-col overflow-auto h-full pb-[44px] ${
-          !isViewingConversation ? "pt-[136px]" : "pt-[78px]"
-        }`}
-      > */}
-      <div
-        className={`flex-1 overflow-auto pt-[136px] pb-[60px] ${
-          isViewingConversation ? "pt-[78px]" : ""
-        }`}
-      >
-        
-        {!isViewingConversation &&
-        currentUserId &&
-          conversations?.map((conversation, index) => (
-            <div className={index === 0 ? "pt-[0px]" : ""} key={conversation._id}>
-              <Conversation
-                key={conversation._id}
-                conversation={convertConversationTypes(conversation, currentUserId)}
-                onClick={() => handleConversationClick(convertConversationTypes(conversation, currentUserId))}
-              />
-            </div>
-          ))
-        }
+        </header>
+      )}
 
-        {isViewingConversation && selectedConversation && (
-          <div className="overflow-auto h-full">
-            <RightPanel conversation={selectedConversation} />
+      
+        {!isViewingConversation && (
+          <div className="p-4">
+            {/* Use the SearchUsers component here */}
+            <SearchUsers />
           </div>
+          
         )}
-        {conversations?.length === 0 && !isViewingConversation && (
-          <>
-            <p className="text-center text-gray-500 text-sm mt-3">No conversations yet!</p>
-            <p className="text-center text-gray-500 text-sm mt-3">
-              Select any name to start a conversation
-            </p>
-          </>
-        )}
-      </div>
+        
+        {/* Conversations List */}
+        <div className="flex-1 overflow-y-auto">
+          {!isViewingConversation &&
+          currentUserId &&
+            conversations?.map((conversation, index) => (
+              
+                <div className={index === 0 ? "pt-[0px]" : ""} key={conversation._id}>
+                  <Conversation
+                    key={conversation._id}
+                    conversation={convertConversationTypes(conversation, currentUserId)}
+                    onClick={() => handleConversationClick(convertConversationTypes(conversation, currentUserId))}
+                  />
+                </div>
+              
+            ))
+          }
+
+          {isViewingConversation && selectedConversation && (
+            <div className="overflow-auto h-full">
+              <RightPanel conversation={selectedConversation} />
+            </div>
+          )}
+          {conversations?.length === 0 && !isViewingConversation && (
+            <>
+              <p className="text-center text-gray-500 text-sm mt-3">No conversations yet!</p>
+              <p className="text-center text-gray-500 text-sm mt-3">
+                Select or search a name to start a conversation
+              </p>
+            </>
+          )}
+        </div>
+
+      {/* Footer */}
+      {!isViewingConversation &&  (
+        <footer className="p-4 flex space-x-4">
+          {/* Home Button */}
+          {/* <button
+            className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+            aria-label="Home"
+            onClick={onHome}
+          >
+            <House className="w-5 h-5 text-primary" />
+          </button> */}
+          {/* Edit Profile Button */}
+        
+          <button
+            className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+            aria-label="Edit Profile"
+          >
+            <Settings className="w-5 h-5 text-primary" />
+          </button>
+        </footer>
+      )}
     </div>
   );
 };
