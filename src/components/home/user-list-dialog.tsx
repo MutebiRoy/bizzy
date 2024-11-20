@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { ImageIcon, MessageSquareDiff } from "lucide-react";
+import { ImageIcon, Plus } from "lucide-react";
 import { Id } from "../../../convex/_generated/dataModel";
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -128,7 +128,7 @@ const UserListDialog = () => {
 	return (
 		<Dialog>
 			<DialogTrigger>
-				<MessageSquareDiff size={20} />
+				<Plus size={20} />
 			</DialogTrigger>
 			<DialogContent>
 				<DialogHeader>
