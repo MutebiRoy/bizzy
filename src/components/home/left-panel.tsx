@@ -107,7 +107,7 @@ const LeftPanel = () => {
   
   return (
     // <div className="w-full overflow-hidden h-screen">
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full max-w-md mx-auto">
 
       {/* Fixed Header */}
       {!isViewingConversation ? (
