@@ -110,7 +110,7 @@ const LeftPanel = () => {
     <div className="flex flex-col h-full">
 
       {/* Fixed Header */}
-      {!isViewingConversation ? (
+      
         <header className="flex items-center justify-between p-4">
           {/* Left: Logged in Profile Picture */}
           <div className="flex items-center">
@@ -137,52 +137,14 @@ const LeftPanel = () => {
             <ThemeSwitch />
           </div>
         </header>
-      ) : (
-        <header className="flex items-center justify-between p-4 text-white sticky top-0 z-10">
-          <div className="flex items-center space-x-2">
-            <button
-              className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
-              aria-label="Go Back"
-              onClick={handleBackClick}
-            >
-              <ArrowLeft className="w-5 h-5 text-white" />
-            </button>
-            {/* Link to Profile Page */}
-            <Link href={`/profile/`} className="flex items-center space-x-3">
-              <Avatar className="ml-2 w-6 h-6">
-                <AvatarImage
-                  src={conversationImage || "/placeholder.png"}
-                  className="object-cover"
-                />
-                <AvatarFallback>
-                  <div className="animate-pulse bg-gray-tertiary w-full h-full rounded-full" />
-                </AvatarFallback>
-              </Avatar>
-              <h1 className="text-lg font-sm">{conversationName}</h1>
-            </Link>
-            {selectedConversation && selectedConversation.isGroup && (
-              <GroupMembersDialog selectedConversation={selectedConversation} />
-            )}
-          </div>
-          <div className="flex items-center space-x-4">
-            {/* Create Groups Icon /> */}
-            {isAuthenticated && <UserListDialog />}
-
-            {/* <ThemeSwitch /> */}
-            <ThemeSwitch />
-          </div>
-        </header>
-      )}
+       
 
       
-        {!isViewingConversation && (
           <div className="p-4">
             {/* Use the SearchUsers component here */}
             <SearchUsers />
           </div>
-          
-        )}
-        
+      
         {/* Conversations List */}
         <div className="flex-1 overflow-y-auto">
           {!isViewingConversation &&
