@@ -99,13 +99,13 @@ const SearchUsers = () => {
 
   return (
     <div className="relative">
-      <Search className="w-5 h-5 text-gray-400 absolute right-3 top-1/2 transform -translate-y-1/2" />
+      <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
       <Input
         type="text"
         placeholder="Search users..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-full max-w-md pl-10 px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-primary transition-all duration-200"
+        className="w-full pl-10 py-2 border rounded-md focus:outline-none focus:ring focus:border-primary transition-all duration-200"
       />
 
       {isAuthenticated && trimmedSearchTerm && searchResults && (
