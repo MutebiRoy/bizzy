@@ -105,9 +105,28 @@ const SearchUsers = () => {
         placeholder="Search users..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-full pl-10 px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-primary"
+        className="w-full max-w-md pl-10 px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-primary transition-all duration-200"
       />
-     
+
+      {isAuthenticated && trimmedSearchTerm && searchResults && (
+        <div className="absolute mt-1 w-full bg-background border rounded shadow z-20">
+          {searchResults.map((user: UserType) => (
+            <div
+              key={user._id}
+              className="flex items-center p-2 hover:bg-accent cursor-pointer"
+              onClick={() => handleSelectUser(user)}
+            >
+              <Avatar className="mr-2">
+                <AvatarImage src={user.image || "/placeholder.png"} alt={user.name} />
+                <AvatarFallback>
+                  <div className="animate-pulse bg-gray-tertiary w-full h-full rounded-full" />
+                </AvatarFallback>
+              </Avatar>
+              <span>{user.name}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
