@@ -11,10 +11,10 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
 	title: "Bizmous",
 	description: "Get paid to chat",
-	// viewport: {
-	//   width: "device-width",
-	//   initialScale: 1.0
-	// },
+	viewport: {
+	width: "device-width",
+	initialScale: 1.0
+	},
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -27,7 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 					defaultTheme='system' 
 					enableSystem 
 					disableTransitionOnChange>
-						
+
 					<ConvexClientProvider>
 						{children}
 						<Toaster />
