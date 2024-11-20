@@ -32,7 +32,7 @@ const RightPanel = ({ conversation }: RightPanelProps) => {
                 <div className='flex-grow overflow-hidden'>
                     <MessageContainer/>
                 </div>
-                <div className='flex-shrink-0 fixed bottom-0 left-0 right-0 z-10 '>
+                <div className=' bottom-0 left-0 right-0 z-10 '>
                     <MessageInput conversation={conversation} />
                 </div>
             </div>
