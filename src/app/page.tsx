@@ -4,7 +4,7 @@ import { useTheme } from "next-themes";
 
 export default function Home() {
 	return (
-		<div className="flex flex-col h-screen">
+		<div className="flex flex-col h-screen overflow-hidden">
 			<LeftPanel />
 		</div>
 	);
