@@ -101,8 +101,19 @@
         background-color: hsl(var(--container));
     }
 } */
+
 input,
 textarea,
 select {
-    @apply text-base;
+  @apply text-base;
 }
+
+html,
+body,
+#root,
+#__next {
+  height: 100%;
+}
+.chat-container {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
