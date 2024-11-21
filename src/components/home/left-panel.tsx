@@ -107,7 +107,7 @@ const LeftPanel = () => {
   
   return (
     // <div className="w-full overflow-hidden h-screen">
-    <div className="flex flex-col">
+    <div className="">
 
       {isViewingConversation && selectedConversation ? (
         <div className="flex flex-col h-full">
