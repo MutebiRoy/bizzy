@@ -33,7 +33,7 @@ const RightPanel = ({ conversation }: RightPanelProps) => {
                     <MessageContainer/>
                 </div>
 
-                <footer className='flex-none '>
+                <footer className='flex-none flex-shrink-0'>
                     <div className="p-0">
                         <MessageInput conversation={conversation} />
                     </div>
