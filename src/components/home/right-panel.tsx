@@ -27,15 +27,16 @@ const RightPanel = ({ conversation }: RightPanelProps) => {
     }
 
     return (
-        <div className='w-full'>
-            <div className='flex flex-col h-full'>
-                <div className='flex-grow overflow-hidden'>
+        <div className='flex flex-col h-full'>
+                <div className='flex-1 overflow-y-auto'>
                     <MessageContainer/>
                 </div>
-                <div className='flex-shrink-0 fixed bottom-0 left-0 right-0 z-10 '>
-                    <MessageInput conversation={conversation} />
-                </div>
-            </div>
+
+                <footer className='flex-none '>
+                    <div className="p-4">
+                        <MessageInput conversation={conversation} />
+                    </div>
+                </footer>
         </div>
     );
 };
