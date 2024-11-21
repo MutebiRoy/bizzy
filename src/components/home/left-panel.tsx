@@ -215,8 +215,9 @@ const LeftPanel = () => {
             </>
           )}
 
-
-          {/* Footer */}
+        </div>
+        
+      {/* Footer */}
       {!isViewingConversation &&  (
         <footer className="p-4 flex space-x-4 sticky bottom-0 z-10">
           {/* Home Button */}
@@ -237,8 +238,6 @@ const LeftPanel = () => {
           </button>
         </footer>
       )}
-        </div>
-
       
     </div>
   );
