@@ -126,7 +126,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ conversation }) => {
 						<Input
 							type='text'
 							placeholder='Type a message'
-							className='text-base py-2 text-sm w-full rounded-lg shadow-sm bg-gray-tertiary focus-visible:ring-transparent'
+							className='text-base py-2 w-full border rounded-md focus:outline-none focus:ring'
 							value={msgText}
 							onChange={(e) => setMsgText(e.target.value)}
 						/>
