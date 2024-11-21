@@ -96,3 +96,9 @@
         background-color: hsl(var(--container));
     }
 } */
+
+input,
+textarea,
+select {
+  @apply text-base;
+}
