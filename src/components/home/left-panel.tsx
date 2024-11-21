@@ -111,7 +111,7 @@ const LeftPanel = () => {
 
       {isViewingConversation && selectedConversation ? (
         <>
-          <header className="flex items-center justify-between p-4 text-white sticky top-0 z-10">
+          <div className="flex items-center justify-between p-4 text-white sticky top-0 z-10">
             <div className="flex items-center space-x-2">
               <button
                 className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
@@ -144,11 +144,11 @@ const LeftPanel = () => {
               {/* <ThemeSwitch /> */}
               <ThemeSwitch />
             </div>
-          </header>
+          </div>
 
           {/* Right Pannel */}
 
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-grow flex-shrink min-h-0 overflow-y-auto">
             {/* // <div className="overflow-auto h-full"> */}
               <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
@@ -158,7 +158,7 @@ const LeftPanel = () => {
       ) : currentUserId ? (
         <>
           {/* Fixed Header */}
-          <header className="flex items-center justify-between p-4">
+          <div className="flex items-center justify-between p-4">
             {/* Left: Logged in Profile Picture */}
             <div className="flex items-center">
               <div className="w-8 h-8 rounded-full overflow-hidden">
@@ -182,7 +182,7 @@ const LeftPanel = () => {
               {/* <ThemeSwitch /> */}
               <ThemeSwitch />
             </div>
-          </header>
+          </div>
 
           <div className="p-4">
             {/* Search Component */}
@@ -190,7 +190,7 @@ const LeftPanel = () => {
           </div>
 
           {/* Conversations List */}
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-grow flex-shrink min-h-0 overflow-y-auto">
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
                 
@@ -218,7 +218,7 @@ const LeftPanel = () => {
             )}
           </div>
 
-          <footer className="p-4 flex space-x-4 sticky bottom-0 z-10">
+          <div className="p-4 flex space-x-4 sticky bottom-0 z-10">
             {/* Home Button */}
             {/* <button
               className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
@@ -235,7 +235,7 @@ const LeftPanel = () => {
             >
               <Settings className="w-5 h-5 text-primary" />
             </button>
-          </footer> 
+          </div> 
 
         </>
       ) : (
