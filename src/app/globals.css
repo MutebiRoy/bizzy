@@ -116,4 +116,5 @@ body,
 }
 .chat-container {
     padding-bottom: env(safe-area-inset-bottom);
+    background: red;
   }
