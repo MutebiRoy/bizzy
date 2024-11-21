@@ -51,7 +51,7 @@ const LeftPanel = () => {
   const conversations = useQuery(
     api.conversations.getMyConversations,
     isAuthenticated ? {} : "skip"
-  );
+  ) ?? [];
 
   const setConversationLastRead = useMutation(api.conversations.setConversationLastRead);
 
@@ -109,136 +109,138 @@ const LeftPanel = () => {
     // <div className="w-full overflow-hidden h-screen">
     <div className="flex flex-col h-full">
 
-      {/* Fixed Header */}
-      {!isViewingConversation ? (
-        <header className="flex items-center justify-between p-4">
-          {/* Left: Logged in Profile Picture */}
-          <div className="flex items-center">
-            <div className="w-8 h-8 rounded-full overflow-hidden">
-              <UserButton />
-            </div>
-          </div>
-    
-          {/* Right: Create Groups, Online Users, Theme Toggle */}
-          <div className="flex items-center space-x-6">
-
-            {/* View Online Users */}
-            <button
-              className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
-              aria-label="View Online Users"  
-            >
-              <Users className="w-5 h-5" /> 
-            </button>
-
-            {/* Create Groups Icon /> */}
-            {isAuthenticated && <UserListDialog />}
-
-            {/* <ThemeSwitch /> */}
-            <ThemeSwitch />
-          </div>
-        </header>
-      ) : (
-        <header className="flex items-center justify-between p-4 text-white sticky top-0 z-10">
-          <div className="flex items-center space-x-2">
-            <button
-              className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
-              aria-label="Go Back"
-              onClick={handleBackClick}
-            >
-              <ArrowLeft className="w-5 h-5 text-white" />
-            </button>
-            {/* Link to Profile Page */}
-            <Link href={`/profile/`} className="flex items-center space-x-4">
-              <Avatar className="ml-2 w-6 h-6">
-                <AvatarImage
-                  src={conversationImage || "/placeholder.png"}
-                  className="object-cover"
-                />
-                <AvatarFallback>
-                  <div className="animate-pulse bg-gray-tertiary w-full h-full rounded-full" />
-                </AvatarFallback>
-              </Avatar>
-              <h1 className="text-lg font-sm">{conversationName}</h1>
-            </Link>
-            {selectedConversation && selectedConversation.isGroup && (
-              <GroupMembersDialog selectedConversation={selectedConversation} />
-            )}
-          </div>
-          <div className="flex items-center space-x-6">
-            {/* Create Groups Icon /> */}
-            {isAuthenticated && <UserListDialog />}
-
-            {/* <ThemeSwitch /> */}
-            <ThemeSwitch />
-          </div>
-        </header>
-      )}
-
-      
-        {!isViewingConversation && (
-          <div className="p-4">
-            {/* Use the SearchUsers component here */}
-            <SearchUsers />
-          </div>
-          
-        )}
-        
-        {/* Conversations List */}
-        {/* <div className="flex-1 overflow-y-auto"> */}
-        <div className="flex-grow flex-shrink min-h-0 overflow-y-auto">
-          {!isViewingConversation &&
-          currentUserId &&
-            conversations?.map((conversation, index) => (
-              
-                <div className={index === 0 ? "pt-[0px]" : ""} key={conversation._id}>
-                  <Conversation
-                    key={conversation._id}
-                    conversation={convertConversationTypes(conversation, currentUserId)}
-                    onClick={() => handleConversationClick(convertConversationTypes(conversation, currentUserId))}
+      {isViewingConversation && selectedConversation ? (
+        <div className="flex flex-col h-full">
+          <header className="flex items-center justify-between p-4 text-white sticky top-0 z-10">
+            <div className="flex items-center space-x-2">
+              <button
+                className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+                aria-label="Go Back"
+                onClick={handleBackClick}
+              >
+                <ArrowLeft className="w-5 h-5 text-white" />
+              </button>
+              {/* Link to Profile Page */}
+              <Link href={`/profile/`} className="flex items-center space-x-4">
+                <Avatar className="ml-2 w-6 h-6">
+                  <AvatarImage
+                    src={conversationImage || "/placeholder.png"}
+                    className="object-cover"
                   />
-                </div>
-              
-            ))
-          }
-
-          {isViewingConversation && selectedConversation && (
-            <div className="overflow-auto h-full">
-              <RightPanel conversation={selectedConversation} />
+                  <AvatarFallback>
+                    <div className="animate-pulse bg-gray-tertiary w-full h-full rounded-full" />
+                  </AvatarFallback>
+                </Avatar>
+                <h1 className="text-lg font-sm">{conversationName}</h1>
+              </Link>
+              {selectedConversation && selectedConversation.isGroup && (
+                <GroupMembersDialog selectedConversation={selectedConversation} />
+              )}
             </div>
-          )}
-          {conversations?.length === 0 && !isViewingConversation && (
-            <>
-              <p className="text-center text-gray-500 text-sm mt-3">No conversations yet!</p>
-              <p className="text-center text-gray-500 text-sm mt-3">
-                Select or search a name to start a conversation
-              </p>
-            </>
-          )}
+            <div className="flex items-center space-x-6">
+              {/* Create Groups Icon /> */}
+              {isAuthenticated && <UserListDialog />}
+
+              {/* <ThemeSwitch /> */}
+              <ThemeSwitch />
+            </div>
+          </header>
+
+          {/* Right Pannel */}
+
+          <div className="flex-grow flex-shrink min-h-0 overflow-y-auto">
+            {/* // <div className="overflow-auto h-full"> */}
+              <RightPanel conversation={selectedConversation} />
+            {/* // </div> */}
+          </div>
 
         </div>
-        
-      {/* Footer */}
-      {!isViewingConversation &&  (
-        <footer className="p-4 flex space-x-4 sticky bottom-0 z-10">
-          {/* Home Button */}
-          {/* <button
-            className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
-            aria-label="Home"
-            onClick={onHome}
-          >
-            <House className="w-5 h-5 text-primary" />
-          </button> */}
-          {/* Edit Profile Button */}
-        
-          <button
-            className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
-            aria-label="Edit Profile"
-          >
-            <Settings className="w-5 h-5 text-primary" />
-          </button>
-        </footer>
-      )}
+      ) : currentUserId ? (
+        <div className="flex flex-col h-full">
+          {/* Fixed Header */}
+          <header className="flex items-center justify-between p-4">
+            {/* Left: Logged in Profile Picture */}
+            <div className="flex items-center">
+              <div className="w-8 h-8 rounded-full overflow-hidden">
+                <UserButton />
+              </div>
+            </div>
       
+            {/* Right: Create Groups, Online Users, Theme Toggle */}
+            <div className="flex items-center space-x-6">
+
+              {/* View Online Users */}
+              <button
+                className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+                aria-label="View Online Users"  
+              >
+                <Users className="w-5 h-5" /> 
+              </button>
+
+              {/* Create Groups Icon /> */}
+              {isAuthenticated && <UserListDialog />}
+
+              {/* <ThemeSwitch /> */}
+              <ThemeSwitch />
+            </div>
+          </header>
+
+          <div className="p-4">
+            {/* Search Component */}
+            <SearchUsers />
+          </div>
+
+          {/* Conversations List */}
+          <div className="flex-grow flex-shrink min-h-0 overflow-y-auto">
+            {conversations?.length > 0 ? (
+              conversations?.map((conversation, index) => (
+                
+                  <div className={index === 0 ? "pt-[0px]" : ""} key={conversation._id}>
+                    <Conversation
+                      key={conversation._id}
+                      conversation={convertConversationTypes(conversation, currentUserId)}
+                      onClick={() => 
+                        handleConversationClick(
+                          convertConversationTypes(conversation, currentUserId)
+                        )
+                      }
+                    />
+                  </div>
+              ))
+            ) : (
+              <>
+                <p className="text-center text-gray-500 text-sm mt-3">
+                  No conversations yet!
+                </p>
+                <p className="text-center text-gray-500 text-sm mt-3">
+                  Select or search a name to start a conversation
+                </p>
+              </>
+            )}
+          </div>
+
+          <footer className="p-4 flex space-x-4 sticky bottom-0 z-10">
+            {/* Home Button */}
+            {/* <button
+              className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+              aria-label="Home"
+              onClick={onHome}
+            >
+              <House className="w-5 h-5 text-primary" />
+            </button> */}
+            {/* Edit Profile Button */}
+          
+            <button
+              className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+              aria-label="Edit Profile"
+            >
+              <Settings className="w-5 h-5 text-primary" />
+            </button>
+          </footer> 
+        </div>
+      ) : (
+        <p>Loading...</p>
+      )}
     </div>
   );
 };
