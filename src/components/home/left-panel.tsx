@@ -148,7 +148,7 @@ const LeftPanel = () => {
 
           {/* Right Pannel */}
 
-          <div className="flex-grow flex-shrink min-h-0 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto">
             {/* // <div className="overflow-auto h-full"> */}
               <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
@@ -190,7 +190,7 @@ const LeftPanel = () => {
           </div>
 
           {/* Conversations List */}
-          <div className="flex-grow flex-shrink min-h-0 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto">
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
                 
@@ -236,6 +236,7 @@ const LeftPanel = () => {
               <Settings className="w-5 h-5 text-primary" />
             </button>
           </footer> 
+
         </div>
       ) : (
         <p>Loading...</p>
