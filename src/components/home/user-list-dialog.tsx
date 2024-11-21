@@ -148,6 +148,7 @@ const UserListDialog = () => {
 					type='file'
 					accept='image/*'
 					ref={imgRef}
+					className="text-base"
 					hidden
 					onChange={(e) => setSelectedImage(e.target.files![0])}
 				/>
@@ -156,6 +157,7 @@ const UserListDialog = () => {
 						<Input
 							placeholder='Group Name'
 							value={groupName}
+							className="text-base"
 							onChange={(e) => setGroupName(e.target.value)}
 						/>
 						<Button className='flex gap-2' onClick={() => imgRef.current?.click()}>
