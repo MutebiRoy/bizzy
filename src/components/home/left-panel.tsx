@@ -107,14 +107,13 @@ const LeftPanel = () => {
   
   return (
     // <div className="w-full overflow-hidden h-screen">
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full chat-container">
 
       {isViewingConversation && selectedConversation ? (
         <>
           {/* Header - Chat View*/}
           <header className="flex-none">
             <div className="flex items-center justify-between p-4 text-white">
-              <div className="flex items-center space-x-2">
                 <button
                   className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
                   aria-label="Go Back"
@@ -145,7 +144,6 @@ const LeftPanel = () => {
 
               {/* <ThemeSwitch /> */}
               <ThemeSwitch />
-            </div>
             </div>
           </header>
 
@@ -221,7 +219,7 @@ const LeftPanel = () => {
             )}
           </div>
 
-          <footer className="flex-none">
+          <footer className="flex-none flex-shrink-0">
             <div className="p-4 flex space-x-4">
               {/* Home Button */}
               {/* <button
