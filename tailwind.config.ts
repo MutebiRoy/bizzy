@@ -13,9 +13,6 @@ const config = {
 			},
 		},
 		extend: {
-			fontSize: {
-				input: '16px', // Add this line
-			  },
 			colors: {
 				border: "hsl(var(--border))",
 				input: "hsl(var(--input))",
