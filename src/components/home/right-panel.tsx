@@ -1,3 +1,4 @@
+// src/components/home/right-panel.tsx"
 "use client";
 import { useEffect } from "react";
 import { useQuery } from "convex/react";
@@ -28,7 +29,7 @@ const RightPanel = ({ conversation }: RightPanelProps) => {
 
     return (
         <div className='flex flex-col h-full'>
-                <div className='flex-1 overflow-y-auto'>
+                <div className='flex-1 min-h-0 overflow-y-auto'>
                     <MessageContainer/>
                 </div>
 
