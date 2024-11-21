@@ -76,6 +76,11 @@
 }
 
 @layer base {
+    input,
+    textarea,
+    select {
+        @apply text-base;
+    }
     * {
         @apply border-border;
     }
@@ -96,9 +101,3 @@
         background-color: hsl(var(--container));
     }
 } */
-
-input,
-textarea,
-select {
-  @apply text-base;
-}
