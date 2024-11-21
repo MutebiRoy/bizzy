@@ -107,10 +107,10 @@ const LeftPanel = () => {
   
   return (
     // <div className="w-full overflow-hidden h-screen">
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col">
 
       {isViewingConversation && selectedConversation ? (
-        <div className="">
+        <div className="flex flex-col h-full">
           <header className="flex items-center justify-between p-4 text-white sticky top-0 z-10">
             <div className="flex items-center space-x-2">
               <button
@@ -156,7 +156,7 @@ const LeftPanel = () => {
 
         </div>
       ) : currentUserId ? (
-        <div className="">
+        <div className="flex flex-col h-full">
           {/* Fixed Header */}
           <header className="flex items-center justify-between p-4">
             {/* Left: Logged in Profile Picture */}
