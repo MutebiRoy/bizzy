@@ -106,7 +106,7 @@ const SearchUsers = () => {
         placeholder="Search users..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-full pl-10 py-2 border rounded-md focus:outline-none focus:ring focus:border-primary transition-all duration-200"
+        className="text-base w-full pl-12 py-2 border rounded-md focus:outline-none focus:ring focus:border-primary transition-colors duration-200"
       />
     </div>
       {isAuthenticated && trimmedSearchTerm && searchResults && (
