@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { ListFilter, Search, ChevronLeft, ArrowLeft, UserCircle, Plus, Users, Settings } from "lucide-react";
+import { ListFilter, Search, ChevronLeft, ArrowLeft, Users, Settings } from "lucide-react";
 import { Input } from "../ui/input";
 import Link from 'next/link'
 import ThemeSwitch from "./theme-switch";
@@ -110,7 +110,7 @@ const LeftPanel = () => {
     <div className="flex flex-col h-full">
 
       {isViewingConversation && selectedConversation ? (
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col">
           <header className="flex items-center justify-between p-4 text-white sticky top-0 z-10">
             <div className="flex items-center space-x-2">
               <button
@@ -156,7 +156,7 @@ const LeftPanel = () => {
 
         </div>
       ) : currentUserId ? (
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col">
           {/* Fixed Header */}
           <header className="flex items-center justify-between p-4">
             {/* Left: Logged in Profile Picture */}
@@ -168,7 +168,6 @@ const LeftPanel = () => {
       
             {/* Right: Create Groups, Online Users, Theme Toggle */}
             <div className="flex items-center space-x-6">
-
               {/* View Online Users */}
               <button
                 className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
