@@ -120,7 +120,7 @@ const LeftPanel = () => {
           </div>
     
           {/* Right: Create Groups, Online Users, Theme Toggle */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-6">
 
             {/* View Online Users */}
             <button
@@ -148,7 +148,7 @@ const LeftPanel = () => {
               <ArrowLeft className="w-5 h-5 text-white" />
             </button>
             {/* Link to Profile Page */}
-            <Link href={`/profile/`} className="flex items-center space-x-3">
+            <Link href={`/profile/`} className="flex items-center space-x-4">
               <Avatar className="ml-2 w-6 h-6">
                 <AvatarImage
                   src={conversationImage || "/placeholder.png"}
@@ -164,7 +164,7 @@ const LeftPanel = () => {
               <GroupMembersDialog selectedConversation={selectedConversation} />
             )}
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-6">
             {/* Create Groups Icon /> */}
             {isAuthenticated && <UserListDialog />}
 
@@ -184,7 +184,8 @@ const LeftPanel = () => {
         )}
         
         {/* Conversations List */}
-        <div className="flex-1 overflow-y-auto">
+        {/* <div className="flex-1 overflow-y-auto"> */}
+        <div className="flex-grow flex-shrink min-h-0 overflow-y-auto">
           {!isViewingConversation &&
           currentUserId &&
             conversations?.map((conversation, index) => (
@@ -213,11 +214,11 @@ const LeftPanel = () => {
               </p>
             </>
           )}
-        </div>
 
-      {/* Footer */}
+
+          {/* Footer */}
       {!isViewingConversation &&  (
-        <footer className="p-4 flex space-x-4">
+        <footer className="p-4 flex space-x-4 sticky bottom-0 z-10">
           {/* Home Button */}
           {/* <button
             className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
@@ -236,6 +237,9 @@ const LeftPanel = () => {
           </button>
         </footer>
       )}
+        </div>
+
+      
     </div>
   );
 };
