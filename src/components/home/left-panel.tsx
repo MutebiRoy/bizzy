@@ -111,32 +111,34 @@ const LeftPanel = () => {
 
       {isViewingConversation && selectedConversation ? (
         <>
-          <div className="flex items-center justify-between p-4 text-white sticky top-0 z-10">
-            <div className="flex items-center space-x-2">
-              <button
-                className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
-                aria-label="Go Back"
-                onClick={handleBackClick}
-              >
-                <ArrowLeft className="w-5 h-5 text-white" />
-              </button>
-              {/* Link to Profile Page */}
-              <Link href={`/profile/`} className="flex items-center space-x-4">
-                <Avatar className="ml-2 w-6 h-6">
-                  <AvatarImage
-                    src={conversationImage || "/placeholder.png"}
-                    className="object-cover"
-                  />
-                  <AvatarFallback>
-                    <div className="animate-pulse bg-gray-tertiary w-full h-full rounded-full" />
-                  </AvatarFallback>
-                </Avatar>
-                <h1 className="text-lg font-sm">{conversationName}</h1>
-              </Link>
-              {selectedConversation && selectedConversation.isGroup && (
-                <GroupMembersDialog selectedConversation={selectedConversation} />
-              )}
-            </div>
+          {/* Header - Chat View*/}
+          <header className="flex-none">
+            <div className="flex items-center justify-between p-4 text-white">
+              <div className="flex items-center space-x-2">
+                <button
+                  className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+                  aria-label="Go Back"
+                  onClick={handleBackClick}
+                >
+                  <ArrowLeft className="w-5 h-5 text-white" />
+                </button>
+                {/* Link to Profile Page */}
+                <Link href={`/profile/`} className="flex items-center space-x-4">
+                  <Avatar className="ml-2 w-6 h-6">
+                    <AvatarImage
+                      src={conversationImage || "/placeholder.png"}
+                      className="object-cover"
+                    />
+                    <AvatarFallback>
+                      <div className="animate-pulse bg-gray-tertiary w-full h-full rounded-full" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <h1 className="text-lg font-sm">{conversationName}</h1>
+                </Link>
+                {selectedConversation && selectedConversation.isGroup && (
+                  <GroupMembersDialog selectedConversation={selectedConversation} />
+                )}
+              </div>
             <div className="flex items-center space-x-6">
               {/* Create Groups Icon /> */}
               {isAuthenticated && <UserListDialog />}
@@ -144,11 +146,12 @@ const LeftPanel = () => {
               {/* <ThemeSwitch /> */}
               <ThemeSwitch />
             </div>
-          </div>
+            </div>
+          </header>
 
           {/* Right Pannel */}
 
-          <div className="flex-grow flex-shrink min-h-0 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto">
             {/* // <div className="overflow-auto h-full"> */}
               <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
@@ -157,10 +160,10 @@ const LeftPanel = () => {
         </>
       ) : currentUserId ? (
         <>
-          {/* Fixed Header */}
-          <div className="flex items-center justify-between p-4">
+          {/* Header - Conversations list*/}
+          <header className="flex-none">
             {/* Left: Logged in Profile Picture */}
-            <div className="flex items-center">
+            <div className="flex items-center justify-between p-4">
               <div className="w-8 h-8 rounded-full overflow-hidden">
                 <UserButton />
               </div>
@@ -182,15 +185,15 @@ const LeftPanel = () => {
               {/* <ThemeSwitch /> */}
               <ThemeSwitch />
             </div>
-          </div>
+          </header>
 
-          <div className="p-4">
+          <div className="flex-none p-4">
             {/* Search Component */}
             <SearchUsers />
           </div>
 
           {/* Conversations List */}
-          <div className="flex-grow flex-shrink min-h-0 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto">
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
                 
@@ -218,24 +221,26 @@ const LeftPanel = () => {
             )}
           </div>
 
-          <div className="p-4 flex space-x-4 sticky bottom-0 z-10">
-            {/* Home Button */}
-            {/* <button
-              className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
-              aria-label="Home"
-              onClick={onHome}
-            >
-              <House className="w-5 h-5 text-primary" />
-            </button> */}
-            {/* Edit Profile Button */}
-          
-            <button
-              className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
-              aria-label="Edit Profile"
-            >
-              <Settings className="w-5 h-5 text-primary" />
-            </button>
-          </div> 
+          <footer className="flex-none">
+            <div className="p-4 flex space-x-4">
+              {/* Home Button */}
+              {/* <button
+                className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+                aria-label="Home"
+                onClick={onHome}
+              >
+                <House className="w-5 h-5 text-primary" />
+              </button> */}
+              {/* Edit Profile Button */}
+            
+              <button
+                className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+                aria-label="Edit Profile"
+              >
+                <Settings className="w-5 h-5 text-primary" />
+              </button>
+            </div>
+          </footer> 
 
         </>
       ) : (
