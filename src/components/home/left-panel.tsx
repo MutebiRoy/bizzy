@@ -221,8 +221,9 @@ const LeftPanel = () => {
                 </p>
               </>
             )}
+          </div>
 
-<footer className="flex-none flex-shrink-0 z-20 h-16">
+          <footer className="flex-none flex-shrink-0 z-20 h-16">
             <div className="p-4 flex space-x-4">
               {/* Home Button */}
               {/* <button
@@ -242,9 +243,6 @@ const LeftPanel = () => {
               </button>
             </div>
           </footer> 
-          </div>
-
-          
 
         </>
       ) : (
