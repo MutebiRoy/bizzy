@@ -123,7 +123,7 @@ const LeftPanel = () => {
                 </button>
                 {/* Link to Profile Page */}
                 <Link href={`/profile/`} className="flex items-center space-x-4">
-                  <Avatar className="ml-2 w-10 h-10">
+                  <Avatar className="ml-2 w-6 h-6">
                     <AvatarImage
                       src={conversationImage || "/placeholder.png"}
                       className="object-cover"
@@ -160,11 +160,11 @@ const LeftPanel = () => {
       ) : currentUserId ? (
         <>
           {/* Header - Conversations list*/}
-          <header className="flex-none flex-shrink-0 ">
+          <header className="flex-none flex-shrink-0">
             {/* Left: Logged in Profile Picture */}
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center">
-                <div className="w-12 h-12 rounded-full overflow-hidden">
+                <div className="w-8 h-8 rounded-full overflow-hidden">
                   <UserButton />
                 </div>
               </div>
