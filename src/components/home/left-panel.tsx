@@ -108,12 +108,12 @@ const LeftPanel = () => {
   return (
     // <div className="w-full overflow-hidden h-screen">
     <div className="flex flex-col h-full chat-container">
-
       {isViewingConversation && selectedConversation ? (
         <>
           {/* Header - Chat View*/}
           <header className="flex-none flex-shrink-0">
             <div className="flex items-center justify-between p-4 text-white">
+              <div className="flex items-center space-x-2">
                 <button
                   className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
                   aria-label="Go Back"
@@ -138,12 +138,13 @@ const LeftPanel = () => {
                   <GroupMembersDialog selectedConversation={selectedConversation} />
                 )}
               </div>
-            <div className="flex items-center space-x-6">
-              {/* Create Groups Icon /> */}
-              {isAuthenticated && <UserListDialog />}
+              <div className="flex items-center space-x-6">
+                {/* Create Groups Icon /> */}
+                {isAuthenticated && <UserListDialog />}
 
-              {/* <ThemeSwitch /> */}
-              <ThemeSwitch />
+                {/* <ThemeSwitch /> */}
+                <ThemeSwitch />
+              </div>
             </div>
           </header>
 
@@ -162,26 +163,28 @@ const LeftPanel = () => {
           <header className="flex-none flex-shrink-0">
             {/* Left: Logged in Profile Picture */}
             <div className="flex items-center justify-between p-4">
-              <div className="w-8 h-8 rounded-full overflow-hidden">
-                <UserButton />
+              <div className="flex items-center">
+                <div className="w-8 h-8 rounded-full overflow-hidden">
+                  <UserButton />
+                </div>
               </div>
-            </div>
       
-            {/* Right: Create Groups, Online Users, Theme Toggle */}
-            <div className="flex items-center space-x-6">
-              {/* View Online Users */}
-              <button
-                className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
-                aria-label="View Online Users"  
-              >
-                <Users className="w-5 h-5" /> 
-              </button>
+              {/* Right: Create Groups, Online Users, Theme Toggle */}
+              <div className="flex items-center space-x-6">
+                {/* View Online Users */}
+                <button
+                  className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+                  aria-label="View Online Users"  
+                >
+                  <Users className="w-5 h-5" /> 
+                </button>
 
-              {/* Create Groups Icon /> */}
-              {isAuthenticated && <UserListDialog />}
+                {/* Create Groups Icon /> */}
+                {isAuthenticated && <UserListDialog />}
 
-              {/* <ThemeSwitch /> */}
-              <ThemeSwitch />
+                {/* <ThemeSwitch /> */}
+                <ThemeSwitch />
+              </div>
             </div>
           </header>
 
