@@ -111,7 +111,7 @@ const LeftPanel = () => {
       {isViewingConversation && selectedConversation ? (
         <>
           {/* Header - Chat View*/}
-          <header className="flex-none flex-shrink-0 z-20 h-16">
+          <header className="flex-none flex-shrink-0">
             <div className="flex items-center justify-between p-4 text-white">
               <div className="flex items-center space-x-2">
                 <button
@@ -160,7 +160,7 @@ const LeftPanel = () => {
       ) : currentUserId ? (
         <>
           {/* Header - Conversations list*/}
-          <header className="flex-none flex-shrink-0 z-20 h-16">
+          <header className="flex-none flex-shrink-0 ">
             {/* Left: Logged in Profile Picture */}
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center">
@@ -223,7 +223,7 @@ const LeftPanel = () => {
             )}
           </div>
 
-          <footer className="flex-none flex-shrink-0 z-20 h-16">
+          <footer className="flex-none flex-shrink-0">
             <div className="p-4 flex space-x-4">
               {/* Home Button */}
               {/* <button
