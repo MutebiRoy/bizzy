@@ -1,3 +1,4 @@
+//C:\Users\mutebi\Desktop\bizmous\src\components\home\conversation.tsx
 import { formatDate } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { MessageSeenSvg } from "@/lib/svgs";
