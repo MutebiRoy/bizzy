@@ -1,5 +1,6 @@
+//C:\Users\mutebi\Desktop\bizmous\convex\users.ts
 import { ConvexError, v } from "convex/values";
-import { internalMutation, query } from "./_generated/server";
+import { internalMutation, mutation, query } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
 
 export const getUserById = query({
@@ -22,18 +23,131 @@ export const createUser = internalMutation({
 		image: v.string(),
 	},
 	handler: async (ctx, args) => {
+		// Generate a default username from email
+		const emailPrefix = args.email.split("@")[0];
+		let baseUsername = emailPrefix.slice(0, 20);
+		let username = baseUsername;
+		let suffix = 1;
+
+		// Function to generate a new username with suffix
+		const generateUsernameWithSuffix = () => {
+			const suffixStr = suffix.toString();
+			const maxBaseLength = 20 - suffixStr.length;
+			const appNameToUsername = "user";
+			return appNameToUsername + baseUsername.slice(0, maxBaseLength) + suffixStr;
+		};
+
+		// Ensure the username is unique
+		while (true) {
+			const existingUser = await ctx.db
+			  .query("users")
+			  .withIndex("by_username", (q) => q.eq("username", username))
+			  .first();
+			
+			if (!existingUser) break;
+
+			suffix++;
+			username = generateUsernameWithSuffix();
+
+			if (suffix > 99999) {
+				throw new Error("Unable to generate a unique username");
+			}
+		  }
+
 		await ctx.db.insert("users", {
 			tokenIdentifier: args.tokenIdentifier,
 			email: args.email,
-			name: args.name,
+			name: args.name || baseUsername,
 			image: args.image,
 			isOnline: true,
+			username,
+
 		});
 	},
 });
 
+// check if a username is available
+export const checkUsernameAvailability = query({
+	args: { username: v.string() },
+	handler: async (ctx, { username }) => {
+	  const normalizedUsername = normalizeUsername(username);
+	  const existingUser = await ctx.db
+		.query("users")
+		.withIndex("by_username", (q) =>
+		  q.eq("username", normalizedUsername)
+		)
+		.first();
+	  return !existingUser;
+	},
+});
+
+// Helper function to normalize usernames
+function normalizeUsername(username: string): string {
+	return username.trim().toLowerCase();
+}
+
+// Update the whole profile
+export const updateProfile = mutation({
+	args: {
+	  	name: v.string(),
+	  	username: v.string(),
+	  	instagramHandle: v.optional(v.string()),
+    	tiktokHandle: v.optional(v.string()),
+	},
+	handler: async (ctx, { name, username, instagramHandle, tiktokHandle }) => {
+	  const identity = await ctx.auth.getUserIdentity();
+	  if (!identity) throw new Error("Unauthorized");
+  
+	  const user = await ctx.db
+		.query("users")
+		.withIndex("by_tokenIdentifier", (q) =>
+		  q.eq("tokenIdentifier", identity.tokenIdentifier)
+		)
+		.unique();
+  
+	  if (!user) throw new Error("User not found");
+
+	  // Validate name length
+	  const trimmedName = name.trim();
+	  if (trimmedName.length < 2 || trimmedName.length > 20) {
+		throw new ConvexError("Name must be between 2 and 20 characters.");
+	  }
+  
+	  const normalizedUsername = normalizeUsername(username);
+
+	  // Check if the username is taken by another user
+	  const existingUser = await ctx.db
+		.query("users")
+		.withIndex("by_username", (q) => q.eq("username", username))
+		.first();
+  
+	  if (existingUser && existingUser._id !== user._id) {
+		throw new Error("Username is already taken");
+	  }
+
+	  // Enforce maximum lengths
+	  if (instagramHandle && instagramHandle.length > 25) {
+		throw new Error("Instagram handle must be 25 characters or less");
+	  }
+
+	  if (tiktokHandle && tiktokHandle.length > 25) {
+		throw new Error("TikTok handle must be 25 characters or less");
+	  }
+  
+	  await ctx.db.patch(user._id, {
+		name: trimmedName,
+		username: normalizedUsername,
+		instagramHandle: instagramHandle?.trim() || undefined,
+		tiktokHandle: tiktokHandle?.trim() || undefined,
+	  });
+	},
+});
+
+// Update user profile image
 export const updateUser = internalMutation({
-	args: { tokenIdentifier: v.string(), image: v.string() },
+	args: { 
+		tokenIdentifier: v.string(), 
+		image: v.string() },
 	async handler(ctx, args) {
 		const user = await ctx.db
 			.query("users")
