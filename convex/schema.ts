@@ -1,3 +1,4 @@
+// C:\Users\mutebi\Desktop\bizmous\convex\schema.ts
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
@@ -8,9 +9,12 @@ export default defineSchema({
     image: v.string(),
     tokenIdentifier: v.string(),
     isOnline: v.boolean(),
+    username: v.optional(v.string()),
+    instagramHandle: v.optional(v.string()),
+    tiktokHandle: v.optional(v.string()),
   })
     .index("by_tokenIdentifier", ["tokenIdentifier"])
-    // Add this line to define a search index on the 'name' field
+    .index("by_username", ["username"])
     .searchIndex("search_name", { searchField: "name" }),
 
   conversations: defineTable({
