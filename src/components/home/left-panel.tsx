@@ -1,3 +1,4 @@
+// C:\Users\mutebi\Desktop\bizmous\src\components\home\left-panel.tsx
 "use client";
 import { useState, useEffect } from "react";
 import { ListFilter, Search, ChevronLeft, ArrowLeft, Users, Settings } from "lucide-react";
@@ -15,6 +16,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import GroupMembersDialog from "./group-members-dialog";
 import { Id } from "../../../convex/_generated/dataModel";
 import SearchUsers from "./search_users";
+import EditProfileDialog from "./edit-profile-dialog";
+import ProfileDialog from "./profile-dialog";
 import { convertConversationTypes, ConversationType, UserType} from "@/utils/conversation_utils";
 
 interface LastMessage {
@@ -103,10 +106,21 @@ const LeftPanel = () => {
     } else {
       console.error("Conversation ID is null");
     }
+
+
   };
+
+  // Ensure participants array does not contain null values
+  const conversationParticipantList = selectedConversation?.participants.filter(
+    (participant): participant is UserType => participant !== null
+  ) || [];
+
+  const otherParticipantInChat = conversationParticipantList.find(
+    (participant) => participant._id.toString() !== me._id.toString()
+  ) || null;
   
   return (
-    // <div className="w-full overflow-hidden h-screen">
+    
     <div className="flex flex-col h-full chat-container">
       {isViewingConversation && selectedConversation ? (
         <>
@@ -122,18 +136,29 @@ const LeftPanel = () => {
                   <ArrowLeft className="w-5 h-5 text-white" />
                 </button>
                 {/* Link to Profile Page */}
-                <Link href={`/profile/`} className="flex items-center space-x-4">
-                  <Avatar className="ml-2 w-6 h-6">
-                    <AvatarImage
-                      src={conversationImage || "/placeholder.png"}
-                      className="object-cover"
-                    />
-                    <AvatarFallback>
-                      <div className="animate-pulse bg-gray-tertiary w-full h-full rounded-full" />
-                    </AvatarFallback>
-                  </Avatar>
-                  <h1 className="text-lg font-sm">{conversationName}</h1>
-                </Link>
+
+                {selectedConversation && (
+                <ProfileDialog
+                  user={!selectedConversation.isGroup ? otherParticipantInChat : null}
+                  conversation={selectedConversation.isGroup ? selectedConversation : null}
+                  trigger={
+                    <div className="flex items-center space-x-4 cursor-pointer">
+                      <Avatar className="ml-2 w-6 h-6">
+                        <AvatarImage
+                          src={conversationImage || "/placeholder.png"}
+                          className="object-cover"
+                        />
+                        <AvatarFallback>
+                          <div className="animate-pulse bg-gray-tertiary w-full h-full rounded-full" />
+                        </AvatarFallback>
+                      </Avatar>
+                      <h1 className="text-lg font-sm">{conversationName}</h1>
+                    </div>
+                  }
+                />
+                )}
+                
+                {/* View group members Dialog */}
                 {selectedConversation && selectedConversation.isGroup && (
                   <GroupMembersDialog selectedConversation={selectedConversation} />
                 )}
@@ -235,12 +260,8 @@ const LeftPanel = () => {
               </button> */}
               {/* Edit Profile Button */}
             
-              <button
-                className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
-                aria-label="Edit Profile"
-              >
-                <Settings className="w-5 h-5 text-primary" />
-              </button>
+              <EditProfileDialog />
+
             </div>
           </footer> 
 
