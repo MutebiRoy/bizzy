@@ -13,7 +13,7 @@ const ChatPlaceHolder = () => {
 
 			</div>
 			<p className='w-1/2 mt-auto text-center text-gray-primary text-xs text-muted-foreground flex items-center justify-center gap-1'>
-				<Lock size={10} /> Your messages are end-to-end encrypted
+				<Lock size={10} /> Happy Chatting!
 			</p>
 		</div>
 	);
