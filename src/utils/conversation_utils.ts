@@ -1,3 +1,4 @@
+//"C:\Users\mutebi\Desktop\bizmous\src\utils\conversation_utils.ts"
 import { Id } from "../../convex/_generated/dataModel";
 
 export type UserType = {
@@ -8,6 +9,9 @@ export type UserType = {
   image: string;
   tokenIdentifier: string;
   isOnline: boolean;
+  username?: string;
+  instagramHandle?: string,
+  tiktokHandle?: string;
 };
 
 // Define the Conversation type as returned from the backend
@@ -34,6 +38,7 @@ export type Conversation = {
   isLastMessageSeen?: boolean;
   unreadMessageCount?: number | undefined;
   initiator?: string;
+  username?: string;
 };
 
 // Define the ConversationType expected in the frontend
@@ -42,7 +47,7 @@ export type ConversationType = {
   groupName?: string;
   participants: Id<"users">[] | UserType[] | (UserType | null)[];
   isGroup: boolean;
-  
+  username?: string;
 	groupImage?: string;
   admin?: Id<"users">;
   isOnline?: boolean;
@@ -71,7 +76,7 @@ export function convertConversationTypes(
     _id: conversation._id as Id<"conversations">,
     _creationTime: conversation._creationTime.toString(),
     participants: conversation.participants
-    ? conversation.participants.map((p) => p._id as Id<"users">)
+    ? conversation.participants as UserType[]
     : [],
 
     isGroup: conversation.isGroup,
@@ -137,6 +142,9 @@ interface User {
   email: string;
   image: string;
   isOnline: boolean;
+  username?: string;
+  instagramHandle?: string,
+  tiktokHandle?: string;
 }
 
 // interface ConversationWithParticipants extends Conversation {
