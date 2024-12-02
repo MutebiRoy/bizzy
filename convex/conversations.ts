@@ -1,3 +1,4 @@
+//C:\Users\mutebi\Desktop\bizmous\convex\conversations.ts
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
@@ -68,24 +69,6 @@ export const setConversationLastRead = mutation({
 			lastReadTime: timeNow,
 			});
 		}
-	  	// Fetch unread messages in this conversation that the user hasn't seen yet
-		// const unreadMessages = await ctx.db
-		// .query("messages")
-		// .withIndex("by_conversation", (q) => q.eq("conversation", conversationId))
-		// .filter((q) =>
-		// 	q.and(
-		// 	q.neq(q.field("sender"), user._id), // Exclude messages sent by the user
-		// 	q.not(q.includes(q.field("seenBy"), user._id)) // Messages not yet seen by the user
-		// 	)
-		// )
-		// .collect();
-
-		// // Update each message to add the current user to 'seenBy'
-		// for (const message of unreadMessages) {
-		// 	await ctx.db.patch(message._id, {
-		// 		seenBy: [...(message.seenBy || []), user._id],
-		// 	});
-		// }
 
 	},
 });
@@ -291,26 +274,7 @@ export const getMyConversations = query(async ({ db, auth }) => {
 			(conversation) => conversation !== null
 		) as any[];
 
-		// Fetch conversations that have at least one message
-
-		// code filtering conversations without messages.
-		// const conversationsWithMessages = [];
-
-		// for ( const conversation of validConversations ) {
-		// 	const messageCounter = await db
-		// 	  .query("messages")
-		// 	  .withIndex("by_conversation", (q) => q.eq("conversation", conversation._id))
-		// 	  //.collect();
-		// 	  .take(1); // Check if at least one message exists
-			
-		// 	const messages = messageCounter.length;
-		
-		// 	if (messages > 0) {
-		// 	  conversationsWithMessages.push(conversation);
-		// 	}
-		// }
-
-		// Optionally, fetch participants for each conversation
+		// fetch participants for each conversation
 		const conversationsWithDetails = await Promise.all(
 			// Allow Conversations without messages 
 			validConversations.map(async (conversation) => {
@@ -325,7 +289,7 @@ export const getMyConversations = query(async ({ db, auth }) => {
 
 			const participantIds = participantsEntries.map((entry) => entry.user);
 			
-			// Fetch participant details
+			// For each conversation, fetch the participants with full user data
 			const participantDetails = await Promise.all(
 				participantIds.map(async (id) => {
 				  const participant = await db.get(id);
@@ -416,18 +380,6 @@ export const getMyConversations = query(async ({ db, auth }) => {
 			.unique();
 	
 		  	const lastReadTime = lastReadRecord ? lastReadRecord.lastReadTime : 0;
-
-			// Count unread messages - After: Excluding messages sent by the user
-			// const unreadMessages = await db
-			// .query("messages")
-			// .withIndex("by_conversation", (q) => q.eq("conversation", conversation._id))
-			// .filter((q) =>
-			// 	q.and(
-			// 	q.gt(q.field("_creationTime"), lastReadTime),
-			// 	q.neq(q.field("sender"), userId)
-			// 	)
-			// )
-			// .collect();
 
 			// const unreadMessageCount = unreadMessages.length;
 			// Count unread messages for the current user
