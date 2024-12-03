@@ -7,6 +7,7 @@ export default defineSchema({
     name: v.optional(v.string()),
     email: v.string(),
     image: v.string(),
+    imageStorageId: v.optional(v.id("_storage")),
     tokenIdentifier: v.string(),
     isOnline: v.boolean(),
     username: v.optional(v.string()),
