@@ -1,4 +1,4 @@
-//C:\Users\mutebi\Desktop\bizmous\convex\users.ts
+// convex\users.ts
 import { ConvexError, v } from "convex/values";
 import { internalMutation, mutation, query } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
@@ -236,16 +236,37 @@ export const setUserOffline = internalMutation({
 export const getUsers = query({
 	args: {},
 	handler: async (ctx, args) => {
-		const identity = await ctx.auth.getUserIdentity();
-		if (!identity) {
-			throw new ConvexError("Unauthorized");
-		}
-
-		const users = await ctx.db.query("users").collect();
-		// const users = await ctx.db.query("users").take(100);
-		return users.filter((user) => user.tokenIdentifier !== identity.tokenIdentifier);
+	  const identity = await ctx.auth.getUserIdentity();
+	  if (!identity) {
+		throw new ConvexError("Unauthorized");
+	  }
+  
+	  const users = await ctx.db.query("users").collect();
+	  const filteredUsers = users.filter((user) => user.tokenIdentifier !== identity.tokenIdentifier);
+  
+	  // Fetch updated image URLs for each user
+	  const usersWithImages = await Promise.all(
+		filteredUsers.map(async (user) => {
+		  let imageUrl = user.image || "/placeholder.png";
+  
+		  if (user.imageStorageId) {
+			const url = await ctx.storage.getUrl(user.imageStorageId);
+			if (url) {
+			  imageUrl = url;
+			}
+		  }
+  
+		  return {
+			...user,
+			image: imageUrl,
+		  };
+		})
+	  );
+  
+	  return usersWithImages;
 	},
 });
+  
 
 
 export const getMe = query(async ({ db, auth, storage }) => {
@@ -276,43 +297,55 @@ export const getMe = query(async ({ db, auth, storage }) => {
 	};
 });
   
-
 export const getGroupMembers = query({
 	args: { 
-		conversationId: v.id("conversations") 
+	  conversationId: v.id("conversations") 
 	},
 	handler: async (ctx, args) => {
-		const identity = await ctx.auth.getUserIdentity();
-
-		if (!identity) {
-			throw new ConvexError("Unauthorized");
-		}
-
-		const conversation = await ctx.db
-			.query("conversations")
-			.filter((q) => q.eq(q.field("_id"), args.conversationId))
-			.first();
-		if (!conversation) {
-			throw new ConvexError("Conversation not found");
-		}
-
-		// Fetch participants from user_conversations
-		const participantsEntries = await ctx.db
+	  const identity = await ctx.auth.getUserIdentity();
+  
+	  if (!identity) {
+		throw new ConvexError("Unauthorized");
+	  }
+  
+	  const conversation = await ctx.db.get(args.conversationId);
+	  if (!conversation) {
+		throw new ConvexError("Conversation not found");
+	  }
+  
+	  // Fetch participants from user_conversations
+	  const participantsEntries = await ctx.db
 		.query("user_conversations")
 		.withIndex("by_conversation", (q) => q.eq("conversation", args.conversationId))
 		.collect();
-
-		const participantIds = participantsEntries.map((entry) => entry.user);
-		// Fetch participant details
-		const participants = await Promise.all(
-			participantIds.map(async (id) => {
-			  const user = await ctx.db.get(id);
-			  return user;
-			})
-		);
-		
-		//const groupMembers = users.filter((user) => conversation.participants.includes(user._id));
-		return participants;
-		//return groupMembers;
+  
+	  const participantIds = participantsEntries.map((entry) => entry.user);
+  
+	  // Fetch participant details with updated image URLs
+	  const participants = await Promise.all(
+		participantIds.map(async (id) => {
+		  const user = await ctx.db.get(id);
+		  if (user) {
+			let imageUrl = user.image || "/placeholder.png";
+  
+			if (user.imageStorageId) {
+			  const url = await ctx.storage.getUrl(user.imageStorageId);
+			  if (url) {
+				imageUrl = url;
+			  }
+			}
+  
+			return {
+			  ...user,
+			  image: imageUrl,
+			};
+		  }
+		  return null;
+		})
+	  );
+  
+	  // Filter out any nulls
+	  return participants.filter((user) => user !== null);
 	},
 });
+  
