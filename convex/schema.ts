@@ -13,6 +13,7 @@ export default defineSchema({
     username: v.optional(v.string()),
     instagramHandle: v.optional(v.string()),
     tiktokHandle: v.optional(v.string()),
+    youtubeHandle: v.optional(v.string()),
   })
     .index("by_tokenIdentifier", ["tokenIdentifier"])
     .index("by_username", ["username"])
