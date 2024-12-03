@@ -13,6 +13,7 @@ export type UserType = {
   username?: string;
   instagramHandle?: string,
   tiktokHandle?: string;
+  youtubeHandle?: string;
 };
 
 // Define the Conversation type as returned from the backend
@@ -149,6 +150,7 @@ interface User {
   username?: string;
   instagramHandle?: string;
   tiktokHandle?: string;
+  youtubeHandle?: string;
 }
 
 // interface ConversationWithParticipants extends Conversation {
