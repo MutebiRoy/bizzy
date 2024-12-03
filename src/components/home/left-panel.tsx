@@ -1,12 +1,13 @@
 // C:\Users\mutebi\Desktop\bizmous\src\components\home\left-panel.tsx
 "use client";
 import { useState, useEffect } from "react";
-import { ListFilter, Search, ChevronLeft, ArrowLeft, Users, Settings } from "lucide-react";
+import { ListFilter, Search, ChevronLeft, ArrowLeft, Users, Settings, Home } from "lucide-react";
 import { Input } from "../ui/input";
 import Link from 'next/link'
 import ThemeSwitch from "./theme-switch";
 import Conversation from "./conversation";
-import { UserButton, useUser } from "@clerk/nextjs";
+// import { UserButton, useUser } from "@clerk/nextjs";
+import CustomUserButton from "./custom-user-button";
 import UserListDialog from "./user-list-dialog";
 import { useConvexAuth, useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -188,11 +189,13 @@ const LeftPanel = () => {
           <header className="flex-none flex-shrink-0">
             {/* Left: Logged in Profile Picture */}
             <div className="flex items-center justify-between p-4">
-              <div className="flex items-center">
-                <div className="w-8 h-8 rounded-full overflow-hidden">
+              {/* <div className="flex items-center"> */}
+                {/* <div className="w-8 h-8 rounded-full overflow-hidden">
                   <UserButton />
-                </div>
-              </div>
+                </div> */}
+                <CustomUserButton />
+              {/* </div> */}
+
       
               {/* Right: Create Groups, Online Users, Theme Toggle */}
               <div className="flex items-center space-x-6">
@@ -260,7 +263,7 @@ const LeftPanel = () => {
               </button> */}
               {/* Edit Profile Button */}
             
-              <EditProfileDialog />
+              <Home />
 
             </div>
           </footer> 
