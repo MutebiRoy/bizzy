@@ -1,8 +1,23 @@
-//C:\Users\mutebi\Desktop\bizmous\convex\conversations.ts
+// convex\conversations.ts
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
 import { getConversationById } from "./getConversationById";
+
+interface User {
+	_id: Id<"users">;
+	_creationTime: number;
+	name?: string;
+	email: string;
+	image: string;
+	imageStorageId?: Id<"_storage">;
+	isOnline: boolean;
+	username?: string;
+	instagramHandle?: string;
+	tiktokHandle?: string;
+	// Add any other fields you have
+}
+
 import {
 	getAll,
 	getOneFrom,
@@ -232,7 +247,7 @@ export const createConversation = mutation({
 	},
 });
 
-export const getMyConversations = query(async ({ db, auth }) => {
+export const getMyConversations = query(async ({ db, auth, storage }) => {
 	const identity = await auth.getUserIdentity();
 	if (!identity) {
 		console.error("Authentication required: identity is null");
@@ -290,10 +305,26 @@ export const getMyConversations = query(async ({ db, auth }) => {
 			const participantIds = participantsEntries.map((entry) => entry.user);
 			
 			// For each conversation, fetch the participants with full user data
-			const participantDetails = await Promise.all(
+			// Fetch full user data for participants
+			const participantDetails: (User | null)[] = await Promise.all(
 				participantIds.map(async (id) => {
 				  const participant = await db.get(id);
-				  return participant;
+				  if (participant) {
+					let imageUrl = participant.image || "/placeholder.png";
+		
+					if (participant.imageStorageId) {
+					  const url = await storage.getUrl(participant.imageStorageId);
+					  if (url) {
+						imageUrl = url;
+					  }
+					}
+		
+					return {
+					  ...participant,
+					  image: imageUrl,
+					} as User;
+				  }
+				  return null;
 				})
 			);
 
@@ -326,13 +357,13 @@ export const getMyConversations = query(async ({ db, auth }) => {
 			.withIndex("by_conversation", (q) =>
 			  q.eq("conversation", conversation._id)
 			)
-			.order("desc") // Assuming newer messages have higher _creationTime
+			.order("desc") // Newest messages first
 			.take(1);
 	
 		  	const lastMessage = lastMessageArray[0];
 
-			  	const otherParticipantsLastRead = await Promise.all(
-					otherParticipants.map(async (participant) => {
+			const otherParticipantsLastRead = await Promise.all(
+				otherParticipants.map(async (participant) => {
 					if (participant) {
 						const lastReadRecord = await db
 						.query("user_conversation_reads")
@@ -406,11 +437,32 @@ export const getMyConversations = query(async ({ db, auth }) => {
 				lastMessage: lastMessage || null,
         		unreadMessageCount,
         		isLastMessageSeen,
+				_creationTime: conversation._creationTime,
 			};
 		})
   	);
  	
-  return conversationsWithDetails;
+	// Sort the conversations so that the newest appear first
+	conversationsWithDetails.sort((a, b) => {
+		// Get the timestamp to sort by
+		const aTime = a.lastMessage
+		  ? a.lastMessage._creationTime
+		  : a._creationTime;
+		const bTime = b.lastMessage
+		  ? b.lastMessage._creationTime
+		  : b._creationTime;
+	
+		// Ensure timestamps are numbers
+		const aTimestamp =
+		  typeof aTime === "string" ? new Date(aTime).getTime() : aTime;
+		const bTimestamp =
+		  typeof bTime === "string" ? new Date(bTime).getTime() : bTime;
+	
+		// Sort in descending order (newest first)
+		return bTimestamp - aTimestamp;
+	});
+
+  	return conversationsWithDetails;
 });
 
 export const kickUser = mutation({
