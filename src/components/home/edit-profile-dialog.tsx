@@ -107,7 +107,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
     }
 
     try {
-      let imageStorageId = null;
+      let imageStorageId: string | undefined = undefined;
 
       if (imageFile) {
         // Generate upload URL
