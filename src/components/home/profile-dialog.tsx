@@ -45,12 +45,13 @@ const ProfileDialog = ({ user, conversation, trigger }: ProfileDialogProps) => {
                   href={`https://instagram.com/${user.instagramHandle}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-500 underline"
+                  className="text-gray-500"
                 >
                   @{user.instagramHandle}
                 </a>
               </p>
             )}
+
             {user.tiktokHandle && (
               <p className="text-sm">
                 TikTok:{" "}
@@ -58,12 +59,27 @@ const ProfileDialog = ({ user, conversation, trigger }: ProfileDialogProps) => {
                   href={`https://tiktok.com/@${user.tiktokHandle}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-500 underline"
+                  className="text-gray-500"
                 >
                   @{user.tiktokHandle}
                 </a>
               </p>
             )}
+
+            {user.youtubeHandle && (
+              <p className="text-sm">
+                Youtube:{" "}
+                <a
+                  href={`https://youtube.com/@${user.youtubeHandle}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-500"
+                >
+                  @{user.youtubeHandle}
+                </a>
+              </p>
+            )}
+            
           </div>
         ) : (
           <p>User not found</p>
