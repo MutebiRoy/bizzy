@@ -1,3 +1,4 @@
+// C:\Users\mutebi\Desktop\bizmous\src\components\home\user-list-dialog.tsx
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -134,10 +135,10 @@ const UserListDialog = () => {
 				<DialogHeader>
 					{/* TODO: <DialogClose /> will be here */}
 					<DialogClose ref={dialogCloseRef} />
-					<DialogTitle>Contacts</DialogTitle>
+					<DialogTitle>Create Group</DialogTitle>
 				</DialogHeader>
 
-				<DialogDescription>Start a new chat</DialogDescription>
+				<DialogDescription>Select members</DialogDescription>
 				{renderedImage && (
 					<div className='w-16 h-16 relative mx-auto'>
 						<Image src={renderedImage} fill alt='user image' className='rounded-full object-cover' />
