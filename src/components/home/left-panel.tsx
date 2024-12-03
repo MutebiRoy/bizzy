@@ -164,6 +164,13 @@ const LeftPanel = () => {
                   <GroupMembersDialog selectedConversation={selectedConversation} />
                 )}
               </div>
+              <div className="flex items-center space-x-6">
+                {/* Create Groups Icon /> */}
+                {/* {isAuthenticated && <UserListDialog />} */}
+
+                {/* <ThemeSwitch /> */}
+                {/* <ThemeSwitch /> */}
+              </div>
             </div>
           </header>
 
