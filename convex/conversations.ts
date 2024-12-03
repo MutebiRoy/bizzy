@@ -15,7 +15,7 @@ interface User {
 	username?: string;
 	instagramHandle?: string;
 	tiktokHandle?: string;
-	// Add any other fields you have
+	youtubeHandle?: string;
 }
 
 import {
