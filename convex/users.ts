@@ -3,6 +3,20 @@ import { ConvexError, v } from "convex/values";
 import { internalMutation, mutation, query } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
 
+interface CustomUser {
+	_id: Id<"users">;
+	_creationTime: number;
+	name?: string;
+	email: string;
+	image: string;
+	imageStorageId?: Id<"_storage">;
+	tokenIdentifier: string;
+	isOnline: boolean;
+	username?: string;
+	instagramHandle?: string;
+	tiktokHandle?: string;
+}
+
 export const getUserById = query({
 	args: {
 	  userId: v.id("users"),
@@ -12,6 +26,16 @@ export const getUserById = query({
 	  if (!user) throw new Error("User not found");
 	  return user;
 	},
+});
+
+// Change Profile image
+export const generateUploadUrl = mutation(async ({ storage, auth }) => {
+	const identity = await auth.getUserIdentity();
+	if (!identity) {
+	  throw new Error("Unauthorized");
+	}
+	// Return the upload URL as a string
+	return await storage.generateUploadUrl();
 });
 
 	
@@ -89,16 +113,20 @@ function normalizeUsername(username: string): string {
 // Update the whole profile
 export const updateProfile = mutation({
 	args: {
-	  	name: v.string(),
-	  	username: v.string(),
-	  	instagramHandle: v.optional(v.string()),
-    	tiktokHandle: v.optional(v.string()),
+	  name: v.string(),
+	  username: v.string(),
+	  instagramHandle: v.optional(v.string()),
+	  tiktokHandle: v.optional(v.string()),
+	  imageStorageId: v.optional(v.string()),
 	},
-	handler: async (ctx, { name, username, instagramHandle, tiktokHandle }) => {
-	  const identity = await ctx.auth.getUserIdentity();
+	handler: async (
+	  { db, auth },
+	  { name, username, instagramHandle, tiktokHandle, imageStorageId }
+	) => {
+	  const identity = await auth.getUserIdentity();
 	  if (!identity) throw new Error("Unauthorized");
   
-	  const user = await ctx.db
+	  const user: CustomUser | null = await db
 		.query("users")
 		.withIndex("by_tokenIdentifier", (q) =>
 		  q.eq("tokenIdentifier", identity.tokenIdentifier)
@@ -106,48 +134,57 @@ export const updateProfile = mutation({
 		.unique();
   
 	  if (!user) throw new Error("User not found");
-
-	  // Validate name length
+  
+	  // Trim and validate name
 	  const trimmedName = name.trim();
 	  if (trimmedName.length < 2 || trimmedName.length > 20) {
-		throw new ConvexError("Name must be between 2 and 20 characters.");
+		throw new Error("Name must be between 2 and 20 characters.");
 	  }
   
-	  const normalizedUsername = normalizeUsername(username);
-
-	  // Check if the username is taken by another user
-	  const existingUser = await ctx.db
+	  const normalizedUsername = username.trim().toLowerCase();
+  
+	  // Check if the username is taken by another user (case-insensitive)
+	  const existingUser = await db
 		.query("users")
-		.withIndex("by_username", (q) => q.eq("username", username))
+		.withIndex("by_username", (q) => q.eq("username", normalizedUsername))
 		.first();
   
-	  if (existingUser && existingUser._id !== user._id) {
-		throw new Error("Username is already taken");
-	  }
-
-	  // Enforce maximum lengths
-	  if (instagramHandle && instagramHandle.length > 25) {
-		throw new Error("Instagram handle must be 25 characters or less");
-	  }
-
-	  if (tiktokHandle && tiktokHandle.length > 25) {
-		throw new Error("TikTok handle must be 25 characters or less");
+	  if (existingUser && existingUser._id.toString() !== user._id.toString()) {
+		throw new Error("Username is already taken.");
 	  }
   
-	  await ctx.db.patch(user._id, {
+	  // Enforce maximum lengths for handles
+	  if (instagramHandle && instagramHandle.length > 25) {
+		throw new Error("Instagram handle must be 25 characters or less.");
+	  }
+  
+	  if (tiktokHandle && tiktokHandle.length > 25) {
+		throw new Error("TikTok handle must be 25 characters or less.");
+	  }
+  
+	  // Prepare the fields to update
+	  const updateFields: Partial<CustomUser> = {
 		name: trimmedName,
 		username: normalizedUsername,
 		instagramHandle: instagramHandle?.trim() || undefined,
 		tiktokHandle: tiktokHandle?.trim() || undefined,
-	  });
+	  };
+  
+	  if (imageStorageId) {
+		updateFields.imageStorageId = imageStorageId as Id<"_storage">;
+	  }
+  
+	  await db.patch(user._id, updateFields);
 	},
 });
+  
 
 // Update user profile image
 export const updateUser = internalMutation({
 	args: { 
 		tokenIdentifier: v.string(), 
-		image: v.string() },
+		image: v.string() 
+	},
 	async handler(ctx, args) {
 		const user = await ctx.db
 			.query("users")
@@ -210,25 +247,33 @@ export const getUsers = query({
 	},
 });
 
-export const getMe = query({
-	args: {},
-	handler: async (ctx, args) => {
-		const identity = await ctx.auth.getUserIdentity();
-		if (!identity) {
-			throw new ConvexError("Unauthorized");
-		}
 
-		const user = await ctx.db
-			.query("users")
-			.withIndex("by_tokenIdentifier", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
-			.unique();
-
-		if (!user) {
-			throw new ConvexError("User not found");
-		}
-
-		return user;
-	},
+export const getMe = query(async ({ db, auth, storage }) => {
+	const identity = await auth.getUserIdentity();
+	if (!identity) throw new Error("Unauthorized");
+  
+	const user: CustomUser | null = await db
+	  .query("users")
+	  .withIndex("by_tokenIdentifier", (q) =>
+		q.eq("tokenIdentifier", identity.tokenIdentifier)
+	  )
+	  .unique();
+  
+	if (!user) throw new Error("User not found");
+  
+	let imageUrl = user.image || "/placeholder.png";
+  
+	if (user.imageStorageId) {
+	  const url = await storage.getUrl(user.imageStorageId);
+	  if (url) {
+		imageUrl = url;
+	  }
+	}
+  
+	return {
+	  ...user,
+	  image: imageUrl,
+	};
 });
   
 
