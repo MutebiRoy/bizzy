@@ -1,3 +1,4 @@
+// convex\search.ts
 import { query } from "./_generated/server";
 import { v } from "convex/values";
 
@@ -17,6 +18,25 @@ export const searchUsersByName = query({
       .withSearchIndex("search_name", (q) => q.search("name", searchTerm))
       .collect();
 
-    return users;
+    // Fetch updated image URLs for each user
+    const usersWithImages = await Promise.all(
+      users.map(async (user) => {
+        let imageUrl = user.image || "/placeholder.png";
+
+        if (user.imageStorageId) {
+          const url = await ctx.storage.getUrl(user.imageStorageId);
+          if (url) {
+            imageUrl = url;
+          }
+        }
+
+        return {
+          ...user,
+          image: imageUrl,
+        };
+      })
+    );
+
+    return usersWithImages;
   },
 });
