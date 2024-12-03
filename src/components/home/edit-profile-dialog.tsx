@@ -1,6 +1,6 @@
 // src/components/home/edit-profile-dialog.tsx
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, } from "react";
 import {
   Dialog,
   DialogTrigger,
@@ -11,12 +11,17 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Settings } from "lucide-react";
+import { Settings } from 'lucide-react';
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import toast from "react-hot-toast";
 
-const EditProfileDialog = () => {
+interface EditProfileDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
   const { isAuthenticated } = useConvexAuth();
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
@@ -25,12 +30,18 @@ const EditProfileDialog = () => {
   const [tiktokHandle, setTiktokHandle] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
 
+  // State for image upload
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const me = useQuery(
     api.users.getMe,
     isAuthenticated ? {} : "skip"
   );
 
   const updateProfile = useMutation(api.users.updateProfile);
+  const generateUploadUrl = useMutation(api.users.generateUploadUrl);
 
   // Fetch username availability
   const isUsernameAvailable = useQuery(
@@ -46,6 +57,7 @@ const EditProfileDialog = () => {
       setUsername(me.username || "");
       setInstagramHandle(me.instagramHandle || "");
       setTiktokHandle(me.tiktokHandle || "");
+      setImagePreviewUrl(me.image || null);
     }
   }, [me]);
 
@@ -55,7 +67,24 @@ const EditProfileDialog = () => {
     }
   }, [isUsernameAvailable]);
 
-  const handleSave = async () => {
+  // Handle Change Profile Photo Change
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleSaveProfileEdit = async () => {
     if (username.length > 15) {
       toast.error("Username must be 15 characters or less");
       return;
@@ -72,31 +101,89 @@ const EditProfileDialog = () => {
       toast.error("TikTok handle must be 25 characters or less");
       return;
     }
+    if (name.trim().length < 2 || name.trim().length > 20) {
+      toast.error("Name must be between 2 and 20 characters");
+      return;
+    }
+
     try {
-      await updateProfile({ name, username, instagramHandle, tiktokHandle });
+      let imageStorageId = null;
+
+      if (imageFile) {
+        // Generate upload URL
+        const uploadUrl = await generateUploadUrl();
+
+        // Upload the image
+        const result = await fetch(uploadUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": imageFile.type,
+          },
+          body: imageFile,
+        });
+
+        if (!result.ok) {
+          throw new Error(`Image upload failed with status ${result.status}`);
+        }
+
+        // Extract storageId from the response
+        const { storageId } = await result.json();
+
+        if (!storageId) {
+          throw new Error("Failed to obtain storageId from upload response");
+        }
+
+        imageStorageId = storageId;
+      }
+
+      await updateProfile({ 
+        name: name.trim(),
+        username,
+        instagramHandle,
+        tiktokHandle,
+        imageStorageId, 
+      });
       toast.success("Profile updated successfully");
       setDialogOpen(false); // Close the dialog
     } catch (error) {
       toast.error("Failed to update profile");
+      console.error(error);
     }
   };
 
   return (
-    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      <DialogTrigger asChild>
-        <button
-          className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
-          aria-label="Edit Profile"
-        >
-          <Settings className="w-5 h-5 text-primary" />
-        </button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Profile</DialogTitle>
-          <DialogDescription>Update your profile information</DialogDescription>
+          <DialogDescription></DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
+          {/* Profile Picture Section */}
+          <div className="flex flex-col items-center">
+            <div className="relative">
+              <img
+                src={imagePreviewUrl || "/placeholder.png"}
+                alt="Profile"
+                className="w-32 h-32 rounded-full object-cover"
+              />
+              <button
+                onClick={handleUploadClick}
+                className="absolute bottom-0 right-0 bg-gray-800 text-white p-1 rounded-full"
+              >
+                Change
+              </button>
+            </div>
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept="image/*"
+              className="hidden"
+              onChange={handleImageChange}
+            />
+          </div>
+
+          {/* Name Input */}
           <div>
             <label className="block text-sm font-medium">Name</label>
             <Input
@@ -104,9 +191,14 @@ const EditProfileDialog = () => {
               onChange={(e) => setName(e.target.value)}
               className="mt-1"
             />
+            {name.trim().length > 0 && (name.trim().length < 2 || name.trim().length > 20) && (
+              <p className="text-sm text-red-500">
+                Name must be between 2 and 20 characters.
+              </p>
+            )}
           </div>
           <div>
-            <label className="block text-sm font-medium">Username</label>
+            <label className="block text-sm font-medium">Bizmous Username</label>
             <Input
               value={username}
               maxLength={20}
@@ -117,6 +209,7 @@ const EditProfileDialog = () => {
               <p className="text-sm text-red-500">Username is already taken</p>
             )}
           </div>
+          {/* Instagram Handle Input */}
           <div>
             <label className="block text-sm font-medium">Instagram Username</label>
             <Input
@@ -125,7 +218,14 @@ const EditProfileDialog = () => {
               onChange={(e) => setInstagramHandle(e.target.value)}
               className="mt-1"
             />
+            {instagramHandle.length > 25 && (
+              <p className="text-sm text-red-500">
+                Instagram handle must be 25 characters or less.
+              </p>
+            )}
           </div>
+
+          {/* TikTok Handle Input */}
           <div>
             <label className="block text-sm font-medium">TikTok Username</label>
             <Input
@@ -134,14 +234,20 @@ const EditProfileDialog = () => {
               onChange={(e) => setTiktokHandle(e.target.value)}
               className="mt-1"
             />
+            {tiktokHandle.length > 25 && (
+              <p className="text-sm text-red-500">
+                TikTok handle must be 25 characters or less.
+              </p>
+            )}
           </div>
+
+          {/* Save Button */}
           <div className="flex justify-end">
-            <Button onClick={handleSave}>Save</Button>
+            <Button onClick={handleSaveProfileEdit}>Save</Button>
           </div>
         </div>
       </DialogContent>
     </Dialog>
   );
 };
-
 export default EditProfileDialog;
