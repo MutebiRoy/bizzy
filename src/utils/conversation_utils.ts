@@ -7,6 +7,7 @@ export type UserType = {
   name?: string;
   email: string;
   image: string;
+  imageStorageId?: Id<"_storage">;
   tokenIdentifier: string;
   isOnline: boolean;
   username?: string;
@@ -138,12 +139,15 @@ interface SharedConversation {
   
 interface User {
   _id: Id<"users">;
+  _creationTime: number;
   name?: string;
   email: string;
   image: string;
+  imageStorageId?: Id<"_storage">;
+  tokenIdentifier: string;
   isOnline: boolean;
   username?: string;
-  instagramHandle?: string,
+  instagramHandle?: string;
   tiktokHandle?: string;
 }
 
