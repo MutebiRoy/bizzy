@@ -28,6 +28,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
   const [usernameAvailable, setUsernameAvailable] = useState(true);
   const [instagramHandle, setInstagramHandle] = useState("");
   const [tiktokHandle, setTiktokHandle] = useState("");
+  const [youtubeHandle, setYoutubeHandle] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
 
   // State for image upload
@@ -57,6 +58,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
       setUsername(me.username || "");
       setInstagramHandle(me.instagramHandle || "");
       setTiktokHandle(me.tiktokHandle || "");
+      setYoutubeHandle(me.youtubeHandle || "");
       setImagePreviewUrl(me.image || null);
     }
   }, [me]);
@@ -101,6 +103,10 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
       toast.error("TikTok handle must be 25 characters or less");
       return;
     }
+    if (youtubeHandle.length > 30) {
+      toast.error("Youtube handle must be 30 characters or less");
+      return;
+    }
     if (name.trim().length < 2 || name.trim().length > 20) {
       toast.error("Name must be between 2 and 20 characters");
       return;
@@ -141,6 +147,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
         username,
         instagramHandle,
         tiktokHandle,
+        youtubeHandle,
         imageStorageId, 
       });
       toast.success("Profile updated successfully");
@@ -198,7 +205,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium">Bizmous Username</label>
+            <label className="block text-sm font-medium">Bizmous Handle</label>
             <Input
               value={username}
               maxLength={20}
@@ -211,7 +218,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
           </div>
           {/* Instagram Handle Input */}
           <div>
-            <label className="block text-sm font-medium">Instagram Username</label>
+            <label className="block text-sm font-medium">Instagram Handle</label>
             <Input
               value={instagramHandle}
               maxLength={25}
@@ -220,14 +227,14 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
             />
             {instagramHandle.length > 25 && (
               <p className="text-sm text-red-500">
-                Instagram handle must be 25 characters or less.
+                Instagram handle must be 25 characters or less. Dont include @ symbol
               </p>
             )}
           </div>
 
           {/* TikTok Handle Input */}
           <div>
-            <label className="block text-sm font-medium">TikTok Username</label>
+            <label className="block text-sm font-medium">TikTok Handle</label>
             <Input
               value={tiktokHandle}
               maxLength={25}
@@ -236,7 +243,23 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
             />
             {tiktokHandle.length > 25 && (
               <p className="text-sm text-red-500">
-                TikTok handle must be 25 characters or less.
+                TikTok handle must be 25 characters or less. Dont include @ symbol
+              </p>
+            )}
+          </div>
+
+          {/* Youtube Handle Input */}
+          <div>
+            <label className="block text-sm font-medium">Youtube Handle</label>
+            <Input
+              value={youtubeHandle}
+              maxLength={30}
+              onChange={(e) => setYoutubeHandle(e.target.value)}
+              className="mt-1 text-base"
+            />
+            {youtubeHandle.length > 30 && (
+              <p className="text-sm text-red-500">
+                Youtube handle must be 30 characters or less. Dont include @ symbol
               </p>
             )}
           </div>
