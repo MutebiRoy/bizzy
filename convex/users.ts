@@ -15,6 +15,7 @@ interface CustomUser {
 	username?: string;
 	instagramHandle?: string;
 	tiktokHandle?: string;
+	youtubeHandle?: string;
 }
 
 export const getUserById = query({
@@ -117,11 +118,12 @@ export const updateProfile = mutation({
 	  username: v.string(),
 	  instagramHandle: v.optional(v.string()),
 	  tiktokHandle: v.optional(v.string()),
+	  youtubeHandle: v.optional(v.string()),
 	  imageStorageId: v.optional(v.string()),
 	},
 	handler: async (
 	  { db, auth },
-	  { name, username, instagramHandle, tiktokHandle, imageStorageId }
+	  { name, username, instagramHandle, tiktokHandle, youtubeHandle, imageStorageId }
 	) => {
 	  const identity = await auth.getUserIdentity();
 	  if (!identity) throw new Error("Unauthorized");
@@ -161,6 +163,10 @@ export const updateProfile = mutation({
 	  if (tiktokHandle && tiktokHandle.length > 25) {
 		throw new Error("TikTok handle must be 25 characters or less.");
 	  }
+
+	  if (youtubeHandle && youtubeHandle.length > 30) {
+		throw new Error("Youtube handle must be 30 characters or less.");
+	  }
   
 	  // Prepare the fields to update
 	  const updateFields: Partial<CustomUser> = {
@@ -168,6 +174,7 @@ export const updateProfile = mutation({
 		username: normalizedUsername,
 		instagramHandle: instagramHandle?.trim() || undefined,
 		tiktokHandle: tiktokHandle?.trim() || undefined,
+		youtubeHandle: youtubeHandle?.trim() || undefined,
 	  };
   
 	  if (imageStorageId) {
