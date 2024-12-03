@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { ListFilter, Search, ChevronLeft, ArrowLeft, Users, Settings, Home } from "lucide-react";
 import { Input } from "../ui/input";
-import Link from 'next/link'
+import Link from 'next/link';
 import ThemeSwitch from "./theme-switch";
 import Conversation from "./conversation";
 // import { UserButton, useUser } from "@clerk/nextjs";
@@ -263,7 +263,9 @@ const LeftPanel = () => {
               </button> */}
               {/* Edit Profile Button */}
             
-              <Home />
+              {/* <Home 
+               
+              /> */}
 
             </div>
           </footer> 
