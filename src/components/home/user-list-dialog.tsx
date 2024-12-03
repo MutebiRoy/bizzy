@@ -28,6 +28,7 @@ const UserListDialog = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [selectedImage, setSelectedImage] = useState<File | null>(null);
 	const [renderedImage, setRenderedImage] = useState("");
+	const [isDialogOpen, setIsDialogOpen] = useState(false);
 
 	const imgRef = useRef<HTMLInputElement>(null);
 	const dialogCloseRef = useRef<HTMLButtonElement>(null);
@@ -127,9 +128,11 @@ const UserListDialog = () => {
 	}, [selectedImage]);
 
 	return (
-		<Dialog>
-			<DialogTrigger>
-				<Plus size={20} />
+		<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+			<DialogTrigger asChild>
+				<Button onClick={() => setIsDialogOpen(true)} className="bg-transparent text-white-600 ">
+					<Plus size={20} />
+				</Button>
 			</DialogTrigger>
 			<DialogContent>
 				<DialogHeader>
@@ -202,10 +205,16 @@ const UserListDialog = () => {
 					))}
 				</div>
 				<div className='flex justify-between'>
-					<Button variant={"outline"}>Cancel</Button>
+				<Button variant={"outline"} onClick={() => setIsDialogOpen(false)}>
+					Cancel
+				</Button>
 					<Button
 						onClick={handleCreateConversation}
-						disabled={selectedUsers.length === 0 || (selectedUsers.length > 1 && !groupName) || isLoading}
+						disabled={
+							selectedUsers.length === 0 || 
+							(selectedUsers.length > 1 && !groupName) || 
+							isLoading
+						}
 					>
 						{/* spinner */}
 						{isLoading ? (
