@@ -189,7 +189,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="mt-1"
+              className="mt-1 text-base"
             />
             {name.trim().length > 0 && (name.trim().length < 2 || name.trim().length > 20) && (
               <p className="text-sm text-red-500">
@@ -203,7 +203,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
               value={username}
               maxLength={20}
               onChange={(e) => setUsername(e.target.value)}
-              className="mt-1"
+              className="mt-1 text-base"
             />
             {!usernameAvailable && username.length > 0 && (
               <p className="text-sm text-red-500">Username is already taken</p>
@@ -216,7 +216,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
               value={instagramHandle}
               maxLength={25}
               onChange={(e) => setInstagramHandle(e.target.value)}
-              className="mt-1"
+              className="mt-1 text-base"
             />
             {instagramHandle.length > 25 && (
               <p className="text-sm text-red-500">
@@ -232,7 +232,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
               value={tiktokHandle}
               maxLength={25}
               onChange={(e) => setTiktokHandle(e.target.value)}
-              className="mt-1"
+              className="mt-1 text-base"
             />
             {tiktokHandle.length > 25 && (
               <p className="text-sm text-red-500">
