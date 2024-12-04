@@ -1,281 +1,337 @@
-// C:\Users\mutebi\Desktop\bizmous\src\components\home\left-panel.tsx
-"use client";
-import { useState, useEffect } from "react";
-import { ListFilter, Search, ChevronLeft, ArrowLeft, Users, Settings, Home } from "lucide-react";
-import { Input } from "../ui/input";
-import Link from 'next/link';
-import ThemeSwitch from "./theme-switch";
-import Conversation from "./conversation";
-// import { UserButton, useUser } from "@clerk/nextjs";
-import CustomUserButton from "./custom-user-button";
-import UserListDialog from "./user-list-dialog";
-import { useConvexAuth, useQuery, useMutation } from "convex/react";
+// src\components\home\media-dropdown.tsx"
+import { useEffect, useRef, useState } from "react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { ImageIcon, Plus, Video } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription } from "../ui/dialog";
+import { Button } from "../ui/button";
+import Image from "next/image";
+import ReactPlayer from "react-player";
+import toast from "react-hot-toast";
+import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useConversationStore } from "@/store/chat-store";
-import RightPanel from "./right-panel";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import GroupMembersDialog from "./group-members-dialog";
+import { ConversationType, UserType, convertConversationTypes } from "@/utils/conversation_utils";
 import { Id } from "../../../convex/_generated/dataModel";
-import SearchUsers from "./search_users";
-import EditProfileDialog from "./edit-profile-dialog";
-import ProfileDialog from "./profile-dialog";
-import { convertConversationTypes, ConversationType, UserType} from "@/utils/conversation_utils";
 
-interface LastMessage {
-  _id: string;
-  _creationTime: string | number;
-  conversation: string;
-  sender: string;
-  content: string;
-  messageType: "image" | "text" | "video";
-}
+const MediaDropdown = () => {
+	const imageInput = useRef<HTMLInputElement>(null);
+  	const videoInput = useRef<HTMLInputElement>(null);
+  	const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  	const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
 
-interface Conversation {
-  _id: string | null;
-  _creationTime: string | number;
-  lastMessage?: LastMessage;
-  isGroup: boolean;
-  //participants: string[];
-  [key: string]: any; // Additional properties as needed
-}
+	const { isAuthenticated } = useConvexAuth();
+  	const [isLoading, setIsLoading] = useState(false);
 
-const LeftPanel = () => {
-  const { isAuthenticated, isLoading } = useConvexAuth();
+  	const generateUploadUrl = useMutation(api.conversations.generateUploadUrl);
+  	const sendImage = useMutation(api.messages.sendImage);
+  	const sendVideo = useMutation(api.messages.sendVideo);
+  	const createConversation = useMutation(api.conversations.createConversation);
+	// const getConversationById = useQuery(api.conversations.getConversationById);
+	const me = useQuery(
+		api.users.getMe,
+		isAuthenticated ? {} : "skip"
+	);
+	
+  	const { selectedConversation, setSelectedConversation } = useConversationStore();
 
-  // Use `getMe` query to get Convex user
-  const me = useQuery(
-    api.users.getMe,
-    isAuthenticated ? {} : "skip"
-  );
+	if (!isAuthenticated || !me) {
+		// Show a loading state, redirect, or return null
+		return null;
+	}
+	
+  	const handleSendImage = async () => {
+		if (!me) {
+			toast.error("User information is not available.");
+			return;
+		}
+		setIsLoading(true);
+		try {
+			// let conversationId = selectedConversation?._id;
+			let conversation = selectedConversation;
+			// Check if this is a temporary conversation
+			if (!conversation?._id) {
+				
+				// Extract participant IDs, handling possible nulls
+				const participantIds = conversation!.participants
+				.filter((user): user is UserType => user !== null)
+				.map((user) => user._id);
+				
+				// Create a new conversation in the backend and get the full conversation data
+				//Create a new conversation in the backend
+				const newConversation = await createConversation({
+					participants: participantIds,
+					isGroup: false,
+				});
 
-  // const conversations = useQuery(
-  //   api.conversations.getMyConversations,
-  //   isAuthenticated ? {} : "skip"
-  // );
-  const conversations = useQuery(
-    api.conversations.getMyConversations,
-    isAuthenticated ? {} : "skip"
-  ) ?? [];
+				// Ensure conversation is not null
+				if (!newConversation) {
+					throw new Error("Failed to create conversation");
+				}
 
-  const setConversationLastRead = useMutation(api.conversations.setConversationLastRead);
+				/// Convert the new conversation to ConversationType
+				const convertedConversation = convertConversationTypes(newConversation, me._id);
 
-  const { selectedConversation, setSelectedConversation, isViewingConversation, setIsViewingConversation } = useConversationStore();
+				// Update the selectedConversation with the new conversation data
+				const updatedConversation: ConversationType = {
+					...selectedConversation!,
+					...convertedConversation,
+					isTemporary: false, // Remove the temporary flag
+				};
+				setSelectedConversation(updatedConversation);
+				
+				// Assign updatedConversation to conversation
+				conversation = updatedConversation;
+			}
 
-  const conversationName =
-    selectedConversation?.groupName ||
-    selectedConversation?.name ||
-    "No conversation selected";
-    
-  const conversationImage =
-    selectedConversation?.groupImage ||
-    selectedConversation?.image ||
-    "/default-avatar.png";
+			const conversationId = conversation._id;
 
-  const currentUserId = me?._id;
+			if (!conversationId) {
+				throw new Error("Conversation ID is null");
+			}
+		
+			// Step 1: Get a short-lived upload URL
+			const postUrl = await generateUploadUrl();
+			// Step 2: POST the file to the URL
+			const result = await fetch(postUrl, {
+				method: "POST",
+				headers: { "Content-Type": selectedImage!.type },
+				body: selectedImage,
+			});
 
-  useEffect(() => {
-    const conversationIds = conversations?.map((conversation) => conversation._id);
-    if (
-      selectedConversation &&
-      conversationIds &&
-      !conversationIds.includes(selectedConversation._id)
-    ) {
-      setSelectedConversation(null);
-    }
-  }, [conversations, selectedConversation, setSelectedConversation]);
+			if (!result.ok) {
+				throw new Error(`Image upload failed with status ${result.status}`);
+			}
 
-  if (isLoading) return null;
-  if (!isAuthenticated || !me) return null;
+			const { storageId } = await result.json();
+			// Step 3: Save the newly allocated storage id to the database
+			await sendImage({
+				conversationId: conversationId as Id<"conversations">,
+				imgId: storageId,
+				sender: me!._id,
+			});
 
-  const handleBackClick = () => {
-    setIsViewingConversation(false);
-    setSelectedConversation(null);
-  };
+			setSelectedImage(null);
+		} catch (err: any) {
+			toast.error(`Failed to send image: ${err.message}`);
+			console.error(err);
+		  } finally {
+			setIsLoading(false);
+		  }
+	};
 
-  // const handleConversationClick = (conversation: ConversationType) => {
-  //   setSelectedConversation(conversation);
-  //   setIsViewingConversation(true);
-  // };
+	const handleSendVideo = async () => {
+		if (!me) {
+			toast.error("User information is not available.");
+		   return;
+		}
+		setIsLoading(true);
+		try {
+		  let conversation = selectedConversation;
+	  
+		  // Check if this is a temporary conversation
+		  if (!conversation?._id) {
+			// Extract participant IDs, handling possible nulls
+			const participantIds = conversation!.participants
+			  .filter((user): user is UserType => user !== null)
+			  .map((user) => user._id);
+	  
+			// Create a new conversation in the backend
+			const newConversation = await createConversation({
+			  participants: participantIds,
+			  isGroup: false,
+			});
+	  
+			if (!newConversation) {
+			  throw new Error("Failed to create conversation");
+			}
+	  
+			// Convert the new conversation to ConversationType
+			const convertedConversation = convertConversationTypes(newConversation, me._id);
+	  
+			// Update the selectedConversation with the new conversation data
+			const updatedConversation: ConversationType = {
+			  ...selectedConversation!,
+			  ...convertedConversation,
+			  isTemporary: false, // Remove the temporary flag
+			};
+			setSelectedConversation(updatedConversation);
+	  
+			// Assign updatedConversation to conversation
+			conversation = updatedConversation;
+		  }
+	  
+		  const conversationId = conversation._id;
+	  
+		  if (!conversationId) {
+			throw new Error("Conversation ID is null");
+		  }
+	  
+		  // Proceed with sending the video
+		  const postUrl = await generateUploadUrl();
+		  const result = await fetch(postUrl, {
+			method: "POST",
+			headers: { "Content-Type": selectedVideo!.type },
+			body: selectedVideo,
+		  });
+	  
+		  if (!result.ok) {
+			throw new Error(`Video upload failed with status ${result.status}`);
+		  }
+	  
+		  const { storageId } = await result.json();
+	  
+		  await sendVideo({
+			videoId: storageId,
+			conversationId: conversationId as Id<"conversations">,
+			sender: me!._id,
+		  });
+	  
+		  setSelectedVideo(null);
+		} catch (err: any) {
+		  toast.error(`Failed to send video: ${err.message}`);
+		  console.error(err);
+		} finally {
+		  setIsLoading(false);
+		}
+	};
+	  
 
-  const handleConversationClick = async (conversation: ConversationType) => {
-    setSelectedConversation(conversation);
-    setIsViewingConversation(true);
+	return (
+		<>
+			<input
+				type='file'
+				ref={imageInput}
+				className="text-base"
+				accept='image/*'
+				onChange={(e) => setSelectedImage(e.target.files![0])}
+				hidden
+			/>
 
-    // Mark conversation as read
-    if (conversation._id) {
-      await setConversationLastRead({ conversationId: conversation._id });
-    } else {
-      console.error("Conversation ID is null");
-    }
+			<input
+				type='file'
+				ref={videoInput}
+				className="text-base"
+				accept='video/mp4, video/mov, video/webm, video/avi, video/mkv, video/flv, video/wmv, video/3gp, video/ogg'
+				onChange={(e) => setSelectedVideo(e.target?.files![0])}
+				hidden
+			/>
 
+			{selectedImage && (
+				<MediaImageDialog
+					isOpen={selectedImage !== null}
+					onClose={() => setSelectedImage(null)}
+					selectedImage={selectedImage}
+					isLoading={isLoading}
+					handleSendImage={handleSendImage}
+				/>
+			)}
 
-  };
+			{selectedVideo && (
+				<MediaVideoDialog
+					isOpen={selectedVideo !== null}
+					onClose={() => setSelectedVideo(null)}
+					selectedVideo={selectedVideo}
+					isLoading={isLoading}
+					handleSendVideo={handleSendVideo}
+				/>
+			)}
 
-  // Ensure participants array does not contain null values
-  const conversationParticipantList = selectedConversation?.participants.filter(
-    (participant): participant is UserType => participant !== null
-  ) || [];
+			<DropdownMenu>
+				<DropdownMenuTrigger>
+					<Plus className='text-gray-600 dark:text-gray-400' />
+				</DropdownMenuTrigger>
 
-  const otherParticipantInChat = conversationParticipantList.find(
-    (participant) => participant._id.toString() !== me._id.toString()
-  ) || null;
-  
-  return (
-    
-    <div className="flex flex-col h-full chat-container">
-      {isViewingConversation && selectedConversation ? (
-        <>
-          {/* Header - Chat View*/}
-          <header className="flex-none flex-shrink-0">
-            <div className="flex items-center justify-between p-4 text-white">
-              <div className="flex items-center space-x-2">
-                <button
-                  className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
-                  aria-label="Go Back"
-                  onClick={handleBackClick}
-                >
-                  <ArrowLeft className="w-5 h-5 text-white" />
-                </button>
-                {/* Link to Profile Page */}
+				<DropdownMenuContent>
+					<DropdownMenuItem onClick={() => imageInput.current!.click()}>
+						<ImageIcon size={18} className='mr-1' /> Photo
+					</DropdownMenuItem>
+					<DropdownMenuItem onClick={() => videoInput.current!.click()}>
+						<Video size={20} className='mr-1' />
+						Video
+					</DropdownMenuItem>
+				</DropdownMenuContent>
+			</DropdownMenu>
+		</>
+	);
+};
+export default MediaDropdown;
 
-                {selectedConversation && (
-                <ProfileDialog
-                  user={!selectedConversation.isGroup ? otherParticipantInChat : null}
-                  conversation={selectedConversation.isGroup ? selectedConversation : null}
-                  trigger={
-                    <div className="flex items-center space-x-4 cursor-pointer">
-                      <Avatar className="ml-2 w-6 h-6">
-                        <AvatarImage
-                          src={conversationImage || "/placeholder.png"}
-                          className="object-cover"
-                        />
-                        <AvatarFallback>
-                          <div className="animate-pulse bg-gray-tertiary w-full h-full rounded-full" />
-                        </AvatarFallback>
-                      </Avatar>
-                      <h1 className="text-lg font-sm">{conversationName}</h1>
-                    </div>
-                  }
-                />
-                )}
-                
-                {/* View group members Dialog */}
-                {selectedConversation && selectedConversation.isGroup && (
-                  <GroupMembersDialog selectedConversation={selectedConversation} />
-                )}
-              </div>
-              <div className="flex items-center space-x-6">
-                {/* Create Groups Icon /> */}
-                {/* {isAuthenticated && <UserListDialog />} */}
-
-                {/* <ThemeSwitch /> */}
-                {/* <ThemeSwitch /> */}
-              </div>
-            </div>
-          </header>
-
-          {/* Right Pannel */}
-
-          <div className="flex-1 min-h-0 overflow-y-auto">
-            {/* // <div className="overflow-auto h-full"> */}
-              <RightPanel conversation={selectedConversation} />
-            {/* // </div> */}
-          </div>
-
-        </>
-      ) : currentUserId ? (
-        <>
-          {/* Header - Conversations list*/}
-          <header className="flex-none flex-shrink-0">
-            {/* Left: Logged in Profile Picture */}
-            <div className="flex items-center justify-between p-4">
-              {/* <div className="flex items-center"> */}
-                {/* <div className="w-8 h-8 rounded-full overflow-hidden">
-                  <UserButton />
-                </div> */}
-                <CustomUserButton />
-              {/* </div> */}
-
-      
-              {/* Right: Create Groups, Online Users, Theme Toggle */}
-              <div className="flex items-center space-x-6">
-                {/* View Online Users */}
-                <button
-                  className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
-                  aria-label="View Online Users"  
-                >
-                  {/* User Online Button */}
-                  <Users className="w-5 h-5" /> 
-                </button>
-
-                {/* Create Groups Icon /> */}
-                {isAuthenticated && <UserListDialog />}
-
-                {/* <ThemeSwitch /> */}
-                <ThemeSwitch />
-              </div>
-            </div>
-          </header>
-
-          <div className="flex-none p-4">
-            {/* Search Component */}
-            <SearchUsers />
-          </div>
-
-          {/* Conversations List */}
-          <div className="flex-1 min-h-0 overflow-y-auto">
-            {conversations?.length > 0 ? (
-              conversations?.map((conversation, index) => (
-                
-                  <div className={index === 0 ? "pt-[0px]" : ""} key={conversation._id}>
-                    <Conversation
-                      key={conversation._id}
-                      conversation={convertConversationTypes(conversation, currentUserId)}
-                      onClick={() => 
-                        handleConversationClick(
-                          convertConversationTypes(conversation, currentUserId)
-                        )
-                      }
-                    />
-                  </div>
-              ))
-            ) : (
-              <>
-                <p className="text-center text-gray-500 text-sm mt-3">
-                  No conversations yet!
-                </p>
-                <p className="text-center text-gray-500 text-sm mt-3">
-                  Select or search a name to start a conversation
-                </p>
-              </>
-            )}
-          </div>
-
-          <footer className="flex-none flex-shrink-0">
-            <div className="p-4 flex space-x-4">
-              {/* Home Button */}
-              {/* <button
-                className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
-                aria-label="Home"
-                onClick={onHome}
-              >
-                <House className="w-5 h-5 text-primary" />
-              </button> */}
-              {/* Edit Profile Button */}
-            
-              {/* <Home 
-               
-              /> */}
-
-            </div>
-          </footer> 
-
-        </>
-      ) : (
-        <p>Loading...</p>
-      )}
-    </div>
-  );
+type MediaImageDialogProps = {
+	isOpen: boolean;
+	onClose: () => void;
+	selectedImage: File;
+	isLoading: boolean;
+	handleSendImage: () => void;
 };
 
-export default LeftPanel;
+const MediaImageDialog = ({ 
+	isOpen, 
+	onClose, 
+	selectedImage, 
+	isLoading, 
+	handleSendImage 
+}: MediaImageDialogProps) => {
+	const [renderedImage, setRenderedImage] = useState<string | null>(null);
+
+	useEffect(() => {
+		if (!selectedImage) return;
+		const reader = new FileReader();
+		reader.onload = (e) => setRenderedImage(e.target?.result as string);
+		reader.readAsDataURL(selectedImage);
+	}, [selectedImage]);
+
+	return (
+		<Dialog
+			open={isOpen}
+			onOpenChange={(isOpen) => {
+				if (!isOpen) onClose();
+			}}
+		>
+			<DialogContent>
+				<DialogDescription className='flex flex-col gap-10 justify-center items-center'>
+					{renderedImage && <Image src={renderedImage} width={300} height={300} alt='selected image' />}
+					<Button className='w-full' disabled={isLoading} onClick={handleSendImage}>
+						{isLoading ? "Sending..." : "Send"}
+					</Button>
+				</DialogDescription>
+			</DialogContent>
+		</Dialog>
+	);
+};
+
+type MediaVideoDialogProps = {
+	isOpen: boolean;
+	onClose: () => void;
+	selectedVideo: File;
+	isLoading: boolean;
+	handleSendVideo: () => void;
+};
+
+const MediaVideoDialog = ({ 
+	isOpen, 
+	onClose, 
+	selectedVideo, 
+	isLoading, 
+	handleSendVideo 
+}: MediaVideoDialogProps) => {
+	const renderedVideo = URL.createObjectURL(new Blob([selectedVideo], { type: "video/mp4" }));
+
+  	return (
+		<Dialog
+			open={isOpen}
+			onOpenChange={(isOpen) => {
+				if (!isOpen) onClose();
+			}}
+		>
+			<DialogContent>
+				<DialogDescription>Video</DialogDescription>
+				<div className='w-full'>
+					{renderedVideo && <ReactPlayer url={renderedVideo} controls width='100%' />}
+				</div>
+				<Button className='w-full' disabled={isLoading} onClick={handleSendVideo}>
+					{isLoading ? "Sending..." : "Send"}
+				</Button>
+			</DialogContent>
+		</Dialog>
+	);
+};
