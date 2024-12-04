@@ -1,4 +1,4 @@
-// C:\Users\mutebi\Desktop\bizmous\convex\schema.ts
+// convex\schema.ts
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
@@ -17,7 +17,8 @@ export default defineSchema({
   })
     .index("by_tokenIdentifier", ["tokenIdentifier"])
     .index("by_username", ["username"])
-    .searchIndex("search_name", { searchField: "name" }),
+    .searchIndex("search_name", { searchField: "name" })
+    .searchIndex("search_username", { searchField: "username" }),
 
   conversations: defineTable({
     isGroup: v.boolean(),
