@@ -167,7 +167,7 @@ export const updateProfile = mutation({
 	  if (youtubeHandle && youtubeHandle.length > 30) {
 		throw new Error("Youtube handle must be 30 characters or less.");
 	  }
-  
+
 	  // Prepare the fields to update
 	  const updateFields: Partial<CustomUser> = {
 		name: trimmedName,
