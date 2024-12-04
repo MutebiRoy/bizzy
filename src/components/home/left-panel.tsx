@@ -169,7 +169,6 @@ const LeftPanel = () => {
                 {/* {isAuthenticated && <UserListDialog />} */}
 
                 {/* <ThemeSwitch /> */}
-                {/* <ThemeSwitch /> */}
               </div>
             </div>
           </header>
