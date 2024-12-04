@@ -1,337 +1,70 @@
-// src\components\home\media-dropdown.tsx"
-import { useEffect, useRef, useState } from "react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
-import { ImageIcon, Plus, Video } from "lucide-react";
-import { Dialog, DialogContent, DialogDescription } from "../ui/dialog";
-import { Button } from "../ui/button";
-import Image from "next/image";
-import ReactPlayer from "react-player";
-import toast from "react-hot-toast";
-import { useConvexAuth, useMutation, useQuery } from "convex/react";
+// src\components\home\group-members-dialog.tsx
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Crown } from "lucide-react";
+import React from "react";
+import { useQuery } from "convex/react";
+import { ConversationType, UserType } from "@/utils/conversation_utils";
 import { api } from "../../../convex/_generated/api";
-import { useConversationStore } from "@/store/chat-store";
-import { ConversationType, UserType, convertConversationTypes } from "@/utils/conversation_utils";
-import { Id } from "../../../convex/_generated/dataModel";
 
-const MediaDropdown = () => {
-	const imageInput = useRef<HTMLInputElement>(null);
-  	const videoInput = useRef<HTMLInputElement>(null);
-  	const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  	const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
-
-	const { isAuthenticated } = useConvexAuth();
-  	const [isLoading, setIsLoading] = useState(false);
-
-  	const generateUploadUrl = useMutation(api.conversations.generateUploadUrl);
-  	const sendImage = useMutation(api.messages.sendImage);
-  	const sendVideo = useMutation(api.messages.sendVideo);
-  	const createConversation = useMutation(api.conversations.createConversation);
-	// const getConversationById = useQuery(api.conversations.getConversationById);
-	const me = useQuery(
-		api.users.getMe,
-		isAuthenticated ? {} : "skip"
-	);
-	
-  	const { selectedConversation, setSelectedConversation } = useConversationStore();
-
-	if (!isAuthenticated || !me) {
-		// Show a loading state, redirect, or return null
-		return null;
-	}
-	
-  	const handleSendImage = async () => {
-		if (!me) {
-			toast.error("User information is not available.");
-			return;
-		}
-		setIsLoading(true);
-		try {
-			// let conversationId = selectedConversation?._id;
-			let conversation = selectedConversation;
-			// Check if this is a temporary conversation
-			if (!conversation?._id) {
-				
-				// Extract participant IDs, handling possible nulls
-				const participantIds = conversation!.participants
-				.filter((user): user is UserType => user !== null)
-				.map((user) => user._id);
-				
-				// Create a new conversation in the backend and get the full conversation data
-				//Create a new conversation in the backend
-				const newConversation = await createConversation({
-					participants: participantIds,
-					isGroup: false,
-				});
-
-				// Ensure conversation is not null
-				if (!newConversation) {
-					throw new Error("Failed to create conversation");
-				}
-
-				/// Convert the new conversation to ConversationType
-				const convertedConversation = convertConversationTypes(newConversation, me._id);
-
-				// Update the selectedConversation with the new conversation data
-				const updatedConversation: ConversationType = {
-					...selectedConversation!,
-					...convertedConversation,
-					isTemporary: false, // Remove the temporary flag
-				};
-				setSelectedConversation(updatedConversation);
-				
-				// Assign updatedConversation to conversation
-				conversation = updatedConversation;
-			}
-
-			const conversationId = conversation._id;
-
-			if (!conversationId) {
-				throw new Error("Conversation ID is null");
-			}
-		
-			// Step 1: Get a short-lived upload URL
-			const postUrl = await generateUploadUrl();
-			// Step 2: POST the file to the URL
-			const result = await fetch(postUrl, {
-				method: "POST",
-				headers: { "Content-Type": selectedImage!.type },
-				body: selectedImage,
-			});
-
-			if (!result.ok) {
-				throw new Error(`Image upload failed with status ${result.status}`);
-			}
-
-			const { storageId } = await result.json();
-			// Step 3: Save the newly allocated storage id to the database
-			await sendImage({
-				conversationId: conversationId as Id<"conversations">,
-				imgId: storageId,
-				sender: me!._id,
-			});
-
-			setSelectedImage(null);
-		} catch (err: any) {
-			toast.error(`Failed to send image: ${err.message}`);
-			console.error(err);
-		  } finally {
-			setIsLoading(false);
-		  }
-	};
-
-	const handleSendVideo = async () => {
-		if (!me) {
-			toast.error("User information is not available.");
-		   return;
-		}
-		setIsLoading(true);
-		try {
-		  let conversation = selectedConversation;
-	  
-		  // Check if this is a temporary conversation
-		  if (!conversation?._id) {
-			// Extract participant IDs, handling possible nulls
-			const participantIds = conversation!.participants
-			  .filter((user): user is UserType => user !== null)
-			  .map((user) => user._id);
-	  
-			// Create a new conversation in the backend
-			const newConversation = await createConversation({
-			  participants: participantIds,
-			  isGroup: false,
-			});
-	  
-			if (!newConversation) {
-			  throw new Error("Failed to create conversation");
-			}
-	  
-			// Convert the new conversation to ConversationType
-			const convertedConversation = convertConversationTypes(newConversation, me._id);
-	  
-			// Update the selectedConversation with the new conversation data
-			const updatedConversation: ConversationType = {
-			  ...selectedConversation!,
-			  ...convertedConversation,
-			  isTemporary: false, // Remove the temporary flag
-			};
-			setSelectedConversation(updatedConversation);
-	  
-			// Assign updatedConversation to conversation
-			conversation = updatedConversation;
-		  }
-	  
-		  const conversationId = conversation._id;
-	  
-		  if (!conversationId) {
-			throw new Error("Conversation ID is null");
-		  }
-	  
-		  // Proceed with sending the video
-		  const postUrl = await generateUploadUrl();
-		  const result = await fetch(postUrl, {
-			method: "POST",
-			headers: { "Content-Type": selectedVideo!.type },
-			body: selectedVideo,
-		  });
-	  
-		  if (!result.ok) {
-			throw new Error(`Video upload failed with status ${result.status}`);
-		  }
-	  
-		  const { storageId } = await result.json();
-	  
-		  await sendVideo({
-			videoId: storageId,
-			conversationId: conversationId as Id<"conversations">,
-			sender: me!._id,
-		  });
-	  
-		  setSelectedVideo(null);
-		} catch (err: any) {
-		  toast.error(`Failed to send video: ${err.message}`);
-		  console.error(err);
-		} finally {
-		  setIsLoading(false);
-		}
-	};
-	  
-
-	return (
-		<>
-			<input
-				type='file'
-				ref={imageInput}
-				className="text-base"
-				accept='image/*'
-				onChange={(e) => setSelectedImage(e.target.files![0])}
-				hidden
-			/>
-
-			<input
-				type='file'
-				ref={videoInput}
-				className="text-base"
-				accept='video/mp4, video/mov, video/webm, video/avi, video/mkv, video/flv, video/wmv, video/3gp, video/ogg'
-				onChange={(e) => setSelectedVideo(e.target?.files![0])}
-				hidden
-			/>
-
-			{selectedImage && (
-				<MediaImageDialog
-					isOpen={selectedImage !== null}
-					onClose={() => setSelectedImage(null)}
-					selectedImage={selectedImage}
-					isLoading={isLoading}
-					handleSendImage={handleSendImage}
-				/>
-			)}
-
-			{selectedVideo && (
-				<MediaVideoDialog
-					isOpen={selectedVideo !== null}
-					onClose={() => setSelectedVideo(null)}
-					selectedVideo={selectedVideo}
-					isLoading={isLoading}
-					handleSendVideo={handleSendVideo}
-				/>
-			)}
-
-			<DropdownMenu>
-				<DropdownMenuTrigger>
-					<Plus className='text-gray-600 dark:text-gray-400' />
-				</DropdownMenuTrigger>
-
-				<DropdownMenuContent>
-					<DropdownMenuItem onClick={() => imageInput.current!.click()}>
-						<ImageIcon size={18} className='mr-1' /> Photo
-					</DropdownMenuItem>
-					<DropdownMenuItem onClick={() => videoInput.current!.click()}>
-						<Video size={20} className='mr-1' />
-						Video
-					</DropdownMenuItem>
-				</DropdownMenuContent>
-			</DropdownMenu>
-		</>
-	);
-};
-export default MediaDropdown;
-
-type MediaImageDialogProps = {
-	isOpen: boolean;
-	onClose: () => void;
-	selectedImage: File;
-	isLoading: boolean;
-	handleSendImage: () => void;
+type GroupMembersDialogProps = {
+	selectedConversation: ConversationType;
 };
 
-const MediaImageDialog = ({ 
-	isOpen, 
-	onClose, 
-	selectedImage, 
-	isLoading, 
-	handleSendImage 
-}: MediaImageDialogProps) => {
-	const [renderedImage, setRenderedImage] = useState<string | null>(null);
-
-	useEffect(() => {
-		if (!selectedImage) return;
-		const reader = new FileReader();
-		reader.onload = (e) => setRenderedImage(e.target?.result as string);
-		reader.readAsDataURL(selectedImage);
-	}, [selectedImage]);
-
+//const GroupMembersDialog = ({ selectedConversation }: GroupMembersDialogProps) => {
+	const GroupMembersDialog: React.FC<GroupMembersDialogProps> = ({ selectedConversation }) => {
+	const users = useQuery(
+		api.users.getGroupMembers, 
+		selectedConversation._id ? { conversationId: selectedConversation._id } : "skip"
+	);
 	return (
-		<Dialog
-			open={isOpen}
-			onOpenChange={(isOpen) => {
-				if (!isOpen) onClose();
-			}}
-		>
+		<Dialog>
+			<DialogTrigger>
+				<p className='text-xs text-muted-foreground text-left'>See members</p>
+			</DialogTrigger>
 			<DialogContent>
-				<DialogDescription className='flex flex-col gap-10 justify-center items-center'>
-					{renderedImage && <Image src={renderedImage} width={300} height={300} alt='selected image' />}
-					<Button className='w-full' disabled={isLoading} onClick={handleSendImage}>
-						{isLoading ? "Sending..." : "Send"}
-					</Button>
-				</DialogDescription>
+				<DialogHeader>
+					<DialogTitle className='my-2'>Current Members</DialogTitle>
+					<DialogDescription>
+						<div className='flex flex-col gap-3 '>
+						{users?.map((user) => (
+  user && (
+							<div key={user._id} className={`flex gap-3 items-center p-2 rounded`}>
+								<Avatar className='overflow-visible'>
+									{user?.isOnline && (
+										<div className='absolute top-0 right-0 w-2 h-2 bg-green-500 rounded-full border-2 border-foreground' />
+									)}
+									<AvatarImage src={user.image} className='rounded-full object-cover' />
+									<AvatarFallback>
+										<div className='animate-pulse bg-gray-tertiary w-full h-full rounded-full'></div>
+									</AvatarFallback>
+								</Avatar>
+
+								<div className='w-full '>
+									<div className='flex items-center gap-2'>
+										<h3 className='text-md font-medium'>
+											{/* johndoe@gmail.com */}
+											{user.name || user.email.split("@")[0]}
+										</h3>
+										{user._id === selectedConversation.admin && (
+											<Crown size={16} className='text-yellow-400' />
+										)}
+									</div>
+								</div>
+							</div>
+							)))}
+						</div>
+					</DialogDescription>
+				</DialogHeader>
 			</DialogContent>
 		</Dialog>
 	);
 };
-
-type MediaVideoDialogProps = {
-	isOpen: boolean;
-	onClose: () => void;
-	selectedVideo: File;
-	isLoading: boolean;
-	handleSendVideo: () => void;
-};
-
-const MediaVideoDialog = ({ 
-	isOpen, 
-	onClose, 
-	selectedVideo, 
-	isLoading, 
-	handleSendVideo 
-}: MediaVideoDialogProps) => {
-	const renderedVideo = URL.createObjectURL(new Blob([selectedVideo], { type: "video/mp4" }));
-
-  	return (
-		<Dialog
-			open={isOpen}
-			onOpenChange={(isOpen) => {
-				if (!isOpen) onClose();
-			}}
-		>
-			<DialogContent>
-				<DialogDescription>Video</DialogDescription>
-				<div className='w-full'>
-					{renderedVideo && <ReactPlayer url={renderedVideo} controls width='100%' />}
-				</div>
-				<Button className='w-full' disabled={isLoading} onClick={handleSendVideo}>
-					{isLoading ? "Sending..." : "Send"}
-				</Button>
-			</DialogContent>
-		</Dialog>
-	);
-};
+export default GroupMembersDialog;
