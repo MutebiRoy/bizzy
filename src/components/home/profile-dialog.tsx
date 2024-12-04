@@ -1,92 +1,44 @@
-// src/components/home/profile-dialog.tsx
+// src/components/home/right-panel.tsx"
 "use client";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-} from "@/components/ui/dialog";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { UserType, ConversationType } from "@/utils/conversation_utils";
+import { useEffect } from "react";
+import { useQuery } from "convex/react";
+import { useConversationStore } from "@/store/chat-store";
+import MessageContainer from "./message-container";
+import MessageInput from "./message-input";
+import { ConversationType} from "@/utils/conversation_utils";
 
-interface ProfileDialogProps {
-  user?: UserType | null;
-  conversation?: ConversationType | null;
-  trigger: React.ReactNode;
+interface RightPanelProps {
+    conversation: ConversationType | null;  // Use ConversationType or null
 }
 
-const ProfileDialog = ({ user, conversation, trigger }: ProfileDialogProps) => {
-  const isGroup = conversation?.isGroup;
+const RightPanel = ({ conversation }: RightPanelProps) => {
+    const { selectedConversation, setSelectedConversation } = useConversationStore();
+    
+    // Only attempt to fetch messages if a conversation is selected
+    //const messages = useQuery(api.messages.getMessages, { conversation: conversation?._id! });
 
-  return (
-    <Dialog>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent>
-        {isGroup ? (
-          <div className="flex flex-col items-center space-y-4">
-            <Avatar className="w-32 h-32">
-              <AvatarImage src={conversation?.groupImage || "/placeholder.png"} />
-              <AvatarFallback>{conversation?.groupName?.charAt(0)}</AvatarFallback>
-            </Avatar>
-            <h2 className="text-2xl font-bold">{conversation?.groupName}</h2>
-            {/* Additional group information can be added here */}
-          </div>
-        ) : user ? (
-          <div className="flex flex-col items-center space-y-4">
-            <Avatar className="w-32 h-32">
-              <AvatarImage src={user.image || "/placeholder.png"} />
-              <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
-            </Avatar>
-            <h2 className="text-2xl font-bold">{user.name}</h2>
-            <p className="text-gray-600">{user.username}</p>
-            {user.instagramHandle && (
-              <p className="text-sm">
-                Instagram:{" "}
-                <a
-                  href={`https://instagram.com/${user.instagramHandle}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-500"
-                >
-                  @{user.instagramHandle}
-                </a>
-              </p>
-            )}
+    useEffect(() => {
+        if (conversation) {
+            setSelectedConversation(conversation);
+        }
+    }, [conversation, setSelectedConversation]);
 
-            {user.tiktokHandle && (
-              <p className="text-sm">
-                TikTok:{" "}
-                <a
-                  href={`https://tiktok.com/@${user.tiktokHandle}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-500"
-                >
-                  @{user.tiktokHandle}
-                </a>
-              </p>
-            )}
+    if (!conversation) {
+        return null;  // Return null if no conversation is selected
+    }
 
-            {user.youtubeHandle && (
-              <p className="text-sm">
-                Youtube:{" "}
-                <a
-                  href={`https://youtube.com/@${user.youtubeHandle}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-500"
-                >
-                  @{user.youtubeHandle}
-                </a>
-              </p>
-            )}
-            
-          </div>
-        ) : (
-          <p>User not found</p>
-        )}
-      </DialogContent>
-    </Dialog>
-  );
+    return (
+        <div className='flex flex-col h-full'>
+                <div className='flex-1 min-h-0 overflow-y-auto'>
+                    <MessageContainer/>
+                </div>
+
+                <footer className='flex-none flex-shrink-0'>
+                    <div className="p-0">
+                        <MessageInput conversation={conversation} />
+                    </div>
+                </footer>
+        </div>
+    );
 };
-
-export default ProfileDialog;
+export default RightPanel;
