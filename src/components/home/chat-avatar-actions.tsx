@@ -1,3 +1,4 @@
+// C:\Users\mutebi\Desktop\bizmous\src\components\home\chat-avatar-actions.tsx
 import { IMessage, useConversationStore } from "@/store/chat-store";
 import { useMutation } from "convex/react";
 import { Ban, LogOut } from "lucide-react";
