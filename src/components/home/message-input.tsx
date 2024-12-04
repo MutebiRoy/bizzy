@@ -1,4 +1,4 @@
-// "C:\src\components\home\message-input.tsx"
+// src\components\home\message-input.tsx"
 import { Laugh, Mic, Plus, Send } from "lucide-react";
 import { Input } from "../ui/input";
 import { useState } from "react";
