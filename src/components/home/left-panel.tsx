@@ -1,4 +1,4 @@
-// C:\Users\mutebi\Desktop\bizmous\src\components\home\left-panel.tsx
+// src\components\home\left-panel.tsx
 "use client";
 import { useState, useEffect } from "react";
 import { ListFilter, Search, ChevronLeft, ArrowLeft, Users, Settings, Home } from "lucide-react";
