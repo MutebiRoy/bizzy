@@ -34,7 +34,7 @@ const SearchUsers = () => {
 
   // Fetch search results
   const searchResults = useQuery(
-    api.search.searchUsersByName,
+    api.search.searchUsersByNameUsername,
     isAuthenticated && trimmedSearchTerm ? { 
       searchTerm: trimmedSearchTerm 
     } : "skip"
