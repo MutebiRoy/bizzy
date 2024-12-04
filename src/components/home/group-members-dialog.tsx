@@ -1,70 +1,281 @@
-// src\components\home\group-members-dialog.tsx
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Crown } from "lucide-react";
-import React from "react";
-import { useQuery } from "convex/react";
-import { ConversationType, UserType } from "@/utils/conversation_utils";
+// C:\Users\mutebi\Desktop\bizmous\src\components\home\left-panel.tsx
+"use client";
+import { useState, useEffect } from "react";
+import { ListFilter, Search, ChevronLeft, ArrowLeft, Users, Settings, Home } from "lucide-react";
+import { Input } from "../ui/input";
+import Link from 'next/link';
+import ThemeSwitch from "./theme-switch";
+import Conversation from "./conversation";
+// import { UserButton, useUser } from "@clerk/nextjs";
+import CustomUserButton from "./custom-user-button";
+import UserListDialog from "./user-list-dialog";
+import { useConvexAuth, useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
+import { useConversationStore } from "@/store/chat-store";
+import RightPanel from "./right-panel";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import GroupMembersDialog from "./group-members-dialog";
+import { Id } from "../../../convex/_generated/dataModel";
+import SearchUsers from "./search_users";
+import EditProfileDialog from "./edit-profile-dialog";
+import ProfileDialog from "./profile-dialog";
+import { convertConversationTypes, ConversationType, UserType} from "@/utils/conversation_utils";
 
-type GroupMembersDialogProps = {
-	selectedConversation: ConversationType;
+interface LastMessage {
+  _id: string;
+  _creationTime: string | number;
+  conversation: string;
+  sender: string;
+  content: string;
+  messageType: "image" | "text" | "video";
+}
+
+interface Conversation {
+  _id: string | null;
+  _creationTime: string | number;
+  lastMessage?: LastMessage;
+  isGroup: boolean;
+  //participants: string[];
+  [key: string]: any; // Additional properties as needed
+}
+
+const LeftPanel = () => {
+  const { isAuthenticated, isLoading } = useConvexAuth();
+
+  // Use `getMe` query to get Convex user
+  const me = useQuery(
+    api.users.getMe,
+    isAuthenticated ? {} : "skip"
+  );
+
+  // const conversations = useQuery(
+  //   api.conversations.getMyConversations,
+  //   isAuthenticated ? {} : "skip"
+  // );
+  const conversations = useQuery(
+    api.conversations.getMyConversations,
+    isAuthenticated ? {} : "skip"
+  ) ?? [];
+
+  const setConversationLastRead = useMutation(api.conversations.setConversationLastRead);
+
+  const { selectedConversation, setSelectedConversation, isViewingConversation, setIsViewingConversation } = useConversationStore();
+
+  const conversationName =
+    selectedConversation?.groupName ||
+    selectedConversation?.name ||
+    "No conversation selected";
+    
+  const conversationImage =
+    selectedConversation?.groupImage ||
+    selectedConversation?.image ||
+    "/default-avatar.png";
+
+  const currentUserId = me?._id;
+
+  useEffect(() => {
+    const conversationIds = conversations?.map((conversation) => conversation._id);
+    if (
+      selectedConversation &&
+      conversationIds &&
+      !conversationIds.includes(selectedConversation._id)
+    ) {
+      setSelectedConversation(null);
+    }
+  }, [conversations, selectedConversation, setSelectedConversation]);
+
+  if (isLoading) return null;
+  if (!isAuthenticated || !me) return null;
+
+  const handleBackClick = () => {
+    setIsViewingConversation(false);
+    setSelectedConversation(null);
+  };
+
+  // const handleConversationClick = (conversation: ConversationType) => {
+  //   setSelectedConversation(conversation);
+  //   setIsViewingConversation(true);
+  // };
+
+  const handleConversationClick = async (conversation: ConversationType) => {
+    setSelectedConversation(conversation);
+    setIsViewingConversation(true);
+
+    // Mark conversation as read
+    if (conversation._id) {
+      await setConversationLastRead({ conversationId: conversation._id });
+    } else {
+      console.error("Conversation ID is null");
+    }
+
+
+  };
+
+  // Ensure participants array does not contain null values
+  const conversationParticipantList = selectedConversation?.participants.filter(
+    (participant): participant is UserType => participant !== null
+  ) || [];
+
+  const otherParticipantInChat = conversationParticipantList.find(
+    (participant) => participant._id.toString() !== me._id.toString()
+  ) || null;
+  
+  return (
+    
+    <div className="flex flex-col h-full chat-container">
+      {isViewingConversation && selectedConversation ? (
+        <>
+          {/* Header - Chat View*/}
+          <header className="flex-none flex-shrink-0">
+            <div className="flex items-center justify-between p-4 text-white">
+              <div className="flex items-center space-x-2">
+                <button
+                  className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+                  aria-label="Go Back"
+                  onClick={handleBackClick}
+                >
+                  <ArrowLeft className="w-5 h-5 text-white" />
+                </button>
+                {/* Link to Profile Page */}
+
+                {selectedConversation && (
+                <ProfileDialog
+                  user={!selectedConversation.isGroup ? otherParticipantInChat : null}
+                  conversation={selectedConversation.isGroup ? selectedConversation : null}
+                  trigger={
+                    <div className="flex items-center space-x-4 cursor-pointer">
+                      <Avatar className="ml-2 w-6 h-6">
+                        <AvatarImage
+                          src={conversationImage || "/placeholder.png"}
+                          className="object-cover"
+                        />
+                        <AvatarFallback>
+                          <div className="animate-pulse bg-gray-tertiary w-full h-full rounded-full" />
+                        </AvatarFallback>
+                      </Avatar>
+                      <h1 className="text-lg font-sm">{conversationName}</h1>
+                    </div>
+                  }
+                />
+                )}
+                
+                {/* View group members Dialog */}
+                {selectedConversation && selectedConversation.isGroup && (
+                  <GroupMembersDialog selectedConversation={selectedConversation} />
+                )}
+              </div>
+              <div className="flex items-center space-x-6">
+                {/* Create Groups Icon /> */}
+                {/* {isAuthenticated && <UserListDialog />} */}
+
+                {/* <ThemeSwitch /> */}
+                {/* <ThemeSwitch /> */}
+              </div>
+            </div>
+          </header>
+
+          {/* Right Pannel */}
+
+          <div className="flex-1 min-h-0 overflow-y-auto">
+            {/* // <div className="overflow-auto h-full"> */}
+              <RightPanel conversation={selectedConversation} />
+            {/* // </div> */}
+          </div>
+
+        </>
+      ) : currentUserId ? (
+        <>
+          {/* Header - Conversations list*/}
+          <header className="flex-none flex-shrink-0">
+            {/* Left: Logged in Profile Picture */}
+            <div className="flex items-center justify-between p-4">
+              {/* <div className="flex items-center"> */}
+                {/* <div className="w-8 h-8 rounded-full overflow-hidden">
+                  <UserButton />
+                </div> */}
+                <CustomUserButton />
+              {/* </div> */}
+
+      
+              {/* Right: Create Groups, Online Users, Theme Toggle */}
+              <div className="flex items-center space-x-6">
+                {/* View Online Users */}
+                <button
+                  className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+                  aria-label="View Online Users"  
+                >
+                  {/* User Online Button */}
+                  <Users className="w-5 h-5" /> 
+                </button>
+
+                {/* Create Groups Icon /> */}
+                {isAuthenticated && <UserListDialog />}
+
+                {/* <ThemeSwitch /> */}
+                <ThemeSwitch />
+              </div>
+            </div>
+          </header>
+
+          <div className="flex-none p-4">
+            {/* Search Component */}
+            <SearchUsers />
+          </div>
+
+          {/* Conversations List */}
+          <div className="flex-1 min-h-0 overflow-y-auto">
+            {conversations?.length > 0 ? (
+              conversations?.map((conversation, index) => (
+                
+                  <div className={index === 0 ? "pt-[0px]" : ""} key={conversation._id}>
+                    <Conversation
+                      key={conversation._id}
+                      conversation={convertConversationTypes(conversation, currentUserId)}
+                      onClick={() => 
+                        handleConversationClick(
+                          convertConversationTypes(conversation, currentUserId)
+                        )
+                      }
+                    />
+                  </div>
+              ))
+            ) : (
+              <>
+                <p className="text-center text-gray-500 text-sm mt-3">
+                  No conversations yet!
+                </p>
+                <p className="text-center text-gray-500 text-sm mt-3">
+                  Select or search a name to start a conversation
+                </p>
+              </>
+            )}
+          </div>
+
+          <footer className="flex-none flex-shrink-0">
+            <div className="p-4 flex space-x-4">
+              {/* Home Button */}
+              {/* <button
+                className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+                aria-label="Home"
+                onClick={onHome}
+              >
+                <House className="w-5 h-5 text-primary" />
+              </button> */}
+              {/* Edit Profile Button */}
+            
+              {/* <Home 
+               
+              /> */}
+
+            </div>
+          </footer> 
+
+        </>
+      ) : (
+        <p>Loading...</p>
+      )}
+    </div>
+  );
 };
 
-//const GroupMembersDialog = ({ selectedConversation }: GroupMembersDialogProps) => {
-	const GroupMembersDialog: React.FC<GroupMembersDialogProps> = ({ selectedConversation }) => {
-	const users = useQuery(
-		api.users.getGroupMembers, 
-		selectedConversation._id ? { conversationId: selectedConversation._id } : "skip"
-	);
-	return (
-		<Dialog>
-			<DialogTrigger>
-				<p className='text-xs text-muted-foreground text-left'>See members</p>
-			</DialogTrigger>
-			<DialogContent>
-				<DialogHeader>
-					<DialogTitle className='my-2'>Current Members</DialogTitle>
-					<DialogDescription>
-						<div className='flex flex-col gap-3 '>
-						{users?.map((user) => (
-  user && (
-							<div key={user._id} className={`flex gap-3 items-center p-2 rounded`}>
-								<Avatar className='overflow-visible'>
-									{user?.isOnline && (
-										<div className='absolute top-0 right-0 w-2 h-2 bg-green-500 rounded-full border-2 border-foreground' />
-									)}
-									<AvatarImage src={user.image} className='rounded-full object-cover' />
-									<AvatarFallback>
-										<div className='animate-pulse bg-gray-tertiary w-full h-full rounded-full'></div>
-									</AvatarFallback>
-								</Avatar>
-
-								<div className='w-full '>
-									<div className='flex items-center gap-2'>
-										<h3 className='text-md font-medium'>
-											{/* johndoe@gmail.com */}
-											{user.name || user.email.split("@")[0]}
-										</h3>
-										{user._id === selectedConversation.admin && (
-											<Crown size={16} className='text-yellow-400' />
-										)}
-									</div>
-								</div>
-							</div>
-							)))}
-						</div>
-					</DialogDescription>
-				</DialogHeader>
-			</DialogContent>
-		</Dialog>
-	);
-};
-export default GroupMembersDialog;
+export default LeftPanel;
