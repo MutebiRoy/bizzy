@@ -124,7 +124,12 @@ const SearchUsers = () => {
                   <div className="animate-pulse bg-gray-tertiary w-full h-full rounded-full" />
                 </AvatarFallback>
               </Avatar>
-              <span>{user.name}</span>
+              <div className="flex flex-col">
+                <span className="font-medium">{user.name}</span>
+                {user.username && (
+                  <span className="text-sm text-muted-foreground">@{user.username}</span>
+                )}
+              </div>
             </div>
           ))}
         </div>
