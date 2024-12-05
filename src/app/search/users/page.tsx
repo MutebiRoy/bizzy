@@ -114,7 +114,7 @@ return (
           </div>
         ))
       ) : (
-        <p>No users found matching "{searchTerm}".</p>
+        <p>No users found matching '{searchTerm}'.</p>
       )}
     </div>
   );
