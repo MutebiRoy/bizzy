@@ -40,7 +40,7 @@ const ProfileDialog = ({ user, conversation, trigger }: ProfileDialogProps) => {
             <p className="text-gray-600">{user.username}</p>
             {user.instagramHandle && (
               <p className="text-sm">
-                Instagram:{" "}
+                Instagram{" "}
                 <a
                   href={`https://instagram.com/${user.instagramHandle}`}
                   target="_blank"
@@ -54,7 +54,7 @@ const ProfileDialog = ({ user, conversation, trigger }: ProfileDialogProps) => {
 
             {user.tiktokHandle && (
               <p className="text-sm">
-                TikTok:{" "}
+                TikTok{" "}
                 <a
                   href={`https://tiktok.com/@${user.tiktokHandle}`}
                   target="_blank"
@@ -68,7 +68,7 @@ const ProfileDialog = ({ user, conversation, trigger }: ProfileDialogProps) => {
 
             {user.youtubeHandle && (
               <p className="text-sm">
-                Youtube:{" "}
+                Youtube{" "}
                 <a
                   href={`https://youtube.com/@${user.youtubeHandle}`}
                   target="_blank"
