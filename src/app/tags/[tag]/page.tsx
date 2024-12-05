@@ -127,7 +127,7 @@ const TagResultsPage = () => {
         </div>
       ))
     ) : (
-      <p>No users found with the tag '{tag}'.</p>
+      <p>No users found with the tag &quot;{tag}&quot;.</p>
     )}
   </div>
   );
