@@ -28,7 +28,7 @@ const TagsSearchPage = () => {
   return (
     <div className="p-4">
       <h1 className="text-xl font-bold mb-4">
-        Tags matching "{searchTerm}"
+        Tags matching '{searchTerm}'
       </h1>
       {tagResults?.map((tag: string, index: number) => (
         <div
