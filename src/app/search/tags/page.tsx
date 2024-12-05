@@ -2,6 +2,7 @@
 
 "use client";
 
+import { Suspense } from 'react';
 import { useSearchParams, useRouter } from "next/navigation";
 import { useQuery, useMutation, useConvexAuth } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
@@ -43,4 +44,10 @@ const TagsSearchPage = () => {
   );
 };
 
-export default TagsSearchPage;
+export default function Page() {
+	return (
+	  <Suspense fallback={<div>Loading...</div>}>
+		  <TagsSearchPage />
+	  </Suspense>
+	);
+}
