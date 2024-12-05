@@ -89,7 +89,7 @@ const UsersSearchPage = () => {
 
 return (
     <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">Users matching '{searchTerm}'</h1>
+      <h1 className="text-xl font-bold mb-4">Users matching &quot;{searchTerm}&quot;</h1>
       {userResults && userResults.length > 0 ? (
         userResults.map((user: UserType) => (
           <div
@@ -114,7 +114,7 @@ return (
           </div>
         ))
       ) : (
-        <p>No users found matching '{searchTerm}'.</p>
+        <p>No users found matching &quot;{searchTerm}&quot;.</p>
       )}
     </div>
   );
