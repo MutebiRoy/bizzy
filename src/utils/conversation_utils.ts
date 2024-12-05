@@ -14,6 +14,7 @@ export type UserType = {
   instagramHandle?: string,
   tiktokHandle?: string;
   youtubeHandle?: string;
+  tags?: string[];
 };
 
 // Define the Conversation type as returned from the backend
