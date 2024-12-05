@@ -170,7 +170,7 @@ const UserListDialog = () => {
 						</Button>
 					</>
 				)}
-				<div className='flex flex-col gap-3 overflow-auto max-h-60'>
+				<div className='flex flex-col gap-3 overflow-auto max-h-80'>
 					{users?.map((user) => (
 						<div
 							key={user._id}
