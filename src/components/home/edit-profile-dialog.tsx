@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Settings } from 'lucide-react';
+import { Settings, Tag } from 'lucide-react';
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import toast from "react-hot-toast";
@@ -30,6 +30,8 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
   const [tiktokHandle, setTiktokHandle] = useState("");
   const [youtubeHandle, setYoutubeHandle] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState(""); 
 
   // State for image upload
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -60,6 +62,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
       setTiktokHandle(me.tiktokHandle || "");
       setYoutubeHandle(me.youtubeHandle || "");
       setImagePreviewUrl(me.image || null);
+      setTags(me.tags || []);
     }
   }, [me]);
 
@@ -68,6 +71,20 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
       setUsernameAvailable(isUsernameAvailable);
     }
   }, [isUsernameAvailable]);
+
+  // Add tags
+  const addTag = () => {
+    const newTag = tagInput.trim().toLowerCase();
+    if (newTag && !tags.includes(newTag) && tags.length < 12) {
+      setTags([...tags, newTag]);
+      setTagInput("");
+    }
+  };
+
+  // remove a tag
+  const removeTag = (tagToRemove: string) => {
+    setTags(tags.filter((tag) => tag !== tagToRemove));
+  };
 
   // Handle Change Profile Photo Change
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,6 +128,10 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
       toast.error("Name must be between 2 and 20 characters");
       return;
     }
+    if (tags.length > 12) {
+      toast.error("You can add up to 12 tags.");
+      return;
+    }
 
     try {
       let imageStorageId: string | undefined = undefined;
@@ -148,7 +169,8 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
         instagramHandle,
         tiktokHandle,
         youtubeHandle,
-        imageStorageId, 
+        imageStorageId,
+        tags,
       });
       toast.success("Profile updated successfully");
       setDialogOpen(false); // Close the dialog
@@ -162,41 +184,45 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit Profile</DialogTitle>
-          <DialogDescription></DialogDescription>
-        </DialogHeader>
-        <div className="space-y-4">
-          {/* Profile Picture Section */}
-          <div className="flex flex-col items-center">
-            <div className="relative">
-              <img
-                src={imagePreviewUrl || "/placeholder.png"}
-                alt="Profile"
-                className="w-32 h-32 rounded-full object-cover"
+          <DialogTitle>
+            Edit Profile
+          </DialogTitle>
+          <DialogDescription>
+            <div className="flex flex-col items-center">
+              <div className="relative">
+                <img
+                  src={imagePreviewUrl || "/placeholder.png"}
+                  alt="Profile"
+                  className="w-32 h-32 rounded-full object-cover"
+                />
+                <button
+                  onClick={handleUploadClick}
+                  className="absolute bottom-0 right-0 bg-gray-800 text-white p-1 rounded-full"
+                >
+                  Change
+                </button>
+              </div>
+              
+              <input
+                type="file"
+                ref={fileInputRef}
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageChange}
               />
-              <button
-                onClick={handleUploadClick}
-                className="absolute bottom-0 right-0 bg-gray-800 text-white p-1 rounded-full"
-              >
-                Change
-              </button>
             </div>
-            <input
-              type="file"
-              ref={fileInputRef}
-              accept="image/*"
-              className="hidden"
-              onChange={handleImageChange}
-            />
-          </div>
-
+          </DialogDescription>
+        </DialogHeader>
+        {/* <div className="space-y-4"> */}
+          
+        <div className='flex flex-col gap-3 overflow-auto max-h-80'>
           {/* Name Input */}
           <div>
             <label className="block text-sm font-medium">Name</label>
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="mt-1 text-base"
+              className="mt-1 text-base text-gray-500"
             />
             {name.trim().length > 0 && (name.trim().length < 2 || name.trim().length > 20) && (
               <p className="text-sm text-red-500">
@@ -210,7 +236,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
               value={username}
               maxLength={20}
               onChange={(e) => setUsername(e.target.value)}
-              className="mt-1 text-base"
+              className="mt-1 text-base text-gray-500"
             />
             {!usernameAvailable && username.length > 0 && (
               <p className="text-sm text-red-500">Username is already taken</p>
@@ -223,7 +249,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
               value={instagramHandle}
               maxLength={25}
               onChange={(e) => setInstagramHandle(e.target.value)}
-              className="mt-1 text-base"
+              className="mt-1 text-base text-gray-500"
             />
             {instagramHandle.length > 25 && (
               <p className="text-sm text-red-500">
@@ -239,7 +265,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
               value={tiktokHandle}
               maxLength={25}
               onChange={(e) => setTiktokHandle(e.target.value)}
-              className="mt-1 text-base"
+              className="mt-1 text-base text-gray-500"
             />
             {tiktokHandle.length > 25 && (
               <p className="text-sm text-red-500">
@@ -255,7 +281,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
               value={youtubeHandle}
               maxLength={30}
               onChange={(e) => setYoutubeHandle(e.target.value)}
-              className="mt-1 text-base"
+              className="mt-1 text-base text-gray-500"
             />
             {youtubeHandle.length > 30 && (
               <p className="text-sm text-red-500">
@@ -264,10 +290,47 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
             )}
           </div>
 
-          {/* Save Button */}
-          <div className="flex justify-end">
-            <Button onClick={handleSaveProfileEdit}>Save</Button>
+          {/* Tags Input */}
+          <div>
+            <label className="block text-sm font-medium">Tags (up to 12)</label>
+            <div className="flex items-center mt-1">
+              <Input
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    addTag();
+                  }
+                }}
+                placeholder="Add a tag and press Enter"
+                className="flex-grow text-base"
+              />
+              <Button variant="secondary" onClick={addTag} className="ml-2">
+                Add
+              </Button>
+            </div>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {tags.map((tag) => (
+                <div
+                  key={tag}
+                  className="flex items-center space-x-1 bg-gray-200 px-2 py-1 rounded-full text-sm"
+                >
+                  <span>{tag}</span>
+                  <button
+                    onClick={() => removeTag(tag)}
+                    className="text-red-500 hover:text-red-700 focus:outline-none"
+                  >
+                    &times;
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
+        </div>
+        {/* Save Button */}
+        <div className="flex justify-end">
+          <Button onClick={handleSaveProfileEdit}>Save</Button>
         </div>
       </DialogContent>
     </Dialog>
