@@ -14,11 +14,17 @@ export default defineSchema({
     instagramHandle: v.optional(v.string()),
     tiktokHandle: v.optional(v.string()),
     youtubeHandle: v.optional(v.string()),
+    tags: v.optional(v.array(v.string())),
   })
     .index("by_tokenIdentifier", ["tokenIdentifier"])
     .index("by_username", ["username"])
     .searchIndex("search_name", { searchField: "name" })
     .searchIndex("search_username", { searchField: "username" }),
+
+  tags: defineTable({
+    tagName: v.string(),
+    userIds: v.array(v.id("users")),
+  }).index("by_tagName", ["tagName"]),
 
   conversations: defineTable({
     isGroup: v.boolean(),
