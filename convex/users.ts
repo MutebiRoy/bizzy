@@ -16,6 +16,7 @@ interface CustomUser {
 	instagramHandle?: string;
 	tiktokHandle?: string;
 	youtubeHandle?: string;
+	tags?: string[];
 }
 
 export const getUserById = query({
@@ -120,15 +121,25 @@ export const updateProfile = mutation({
 	  tiktokHandle: v.optional(v.string()),
 	  youtubeHandle: v.optional(v.string()),
 	  imageStorageId: v.optional(v.string()),
+	  tags: v.optional(v.array(v.string())),
 	},
 	handler: async (
-	  { db, auth },
-	  { name, username, instagramHandle, tiktokHandle, youtubeHandle, imageStorageId }
+	  ctx,
+	  {
+		name,
+		username,
+		instagramHandle,
+		tiktokHandle,
+		youtubeHandle,
+		imageStorageId,
+		tags,
+	  }
 	) => {
+	  const { db, auth } = ctx;
 	  const identity = await auth.getUserIdentity();
 	  if (!identity) throw new Error("Unauthorized");
   
-	  const user: CustomUser | null = await db
+	  const user = await db
 		.query("users")
 		.withIndex("by_tokenIdentifier", (q) =>
 		  q.eq("tokenIdentifier", identity.tokenIdentifier)
@@ -163,13 +174,13 @@ export const updateProfile = mutation({
 	  if (tiktokHandle && tiktokHandle.length > 25) {
 		throw new Error("TikTok handle must be 25 characters or less.");
 	  }
-
+  
 	  if (youtubeHandle && youtubeHandle.length > 30) {
-		throw new Error("Youtube handle must be 30 characters or less.");
+		throw new Error("YouTube handle must be 30 characters or less.");
 	  }
-
+  
 	  // Prepare the fields to update
-	  const updateFields: Partial<CustomUser> = {
+	  const updateFields: Partial<typeof user> = {
 		name: trimmedName,
 		username: normalizedUsername,
 		instagramHandle: instagramHandle?.trim() || undefined,
@@ -181,7 +192,67 @@ export const updateProfile = mutation({
 		updateFields.imageStorageId = imageStorageId as Id<"_storage">;
 	  }
   
+	  // Normalize tags to lowercase
+	  const newTags = tags ? tags.map((tag) => tag.toLowerCase()) : [];
+  
+	  // Fetch existing tags for comparison
+	  const oldTags = user.tags || [];
+  
+	  // Update the user document with new tags
+	  updateFields.tags = newTags;
+  
+	  // Apply updates to the user document
 	  await db.patch(user._id, updateFields);
+  
+	  // Calculate added and removed tags
+	  const addedTags = newTags.filter((tag) => !oldTags.includes(tag));
+	  const removedTags = oldTags.filter((tag) => !newTags.includes(tag));
+  
+	  // Handle added tags
+	  for (const tag of addedTags) {
+		// Check if the tag document exists
+		let tagDoc = await db
+		  .query("tags")
+		  .withIndex("by_tagName", (q) => q.eq("tagName", tag))
+		  .unique();
+  
+		if (tagDoc) {
+		  // Add user ID to the existing tag document
+		  await db.patch(tagDoc._id, {
+			userIds: [...tagDoc.userIds, user._id],
+		  });
+		} else {
+		  // Create a new tag document
+		  await db.insert("tags", {
+			tagName: tag,
+			userIds: [user._id],
+		  });
+		}
+	  }
+  
+	  // Handle removed tags
+	  for (const tag of removedTags) {
+		let tagDoc = await db
+		  .query("tags")
+		  .withIndex("by_tagName", (q) => q.eq("tagName", tag))
+		  .unique();
+  
+		if (tagDoc) {
+		  // Remove user ID from the tag document
+		  const updatedUserIds = tagDoc.userIds.filter(
+			(id) => id !== user._id
+		  );
+  
+		  if (updatedUserIds.length === 0) {
+			// Remove the tag document if no users are left
+			await db.delete(tagDoc._id);
+		  } else {
+			await db.patch(tagDoc._id, {
+			  userIds: updatedUserIds,
+			});
+		  }
+		}
+	  }
 	},
 });
   
