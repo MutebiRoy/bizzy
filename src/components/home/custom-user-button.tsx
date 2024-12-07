@@ -10,10 +10,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, Pencil } from "lucide-react"; // Use UserEdit instead of UserPen
+import { LogOut, Pencil, Users, Plus } from "lucide-react"; // Use UserEdit instead of UserPen
 import { useRouter } from "next/navigation";
 import EditProfileDialog from "./edit-profile-dialog";
 import { useAuth } from "@clerk/nextjs";
+import UserListDialog from "./user-list-dialog";
+import ThemeSwitch from "./theme-switch";
 
 const CustomUserButton = () => {
   const { signOut } = useAuth();
@@ -21,6 +23,9 @@ const CustomUserButton = () => {
   const me = useQuery(api.users.getMe);
 
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+  const [isUserListOpen, setIsUserListOpen] = useState(false);
+
+  const isAuthenticated = !!me;
 
   if (!me) {
     return null; // or a loading indicator
@@ -37,27 +42,55 @@ const CustomUserButton = () => {
             </Avatar>
           </div>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        <DropdownMenuContent className="ml-3">
+          {/* People Online */}
+          <DropdownMenuItem onClick={() => {
+            // Add your logic for people online here
+            // e.g. navigate to a page or open a dialog
+          }}>
+            <Users className="mr-2 h-4 w-4" />
+            <span>People Online</span>
+          </DropdownMenuItem>
+
+          {/* Create Groups */}
+          {isAuthenticated && (
+            <DropdownMenuItem onClick={() => setIsUserListOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              <span>Create Groups</span>
+            </DropdownMenuItem>
+          )}
+
           <DropdownMenuItem onClick={() => setIsEditProfileOpen(true)}>
             <Pencil className="mr-2 h-4 w-4" />
             <span>Edit Profile</span>
           </DropdownMenuItem>
+
+          {/* Theme Switch */}
+
+          <ThemeSwitch />
+          
+
           <DropdownMenuItem
             onClick={() => {
               signOut();
-              router.push("/"); // Redirect to home or login page after sign out
+              router.push("/"); // Redirect to login page
             }}
           >
             <LogOut className="mr-2 h-4 w-4" />
             <span>Sign Out</span>
           </DropdownMenuItem>
+
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Place the EditProfileDialog outside the DropdownMenu */}
+      {/* Modals outside the DropdownMenu */}
       <EditProfileDialog
         open={isEditProfileOpen}
         onOpenChange={setIsEditProfileOpen}
+      />
+      <UserListDialog 
+        open={isUserListOpen}
+        onOpenChange={setIsUserListOpen}
       />
     </>
   );
