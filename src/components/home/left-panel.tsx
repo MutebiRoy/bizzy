@@ -4,11 +4,8 @@ import { useState, useEffect } from "react";
 import { ListFilter, Search, ChevronLeft, ArrowLeft, Users, Settings, Home } from "lucide-react";
 import { Input } from "../ui/input";
 import Link from 'next/link';
-import ThemeSwitch from "./theme-switch";
 import Conversation from "./conversation";
-// import { UserButton, useUser } from "@clerk/nextjs";
 import CustomUserButton from "./custom-user-button";
-import UserListDialog from "./user-list-dialog";
 import { useConvexAuth, useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useConversationStore } from "@/store/chat-store";
@@ -188,38 +185,13 @@ const LeftPanel = () => {
           <header className="flex-none flex-shrink-0">
             {/* Left: Logged in Profile Picture */}
             <div className="flex items-center justify-between p-4">
-              {/* <div className="flex items-center"> */}
-                {/* <div className="w-8 h-8 rounded-full overflow-hidden">
-                  <UserButton />
-                </div> */}
-                <CustomUserButton />
-              {/* </div> */}
-
-      
-              {/* Right: Create Groups, Online Users, Theme Toggle */}
-              <div className="flex items-center space-x-6">
-                {/* View Online Users */}
-                <button
-                  className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
-                  aria-label="View Online Users"  
-                >
-                  {/* User Online Button */}
-                  <Users className="w-5 h-5" /> 
-                </button>
-
-                {/* Create Groups Icon /> */}
-                {isAuthenticated && <UserListDialog />}
-
-                {/* <ThemeSwitch /> */}
-                <ThemeSwitch />
+              <CustomUserButton />
+              <div className="flex-1 ml-4">
+                {/* Search bar now placed next to profile image */}
+                <SearchUsers />
               </div>
             </div>
           </header>
-
-          <div className="flex-none p-4">
-            {/* Search Component */}
-            <SearchUsers />
-          </div>
 
           {/* Conversations List */}
           <div className="flex-1 min-h-0 overflow-y-auto">
