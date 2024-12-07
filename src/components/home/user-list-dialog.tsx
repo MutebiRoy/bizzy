@@ -21,7 +21,12 @@ import { api } from "../../../convex/_generated/api";
 import toast from "react-hot-toast";
 import { useConversationStore } from "@/store/chat-store";
 
-const UserListDialog = () => {
+interface UserListDialogProps {
+	open: boolean;
+	onOpenChange: (open: boolean) => void;
+}
+
+const UserListDialog = ({ open, onOpenChange }: UserListDialogProps) => {
 	const { isAuthenticated } = useConvexAuth();
 	const [selectedUsers, setSelectedUsers] = useState<Id<"users">[]>([]);
 	const [groupName, setGroupName] = useState("");
@@ -128,12 +133,7 @@ const UserListDialog = () => {
 	}, [selectedImage]);
 
 	return (
-		<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-			<DialogTrigger asChild>
-				<Button onClick={() => setIsDialogOpen(true)} className="bg-transparent text-white-600 ">
-					<Plus size={20} />
-				</Button>
-			</DialogTrigger>
+		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent>
 				<DialogHeader>
 					{/* TODO: <DialogClose /> will be here */}
