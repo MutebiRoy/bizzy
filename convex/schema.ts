@@ -15,6 +15,7 @@ export default defineSchema({
     tiktokHandle: v.optional(v.string()),
     youtubeHandle: v.optional(v.string()),
     tags: v.optional(v.array(v.string())),
+    gender: v.optional(v.string()),
   })
     .index("by_tokenIdentifier", ["tokenIdentifier"])
     .index("by_username", ["username"])
