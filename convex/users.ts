@@ -17,6 +17,7 @@ interface CustomUser {
 	tiktokHandle?: string;
 	youtubeHandle?: string;
 	tags?: string[];
+	gender?: string;
 }
 
 export const getUserById = query({
@@ -122,6 +123,7 @@ export const updateProfile = mutation({
 	  youtubeHandle: v.optional(v.string()),
 	  imageStorageId: v.optional(v.string()),
 	  tags: v.optional(v.array(v.string())),
+	  gender: v.optional(v.string()),
 	},
 	handler: async (
 	  ctx,
@@ -133,6 +135,7 @@ export const updateProfile = mutation({
 		youtubeHandle,
 		imageStorageId,
 		tags,
+		gender,
 	  }
 	) => {
 	  const { db, auth } = ctx;
@@ -178,6 +181,11 @@ export const updateProfile = mutation({
 	  if (youtubeHandle && youtubeHandle.length > 30) {
 		throw new Error("YouTube handle must be 30 characters or less.");
 	  }
+	  // For gender, if not provided or empty, default to "Prefer not to say"
+	  let finalGender = gender?.trim() || "Prefer not to say";
+	  if (finalGender.length > 25) {
+		throw new Error("Gender must be 25 characters or less.");
+	  }
   
 	  // Prepare the fields to update
 	  const updateFields: Partial<typeof user> = {
@@ -186,6 +194,7 @@ export const updateProfile = mutation({
 		instagramHandle: instagramHandle?.trim() || undefined,
 		tiktokHandle: tiktokHandle?.trim() || undefined,
 		youtubeHandle: youtubeHandle?.trim() || undefined,
+		gender: finalGender,
 	  };
   
 	  if (imageStorageId) {
