@@ -21,6 +21,9 @@ interface EditProfileDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
+const GENDER_OPTIONS = ["Male", "Female", "Custom", "Prefer not to say"] as const;
+type GenderOption = typeof GENDER_OPTIONS[number];
+
 const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
   const { isAuthenticated } = useConvexAuth();
   const [name, setName] = useState("");
@@ -31,7 +34,11 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
   const [youtubeHandle, setYoutubeHandle] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
-  const [tagInput, setTagInput] = useState(""); 
+  const [tagInput, setTagInput] = useState("");
+
+  // Gender states
+  const [gender, setGender] = useState<GenderOption>("Prefer not to say");
+  const [customGender, setCustomGender] = useState("");
 
   // State for image upload
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -63,6 +70,22 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
       setYoutubeHandle(me.youtubeHandle || "");
       setImagePreviewUrl(me.image || null);
       setTags(me.tags || []);
+      
+      // Set gender based on what is stored
+      // If me.gender is set and is one of GENDER_OPTIONS, use it.
+      // Else if me.gender is something else (custom), set to "Custom" and put value in customGender.
+      if (me.gender) {
+        if (GENDER_OPTIONS.includes(me.gender as GenderOption)) {
+          setGender(me.gender as GenderOption);
+        } else {
+          // This means me.gender is custom
+          setGender("Custom");
+          setCustomGender(me.gender);
+        }
+      } else {
+        // If no gender stored, default to "Prefer not to say"
+        setGender("Prefer not to say");
+      }
     }
   }, [me]);
 
@@ -104,6 +127,10 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
   };
 
   const handleSaveProfileEdit = async () => {
+    if (name.trim().length < 2 || name.trim().length > 20) {
+      toast.error("Name must be between 2 and 20 characters");
+      return;
+    }
     if (username.length > 15) {
       toast.error("Username must be 15 characters or less");
       return;
@@ -124,12 +151,18 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
       toast.error("Youtube handle must be 30 characters or less");
       return;
     }
-    if (name.trim().length < 2 || name.trim().length > 20) {
-      toast.error("Name must be between 2 and 20 characters");
-      return;
-    }
     if (tags.length > 12) {
       toast.error("You can add up to 12 tags.");
+      return;
+    }
+
+    // Determine final gender value to store
+    if (gender === "Custom" && customGender.trim().length === 0) {
+      toast.error("Please specify a custom gender or choose another option");
+      return;
+    }
+    if (gender === "Custom" && customGender.trim().length > 25) {
+      toast.error("Custom gender must be 25 characters or less");
       return;
     }
 
@@ -163,6 +196,13 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
         imageStorageId = storageId;
       }
 
+      let finalGender: string;
+      if (gender === "Custom") {
+        finalGender = customGender.trim();
+      } else {
+        finalGender = gender; // "Male", "Female", or "Prefer not to say"
+      }
+
       await updateProfile({ 
         name: name.trim(),
         username,
@@ -171,6 +211,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
         youtubeHandle,
         imageStorageId,
         tags,
+        gender: finalGender || "Prefer not to say", // default if nothing set
       });
       toast.success("Profile updated successfully");
       setDialogOpen(false); // Close the dialog
@@ -179,6 +220,10 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
       console.error(error);
     }
   };
+
+  // Limit customGender to 25 chars
+  const customGenderLimit = 25;
+  const customGenderLength = customGender.length;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -230,6 +275,49 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
               </p>
             )}
           </div>
+
+          {/* Gender Options */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Gender</label>
+            <div className="flex flex-col gap-2">
+              {GENDER_OPTIONS.map((option) => (
+                <label key={option} className="flex items-center space-x-2 text-sm">
+                  <input
+                    type="radio"
+                    name="gender"
+                    value={option}
+                    checked={gender === option}
+                    onChange={() => {
+                      setGender(option as GenderOption);
+                      if (option !== "Custom") {
+                        setCustomGender("");
+                      }
+                    }}
+                  />
+                  <span>{option}</span>
+                </label>
+              ))}
+            </div>
+            {gender === "Custom" && (
+              <div className="mt-2">
+                <label className="block text-sm font-medium">Custom Gender</label>
+                <Input
+                  value={customGender}
+                  onChange={(e) => {
+                    if (e.target.value.length <= customGenderLimit) {
+                      setCustomGender(e.target.value);
+                    }
+                  }}
+                  className="mt-1 text-base text-gray-500"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  {customGenderLength}/{customGenderLimit} characters
+                </p>
+              </div>
+            )}
+          </div>
+          
+          {/* Bizmous Handle */}
           <div>
             <label className="block text-sm font-medium">Bizmous Handle</label>
             <Input
