@@ -3,6 +3,8 @@ import { ConvexError, v } from "convex/values";
 import { internalMutation, mutation, query } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
 
+const STANDARD_GENDERS = ["male", "female", "prefer not to say"];
+
 interface CustomUser {
 	_id: Id<"users">;
 	_creationTime: number;
@@ -18,6 +20,7 @@ interface CustomUser {
 	youtubeHandle?: string;
 	tags?: string[];
 	gender?: string;
+	preferredGender?: string;
 }
 
 export const getUserById = query({
@@ -56,6 +59,14 @@ export const createUser = internalMutation({
 		let username = baseUsername;
 		let suffix = 1;
 
+		// Default gender
+		let baseGender = 'prefer not to say';
+		let gender = baseGender;
+		
+		// Default preferred gender
+		let basePreferredGender = 'all genders';
+		let preferredGender = basePreferredGender;
+
 		// Function to generate a new username with suffix
 		const generateUsernameWithSuffix = () => {
 			const suffixStr = suffix.toString();
@@ -88,10 +99,39 @@ export const createUser = internalMutation({
 			image: args.image,
 			isOnline: true,
 			username,
-
+			gender,
+			preferredGender,
 		});
 	},
 });
+
+export const getOnlineUsers = query(async ({ db, storage }) => {
+	const users = await db.query("users").collect();
+	const onlineUsers = users.filter((u) => u.isOnline);
+  
+	const usersWithImages = await Promise.all(
+	  onlineUsers.map(async (user) => {
+		let imageUrl = user.image || "/placeholder.png";
+		if (user.imageStorageId) {
+		  const url = await storage.getUrl(user.imageStorageId);
+		  if (url) {
+			imageUrl = url;
+		  }
+		}
+		return {
+		  ...user,
+		  image: imageUrl,
+		};
+	  })
+	);
+  
+	return usersWithImages;
+});
+
+// Helper function to normalize usernames
+function normalizeUsername(username: string): string {
+	return username.trim().toLowerCase();
+}
 
 // check if a username is available
 export const checkUsernameAvailability = query({
@@ -108,10 +148,25 @@ export const checkUsernameAvailability = query({
 	},
 });
 
-// Helper function to normalize usernames
-function normalizeUsername(username: string): string {
-	return username.trim().toLowerCase();
-}
+// A helper to ensure a gender exists in genders table if it's custom
+async function ensureGenderExists(db: any, gender: string): Promise<string> {
+	const g = gender.trim().toLowerCase();
+	// If standard or "all genders", just return
+	if (STANDARD_GENDERS.includes(g) || g === "all genders") {
+	  return Promise.resolve(g);
+	}
+  
+	// Check if custom gender exists
+	return db.query("genders")
+	.withIndex("by_genderName", (q: any) => q.eq("genderName", g))
+	  .unique()
+	  .then((existing: any) => {
+		if (!existing) {
+		  return db.insert("genders", { genderName: g }).then(() => g);
+		}
+		return g;
+	  });
+  }
 
 // Update the whole profile
 export const updateProfile = mutation({
@@ -124,6 +179,7 @@ export const updateProfile = mutation({
 	  imageStorageId: v.optional(v.string()),
 	  tags: v.optional(v.array(v.string())),
 	  gender: v.optional(v.string()),
+	  preferredGender: v.optional(v.string()),
 	},
 	handler: async (
 	  ctx,
@@ -136,6 +192,7 @@ export const updateProfile = mutation({
 		imageStorageId,
 		tags,
 		gender,
+		preferredGender,
 	  }
 	) => {
 	  const { db, auth } = ctx;
@@ -158,8 +215,12 @@ export const updateProfile = mutation({
 	  }
   
 	  const normalizedUsername = username.trim().toLowerCase();
+
+	  if (normalizedUsername.length < 2 || normalizedUsername.length > 25 ) {
+		throw new Error("Username must be 2 to 25 characters");
+	  }
   
-	  // Check if the username is taken by another user (case-insensitive)
+	  // Check if the username is already taken by another user (case-insensitive)
 	  const existingUser = await db
 		.query("users")
 		.withIndex("by_username", (q) => q.eq("username", normalizedUsername))
@@ -182,11 +243,31 @@ export const updateProfile = mutation({
 		throw new Error("YouTube handle must be 30 characters or less.");
 	  }
 	  // For gender, if not provided or empty, default to "Prefer not to say"
-	  let finalGender = gender?.trim() || "Prefer not to say";
+	  let finalGender = (gender?.trim().toLowerCase()) || "prefer not to say";
+	  let finalPreferredGender = (preferredGender?.trim().toLowerCase()) || "all genders";
+      
+	  // Handle the special case where both gender and preferredGender are the same default value
+	//   if (finalGender === "prefer not to say" && finalPreferredGender === "prefer not to say") {
+	// 	throw new Error("You cannot update both gender and preferred gender to the same default value.");
+	//   }
+
 	  if (finalGender.length > 25) {
 		throw new Error("Gender must be 25 characters or less.");
 	  }
-  
+
+	  if (finalPreferredGender.length > 25) {
+	    throw new Error("Preferred gender must be 25 characters or less.");
+	  }
+
+	  // Ensure custom genders exist in genders table
+	  try {
+		finalGender = await ensureGenderExists(db, finalGender);
+		finalPreferredGender = await ensureGenderExists(db, finalPreferredGender);
+	  } catch (error) {
+		console.error("Error ensuring gender exists:", error);
+		throw new Error("Failed to process gender information.");
+	  }
+
 	  // Prepare the fields to update
 	  const updateFields: Partial<typeof user> = {
 		name: trimmedName,
@@ -195,6 +276,7 @@ export const updateProfile = mutation({
 		tiktokHandle: tiktokHandle?.trim() || undefined,
 		youtubeHandle: youtubeHandle?.trim() || undefined,
 		gender: finalGender,
+		preferredGender: finalPreferredGender,
 	  };
   
 	  if (imageStorageId) {
