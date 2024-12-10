@@ -16,6 +16,7 @@ export default defineSchema({
     youtubeHandle: v.optional(v.string()),
     tags: v.optional(v.array(v.string())),
     gender: v.optional(v.string()),
+    preferredGender: v.optional(v.string()),
   })
     .index("by_tokenIdentifier", ["tokenIdentifier"])
     .index("by_username", ["username"])
@@ -61,4 +62,8 @@ export default defineSchema({
     lastReadTime: v.number(), // Store timestamp in milliseconds
   })
     .index("by_user_and_conversation", ["user", "conversation"]),
+
+  genders: defineTable({
+    genderName: v.string(),
+  }).index("by_genderName", ["genderName"]),
 });
