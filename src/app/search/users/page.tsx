@@ -36,7 +36,9 @@ const UsersSearchPage = () => {
 		isAuthenticated ? {} : "skip"
 	);
 		
-	const createConversation = useMutation(api.conversations.createConversation);
+	const createConversation = useMutation(
+		api.conversations.createConversation
+	);
 	
 	// Handle user selection from search results
 	const handleSelectUser = async (selectedUser: UserType) => {  
@@ -127,4 +129,4 @@ export default function Page() {
 		<UsersSearchPage />
 	  </Suspense>
 	);
-  }
+}
