@@ -45,8 +45,7 @@ const CustomUserButton = () => {
         <DropdownMenuContent className="ml-3">
           {/* People Online */}
           <DropdownMenuItem onClick={() => {
-            // Add your logic for people online here
-            // e.g. navigate to a page or open a dialog
+            router.push("/online");
           }}>
             <Users className="mr-2 h-4 w-4" />
             <span>People Online</span>
