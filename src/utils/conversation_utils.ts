@@ -15,6 +15,8 @@ export type UserType = {
   tiktokHandle?: string;
   youtubeHandle?: string;
   tags?: string[];
+  gender?: string;
+	preferredGender?: string;
 };
 
 // Define the Conversation type as returned from the backend
@@ -42,6 +44,12 @@ export type Conversation = {
   unreadMessageCount?: number | undefined;
   initiator?: string;
   username?: string;
+  instagramHandle?: string;
+	tiktokHandle?: string;
+	youtubeHandle?: string;
+	tags?: string[];
+	gender?: string;
+	preferredGender?: string;
 };
 
 // Define the ConversationType expected in the frontend
@@ -69,6 +77,12 @@ export type ConversationType = {
   unreadMessageCount: number;
   isLastMessageSeen?: boolean;
   initiator?: string;
+  instagramHandle?: string;
+	tiktokHandle?: string;
+	youtubeHandle?: string;
+	tags?: string[];
+	gender?: string;
+	preferredGender?: string;
 };
 
 export function convertConversationTypes(
@@ -128,6 +142,12 @@ interface SharedConversation {
     name?: string;
     image?: string;
     isOnline?: boolean;
+    instagramHandle?: string;
+	tiktokHandle?: string;
+	youtubeHandle?: string;
+	tags?: string[];
+	gender?: string;
+	preferredGender?: string;
     lastMessage?: {
       _id: Id<"messages">;
       _creationTime: number;
@@ -152,6 +172,9 @@ interface User {
   instagramHandle?: string;
   tiktokHandle?: string;
   youtubeHandle?: string;
+	tags?: string[];
+	gender?: string;
+	preferredGender?: string;
 }
 
 // interface ConversationWithParticipants extends Conversation {
