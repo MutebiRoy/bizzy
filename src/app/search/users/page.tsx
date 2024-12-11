@@ -10,6 +10,7 @@ import { useConvexAuth } from "convex/react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useConversationStore } from "@/store/chat-store";
 import { ConversationType, UserType, convertConversationTypes } from "@/utils/conversation_utils";
+import { Home } from "lucide-react";
 
 const UsersSearchPage = () => {
 	const searchParams = useSearchParams();
@@ -91,7 +92,8 @@ const UsersSearchPage = () => {
 };
 
 return (
-    <div className="p-4">
+<div className="flex flex-col min-h-screen">
+	<div className="flex flex-col p-4 flex-grow">
       <h1 className="text-xl font-bold mb-4">Users matching &quot;{searchTerm}&quot;</h1>
       {userResults && userResults.length > 0 ? (
         userResults.map((user: UserType) => (
@@ -120,6 +122,16 @@ return (
         <p>No users found matching &quot;{searchTerm}&quot;.</p>
       )}
     </div>
+	{/* Footer with Home icon pinned at the bottom */}
+    <footer className="p-4 flex justify-center items-center">
+      <button
+        onClick={() => router.push("/")}
+        aria-label="Home"
+      >
+        <Home className="w-6 h-6" />
+      </button>
+    </footer>
+</div>
   );
 };
 
