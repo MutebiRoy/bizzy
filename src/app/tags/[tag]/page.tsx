@@ -10,6 +10,7 @@ import { useConversationStore } from "@/store/chat-store";
 import { ConversationType, UserType, convertConversationTypes } from "@/utils/conversation_utils";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { User } from "@clerk/clerk-sdk-node";
+import { Home } from "lucide-react";
 
 const TagResultsPage = () => {
   const router = useRouter();
@@ -96,7 +97,8 @@ const TagResultsPage = () => {
   };
 
   return (
-    <div className="p-4">
+  <div className="flex flex-col min-h-screen">
+	  <div className="flex flex-col p-4 flex-grow">
       <h1 className="text-xl font-bold mb-4">Users tagged with #{tag}</h1>
       
       {!tagResults ? (
@@ -130,6 +132,18 @@ const TagResultsPage = () => {
       <p>No users found with the tag &quot;{tag}&quot;.</p>
     )}
   </div>
+  
+  {/* Footer with Home icon pinned at the bottom */}
+  <footer className="p-4 flex justify-center items-center">
+    <button
+      onClick={() => router.push("/")}
+      aria-label="Home"
+    >
+      <Home className="w-6 h-6" />
+    </button>
+  </footer>
+
+</div>
   );
 };
 
