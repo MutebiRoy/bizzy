@@ -1,7 +1,8 @@
 // src\components\home\left-panel.tsx
 "use client";
+import { useMemo } from "react";
 import { useState, useEffect } from "react";
-import { ListFilter, Search, ChevronLeft, ArrowLeft, Users, Settings, Home } from "lucide-react";
+import { ListFilter, Search, ArrowLeft, Users, Settings, Home } from "lucide-react";
 import { Input } from "../ui/input";
 import Link from 'next/link';
 import Conversation from "./conversation";
@@ -45,14 +46,8 @@ const LeftPanel = () => {
     isAuthenticated ? {} : "skip"
   );
 
-  // const conversations = useQuery(
-  //   api.conversations.getMyConversations,
-  //   isAuthenticated ? {} : "skip"
-  // );
-  const conversations = useQuery(
-    api.conversations.getMyConversations,
-    isAuthenticated ? {} : "skip"
-  ) ?? [];
+  const rawConversations = useQuery(api.conversations.getMyConversations, isAuthenticated ? {} : "skip");
+  const conversations = useMemo(() => rawConversations ?? [], [rawConversations]);
 
   const setConversationLastRead = useMutation(api.conversations.setConversationLastRead);
 
