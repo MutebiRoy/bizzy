@@ -37,7 +37,17 @@ const ProfileDialog = ({ user, conversation, trigger }: ProfileDialogProps) => {
               <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
             </Avatar>
             <h2 className="text-2xl font-bold">{user.name}</h2>
-            <p className="text-gray-600">{user.username}</p>
+            <p className="text-gray-600">{
+            <a
+              href={`https://bizmous.com/${user.username}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-500"
+            > 
+              @{user.username}
+            </a>
+            }</p>
+
             {user.instagramHandle && (
               <p className="text-sm">
                 Instagram{" "}
