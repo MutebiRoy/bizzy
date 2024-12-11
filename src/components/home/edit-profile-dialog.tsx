@@ -1,6 +1,7 @@
 // src/components/home/edit-profile-dialog.tsx
 "use client";
 import { useState, useEffect, useRef, } from "react";
+import Image from "next/image";
 import {
   Dialog,
   DialogTrigger,
@@ -273,12 +274,15 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
             Edit Profile
           </DialogTitle>
           <DialogDescription>
-            <div className="flex flex-col items-center">
-              <div className="relative">
-                <img
+            
+          </DialogDescription>
+          <div className="flex flex-col items-center">
+              <div className="relative w-32 h-32">
+                <Image
                   src={imagePreviewUrl || "/placeholder.png"}
                   alt="Profile"
-                  className="w-32 h-32 rounded-full object-cover"
+                  fill
+                  className="rounded-full object-cover"
                 />
                 <button
                   onClick={handleUploadClick}
@@ -296,7 +300,6 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
                 onChange={handleImageChange}
               />
             </div>
-          </DialogDescription>
         </DialogHeader>
         {/* <div className="space-y-4"> */}
           
