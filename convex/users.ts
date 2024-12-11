@@ -34,6 +34,32 @@ export const getUserById = query({
 	},
 });
 
+export const getUserByUsername = query({
+	args: {
+	  username: v.string(),
+	},
+	handler: async (ctx, { username }) => {
+	  const normalizedUsername = username.trim().toLowerCase();
+	  const user = await ctx.db
+		.query("users")
+		.withIndex("by_username", q => q.eq("username", normalizedUsername))
+		.first();
+  
+	  if (!user) return null;
+  
+	  let imageUrl = user.image || "/placeholder.png";
+	  if (user.imageStorageId) {
+		const url = await ctx.storage.getUrl(user.imageStorageId);
+		if (url) imageUrl = url;
+	  }
+  
+	  return {
+		...user,
+		image: imageUrl,
+	  };
+	},
+});
+
 // Change Profile image
 export const generateUploadUrl = mutation(async ({ storage, auth }) => {
 	const identity = await auth.getUserIdentity();
