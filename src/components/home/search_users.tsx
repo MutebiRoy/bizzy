@@ -138,7 +138,7 @@ const SearchUsers = () => {
           {/* Section One: User Results */}
           {userResults && userResults.length > 0 && (
             <div>
-              {userResults.slice(0, 5).map((user: UserType) => (
+              {userResults.slice(0, 3).map((user: UserType) => (
               <div
                 key={user._id}
                 className="flex items-center p-2 hover:bg-accent cursor-pointer"
@@ -162,7 +162,7 @@ const SearchUsers = () => {
                 </div>
               </div>
               ))}
-              {userResults.length > 2 && (
+              {userResults.length > 3 && (
                 <div className="text-center mt-2">
                   <button 
                     onClick={() => 
@@ -186,7 +186,7 @@ const SearchUsers = () => {
           {tagResults && tagResults.length > 0 && (
             <div className="flex flex-col mt-1 mb-3">
               <div className="flex flex-wrap ml-3">
-                {tagResults.slice(0, 6).map((tag: string, index: number) => (
+                {tagResults.slice(0, 5).map((tag: string, index: number) => (
                   <span 
                     key={index} 
                     className="mr-1 mt-1 px-2 py-1 bg-gray-800 text-sm rounded-full cursor-pointer hover:bg-accent"
@@ -197,8 +197,8 @@ const SearchUsers = () => {
                   
                 ))}
               </div>
-              {tagResults.length > 6 && (
-                <div className="text-center mt-2 mb-2">
+              {tagResults.length > 5 && (
+                <div className="text-center mt-2 mb-1">
                   <button 
                     onClick={() => 
                       router.push(
