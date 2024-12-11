@@ -128,6 +128,19 @@ export const getOnlineUsers = query(async ({ db, storage }) => {
 	return usersWithImages;
 });
 
+export const getAllGenders = query(async ({ db }) => {
+	const genderDocs = await db.query("genders").collect();
+	// genderDocs: [{_id, genderName}, ...]
+  
+	// Extract genderName strings
+	const genderNames = genderDocs.map(d => d.genderName);
+  
+	// Make sure we have unique set
+	const uniqueGenders = Array.from(new Set(genderNames));
+  
+	return uniqueGenders;
+});
+
 // Helper function to normalize usernames
 function normalizeUsername(username: string): string {
 	return username.trim().toLowerCase();
