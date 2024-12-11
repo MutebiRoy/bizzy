@@ -6,7 +6,7 @@ import { api } from "../../../convex/_generated/api";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useConversationStore } from "@/store/chat-store";
-import { Search } from "lucide-react";
+import { Search, Home } from "lucide-react";
 import { useConvexAuth } from "convex/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -143,7 +143,8 @@ export default function OnlinePage() {
   //const genderOptions = ["all genders", "male", "female", "prefer not to say"];
 
   return (
-    <div className="p-4 space-y-4">
+  <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col p-4 space-y-4 flex-grow">
       <h1 className="text-xl font-bold text-center">Online users</h1>
       <div className="relative">
         <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
@@ -199,5 +200,15 @@ export default function OnlinePage() {
         <p className="text-center">No users found.</p>
       )}
     </div>
+    {/* Footer with Home icon pinned at the bottom */}
+    <footer className="p-4 flex justify-center items-center">
+      <button
+        onClick={() => router.push("/")}
+        aria-label="Home"
+      >
+        <Home className="w-6 h-6" />
+      </button>
+    </footer>
+  </div>
   );
 }
