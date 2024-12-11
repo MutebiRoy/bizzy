@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, Pencil, Users, Plus } from "lucide-react"; // Use UserEdit instead of UserPen
+import { LogOut, Pencil, Users, Plus, Share } from "lucide-react"; // Use UserEdit instead of UserPen
 import { useRouter } from "next/navigation";
 import EditProfileDialog from "./edit-profile-dialog";
 import { useAuth } from "@clerk/nextjs";
@@ -62,6 +62,14 @@ const CustomUserButton = () => {
           <DropdownMenuItem onClick={() => setIsEditProfileOpen(true)}>
             <Pencil className="mr-2 h-4 w-4" />
             <span>Edit Profile</span>
+          </DropdownMenuItem>
+
+          {/* view My Profile */}
+          <DropdownMenuItem onClick={() => {
+            router.push(`/${me.username}`)
+          }}>
+            <Share className="mr-2 h-4 w-4" />
+            <span>View my profile</span>
           </DropdownMenuItem>
 
           {/* Theme Switch */}
