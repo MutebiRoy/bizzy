@@ -31,7 +31,7 @@ export default function OnlinePage() {
   const createConversation = useMutation(api.conversations.createConversation);
 
   // Fetch all genders from genders table
-  const dynamicGenders = useQuery(api.genders.getAllGenders, isAuthenticated ? {} : "skip") ?? [];
+  const dynamicGenders = useQuery(api.users.getAllGenders, isAuthenticated ? {} : "skip") ?? [];
 
   // After we have me, if me has a preferredGender, update state
   useEffect(() => {
