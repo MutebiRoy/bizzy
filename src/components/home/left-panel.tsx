@@ -18,6 +18,7 @@ import SearchUsers from "./search_users";
 import EditProfileDialog from "./edit-profile-dialog";
 import ProfileDialog from "./profile-dialog";
 import { convertConversationTypes, ConversationType, UserType} from "@/utils/conversation_utils";
+import { Main } from "next/document";
 
 interface LastMessage {
   _id: string;
@@ -114,11 +115,11 @@ const LeftPanel = () => {
   
   return (
     
-    <div className="flex flex-col h-full chat-container">
+    <div className="flex flex-col h-screen relative w-full chat-container">
       {isViewingConversation && selectedConversation ? (
-        <>
+        <div className="flex flex-col h-full w-full">
           {/* Header - Chat View*/}
-          <header className="flex-none flex-shrink-0">
+          <header className="fixed top-0 left-0 w-full z-10">
             <div className="flex items-center justify-between p-4 text-white">
               <div className="flex items-center space-x-2">
                 <button
@@ -167,17 +168,17 @@ const LeftPanel = () => {
 
           {/* Right Pannel */}
 
-          <div className="flex-1 min-h-0 overflow-y-auto">
+          <main className="flex-1 overflow-y-auto pt-[60px]">
             {/* // <div className="overflow-auto h-full"> */}
               <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
-          </div>
+          </main>
 
-        </>
+        </div>
       ) : currentUserId ? (
-        <>
+        <div className="flex flex-col h-full w-full">
           {/* Header - Conversations list*/}
-          <header className="flex-none flex-shrink-0">
+          <header className="fixed top-0 left-0 w-full z-10">
             {/* Left: Logged in Profile Picture */}
             <div className="flex items-center justify-between p-4">
               <CustomUserButton />
@@ -189,7 +190,7 @@ const LeftPanel = () => {
           </header>
 
           {/* Conversations List */}
-          <div className="flex-1 min-h-0 overflow-y-auto">
+          <main className="flex-1 overflow-y-auto pt-[60px] pb-[80px]">
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
                 
@@ -215,18 +216,18 @@ const LeftPanel = () => {
                 </p>
               </>
             )}
-          </div>
+          </main>
 
-          <footer className="flex-none flex-shrink-0">
+          <footer className="fixed bottom-0 left-0 w-full z-10">
             <div className="p-4 flex space-x-4">
               {/* Home Button */}
-              {/* <button
+              <button
                 className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
                 aria-label="Home"
-                onClick={onHome}
+                
               >
-                <House className="w-5 h-5 text-primary" />
-              </button> */}
+                <Home className="w-5 h-5 text-primary" />
+              </button>
               {/* Edit Profile Button */}
             
               {/* <Home 
@@ -236,7 +237,7 @@ const LeftPanel = () => {
             </div>
           </footer> 
 
-        </>
+        </div>
       ) : (
         <p>Loading...</p>
       )}
