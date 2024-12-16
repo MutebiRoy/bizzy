@@ -168,11 +168,11 @@ const LeftPanel = () => {
 
           {/* Right Pannel */}
 
-          <main className="flex-1 overflow-y-auto pt-[60px]">
+          <div className="flex-1 overflow-y-auto pt-[60px]">
             {/* // <div className="overflow-auto h-full"> */}
               <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
-          </main>
+          </div>
 
         </div>
       ) : currentUserId ? (
