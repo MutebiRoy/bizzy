@@ -72,6 +72,15 @@
 
     body {
         @apply bg-background text-foreground;
+        margin: 0; /* Reset default body margins - CRUCIAL */
+        min-height: 100vh; /* Important for mobile viewport handling */
+        width: 100vw;
+        overflow-x: hidden;
+    }
+    html,
+    body,
+    #__next {
+        height: 100%; /* Ensure full height */
     }
 }
 
@@ -116,4 +125,21 @@ body,
 }
 .chat-container {
     padding-bottom: env(safe-area-inset-bottom);
-  }
+}
+
+.message-input-container {
+    width: 100%; /* Make sure input takes full width */
+}
+/* Optional: Custom scrollbar styles (If you need them)*/
+/*
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--gray-primary));
+    border-radius: 4px;
+}
+::-webkit-scrollbar-track {
+    background-color: hsl(var(--container));
+}
+*/
