@@ -178,11 +178,11 @@ const LeftPanel = () => {
           </header>
           {/* Right Pannel */}
 
-          <main ref={mainRef} className={`flex-1 overflow-y-auto ${isSafari ? "safari-main-padding safari-main-padding-bottom" : ""}`}> {/* Safari padding and bottom padding */}
+          <main ref={mainRef} className="flex-1 overflow-y-auto">{/* Safari padding and bottom padding */}
             <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
           </main>
-          <footer>
+          <footer className="h-0">
 
           </footer>
 
@@ -202,7 +202,7 @@ const LeftPanel = () => {
           </header>
 
           {/* Conversations List */}
-          <main ref={mainRef} className={`flex-1 overflow-y-auto ${isSafari ? "safari-main-padding safari-main-padding-bottom" : ""}`}> {/* Safari padding and bottom padding */}
+          <main ref={mainRef} className={`flex-1 overflow-y-auto ${isSafari ? "safari-main-padding safari-main-padding-bottom" : ""}`}>
             {/** Conversations List */}
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
