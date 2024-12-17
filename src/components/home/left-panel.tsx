@@ -167,7 +167,7 @@ const LeftPanel = () => {
           </header>
           {/* Right Pannel */}
 
-          <main className="flex-1 overflow-y-auto pt-[0px] safari-fix">
+          <main className="flex-1 overflow-y-auto safari-fix">
             {/* // <div className="overflow-auto h-full"> */}
               <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
@@ -192,7 +192,7 @@ const LeftPanel = () => {
           </header>
 
           {/* Conversations List */}
-          <main className="flex-1 overflow-y-auto pt-[0px] pb-[0px] safari-fix">
+          <main className="flex-1 overflow-y-auto pb-[60px] safari-fix">
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
                 
