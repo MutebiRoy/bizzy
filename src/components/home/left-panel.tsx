@@ -57,16 +57,14 @@ const LeftPanel = () => {
 
   // Detect Safari browser
   useEffect(() => {
-    // More robust Safari detection
-    const isReallySafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor);
-    setIsSafari(isReallySafari);
+    setIsSafari(/^((?!chrome|android).)*safari/i.test(navigator.userAgent));
   }, []);
   
   useEffect(() => {
-    if (!isViewingConversation && mainRef.current) {
-        mainRef.current.scrollTo(0, 0);
-    }
-  }, [isViewingConversation]);
+        if (!isViewingConversation && mainRef.current) {
+            mainRef.current.scrollTo(0, 0);
+        }
+    }, [isViewingConversation]);
 
   const conversationName =
     selectedConversation?.groupName ||
