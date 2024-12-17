@@ -17,6 +17,7 @@ import SearchUsers from "./search_users";
 import EditProfileDialog from "./edit-profile-dialog";
 import ProfileDialog from "./profile-dialog";
 import { convertConversationTypes, ConversationType, UserType} from "@/utils/conversation_utils";
+import { isSafari } from 'react-device-detect';
 
 interface LastMessage {
   _id: string;
@@ -57,9 +58,7 @@ const LeftPanel = () => {
 
   // Detect Safari browser
   useEffect(() => {
-    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) ||
-      navigator.userAgent.toLowerCase().includes('safari') &&
-      !navigator.userAgent.toLowerCase().includes('chrome');
+    const isSafariBrowser = isSafari;
   
     alert(`Browser type: ${isSafari ? 'Safari' : 'Not Safari'}`);
     setIsSafari(isSafari);
