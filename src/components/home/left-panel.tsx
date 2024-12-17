@@ -219,7 +219,7 @@ const LeftPanel = () => {
             )}
           </main>
 
-          <footer className="sticky bottom-0 left-0 w-full z-50 pt-50">
+          <footer className="sticky bottom-0 left-0 w-full z-50 pt-70">
             <div className="p-4 flex space-x-4">
               {/* Home Button */}
               <button
