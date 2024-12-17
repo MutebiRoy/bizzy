@@ -4,6 +4,7 @@
 
 @layer base {
     :root {
+        --header-height: 64px;
         --background: 48, 8%, 88%;
         --foreground: 222.2 84% 4.9%;
         --container: 0 0 100%;
@@ -162,3 +163,19 @@ header, footer {
     }
 }
 
+header.sticky {
+    height: var(--header-height); /* Set a fixed height for the header */
+    background-color: var(--header-bg);
+    padding-top: env(safe-area-inset-top);
+}
+
+/* Safari-specific padding for <main> */
+.safari-main-padding {
+    padding-top: calc(var(--header-height) + env(safe-area-inset-top)); /* Use header height + safe area */
+}
+
+@supports (-webkit-overflow-scrolling: touch) {
+    .safari-main-padding {
+        padding-top: calc(var(--header-height) + env(safe-area-inset-top)); /* Redundant but ensures consistent behavior */
+    }
+}
