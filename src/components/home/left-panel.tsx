@@ -191,7 +191,7 @@ const LeftPanel = () => {
           </header>
 
           {/* Conversations List */}
-          <main className="flex-1 overflow-y-auto pt-[0px] pb-[50px]">
+          <main className="flex-1 overflow-y-auto pt-[0px] pb-[70px]">
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
                 
@@ -219,7 +219,7 @@ const LeftPanel = () => {
             )}
           </main>
 
-          <footer className="sticky bottom-0 left-0 w-full z-50 pt-70">
+          <footer className="sticky bottom-0 left-0 w-full z-50 pt-0">
             <div className="p-4 flex space-x-4">
               {/* Home Button */}
               <button
