@@ -118,7 +118,7 @@ const LeftPanel = () => {
       {isViewingConversation && selectedConversation ? (
         <div className="flex flex-col h-full w-full">
           {/* Header - Chat View*/}
-          <header className="fixed top-0 left-0 w-full z-50">
+          <header className="sticky top-0 left-0 w-full z-50">
             <div className="flex items-center justify-between p-4 text-white">
               <div className="flex items-center space-x-2">
                 <button
@@ -167,7 +167,7 @@ const LeftPanel = () => {
 
           {/* Right Pannel */}
 
-          <main className="flex-1 overflow-y-auto pt-[60px]">
+          <main className="flex-1 overflow-y-auto pt-[0px]">
             {/* // <div className="overflow-auto h-full"> */}
               <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
@@ -180,7 +180,7 @@ const LeftPanel = () => {
       ) : currentUserId ? (
         <div className="flex flex-col h-full w-full">
           {/* Header - Conversations list*/}
-          <header className="fixed top-0 left-0 w-full z-50">
+          <header className="sticky top-0 left-0 w-full z-50">
             {/* Left: Logged in Profile Picture */}
             <div className="flex items-center justify-between p-4">
               <CustomUserButton />
@@ -192,7 +192,7 @@ const LeftPanel = () => {
           </header>
 
           {/* Conversations List */}
-          <main className="flex-1 overflow-y-auto pt-[70px] pb-[80px]">
+          <main className="flex-1 overflow-y-auto pt-[0px] pb-[0px]">
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
                 
@@ -220,7 +220,7 @@ const LeftPanel = () => {
             )}
           </main>
 
-          <footer className="fixed bottom-0 left-0 w-full z-50">
+          <footer className="sticky bottom-0 left-0 w-full z-50">
             <div className="p-4 flex space-x-4">
               {/* Home Button */}
               <button
