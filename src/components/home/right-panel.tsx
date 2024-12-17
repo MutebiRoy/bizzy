@@ -33,11 +33,11 @@ const RightPanel = ({ conversation }: RightPanelProps) => {
                 <MessageContainer/>
             </div>
 
-            <footer className='fixed bottom-0 left-0 w-full bg-white z-20'>
+            <div className='fixed bottom-0 left-0 w-full bg-white z-20'>
                 <div className="p-0">
                     <MessageInput conversation={conversation} />
                 </div>
-            </footer>
+            </div>
         </div>
     );
 };
