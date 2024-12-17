@@ -1,164 +1,260 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+// src\components\home\left-panel.tsx
+"use client";
+import { useMemo } from "react";
+import { useState, useEffect } from "react";
+import { ListFilter, Search, ArrowLeft, Users, Settings, Home } from "lucide-react";
+import { Input } from "../ui/input";
+import Link from 'next/link';
+import Conversation from "./conversation";
+import CustomUserButton from "./custom-user-button";
+import { useConvexAuth, useQuery, useMutation } from "convex/react";
+import { api } from "../../../convex/_generated/api";
+import { useConversationStore } from "@/store/chat-store";
+import RightPanel from "./right-panel";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import GroupMembersDialog from "./group-members-dialog";
+import { Id } from "../../../convex/_generated/dataModel";
+import SearchUsers from "./search_users";
+import EditProfileDialog from "./edit-profile-dialog";
+import ProfileDialog from "./profile-dialog";
+import { convertConversationTypes, ConversationType, UserType} from "@/utils/conversation_utils";
 
-@layer base {
-    :root {
-        --background: 48, 8%, 88%;
-        --foreground: 222.2 84% 4.9%;
-        --container: 0 0 100%;
-        --left-panel: 203, 32%, 10%;
-        --gray-primary: 216, 20%, 95%;
-        --gray-secondary: 216, 20%, 95%;
-        --left-panel: 100, 100%, 100%;
-        --chat-hover: 180, 5%, 96%;
-        --green-primary: 167, 100%, 33%;
-        --green-chat: 111, 91%, 91%;
-        --card: 0 0% 100%;
-        --card-foreground: 222.2 84% 4.9%;
-        --popover: 0 0% 100%;
-        --popover-foreground: 222.2 84% 4.9%;
-        --primary: 222.2 47.4% 11.2%;
-        --primary-foreground: 210 40% 98%;
-        --secondary: 210 40% 96.1%;
-        --secondary-foreground: 222.2 47.4% 11.2%;
-        --muted: 210 40% 96.1%;
-        --muted-foreground: 215.4 16.3% 46.9%;
-        --accent: 210 40% 96.1%;
-        --accent-foreground: 222.2 47.4% 11.2%;
-        --destructive: 0 84.2% 60.2%;
-        --destructive-foreground: 210 40% 98%;
-        --border: 214.3 31.8% 91.4%;
-        --input: 214.3 31.8% 91.4%;
-        --ring: 222.2 84% 4.9%;
-        --radius: 0.5rem;
-    }
-
-    .dark {
-        --background: 202, 31%, 7%;
-        --foreground: 210 40% 98%;
-        --container: 202, 31%, 7%;
-        --gray-primary: 202, 23%, 16%;
-        --gray-secondary: 202, 22%, 17%;
-        --left-panel: 203, 32%, 10%;
-        --chat-hover: 202, 23%, 16%;
-        --green-primary: 167, 100%, 33%;
-        --green-secondary: 165, 100%, 39%;
-        --green-chat: 169, 100%, 18%;
-        --gray-tertiary: 203, 22%, 21%;
-        --card: 222.2 84% 4.9%;
-        --card-foreground: 210 40% 98%;
-        --popover: 222.2 84% 4.9%;
-        --popover-foreground: 210 40% 98%;
-        --primary: 210 40% 98%;
-        --primary-foreground: 222.2 47.4% 11.2%;
-        --secondary: 217.2 32.6% 17.5%;
-        --secondary-foreground: 210 40% 98%;
-        --muted: 217.2 32.6% 17.5%;
-        --muted-foreground: 215 20.2% 65.1%;
-        --accent: 217.2 32.6% 17.5%;
-        --accent-foreground: 210 40% 98%;
-        --destructive: 0 62.8% 30.6%;
-        --destructive-foreground: 210 40% 98%;
-        --border: 217.2 32.6% 17.5%;
-        --input: 217.2 32.6% 17.5%;
-        --ring: 212.7 26.8% 83.9%;
-    }
-
-    .dark {
-        --background: 202, 31%, 7%;
-        --foreground: 210 40% 98%;
-    }
-
-    body {
-        @apply bg-background text-foreground;
-        margin: 0; /* Reset default body margins - CRUCIAL */
-        max-height: 100vh; /* Important for mobile viewport handling */
-        width: 100vw;
-        overflow-x: hidden;
-        display: flex;
-        flex-direction: column;
-    }
-    html,
-    body,
-    #__next {
-        height: 100%; /* Ensure full height */
-        display: flex;
-        flex-direction: column;
-    }
+interface LastMessage {
+  _id: string;
+  _creationTime: string | number;
+  conversation: string;
+  sender: string;
+  content: string;
+  messageType: "image" | "text" | "video";
 }
 
-@layer base {
-    input,
-    textarea,
-    select {
-        @apply text-base;
-    }
-    * {
-        @apply border-border;
-    }
-    body {
-        @apply bg-background text-foreground;
-    }
+interface Conversation {
+  _id: string | null;
+  _creationTime: string | number;
+  lastMessage?: LastMessage;
+  isGroup: boolean;
+  //participants: string[];
+  [key: string]: any; // Additional properties as needed
 }
 
-/* @layer components {
-    ::-webkit-scrollbar {
-        width: 8px;
-    }
-    ::-webkit-scrollbar-thumb {
-        background-color: hsl(var(--gray-primary));
-        border-radius: 4px;
-    }
-    ::-webkit-scrollbar-track {
-        background-color: hsl(var(--container));
-    }
-} */
+const LeftPanel = () => {
+  const { isAuthenticated, isLoading } = useConvexAuth();
 
-input,
-textarea,
-select {
-  @apply text-base;
-}
+  // Use `getMe` query to get Convex user
+  const me = useQuery(
+    api.users.getMe,
+    isAuthenticated ? {} : "skip"
+  );
 
-html,
-body,
-#root,
-#__next {
-  height: 100%;
-  overflow: hidden; 
-}
-.chat-container {
-    padding-bottom: env(safe-area-inset-bottom);
-    position: sticky;
-    bottom: 0;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
+  const rawConversations = useQuery(api.conversations.getMyConversations, isAuthenticated ? {} : "skip");
+  const conversations = useMemo(() => rawConversations ?? [], [rawConversations]);
 
-.message-input-container {
-    width: 100%; /* Make sure input takes full width */
-}
-/* Optional: Custom scrollbar styles (If you need them)*/
-/*
-::-webkit-scrollbar {
-    width: 8px;
-}
-::-webkit-scrollbar-thumb {
-    background-color: hsl(var(--gray-primary));
-    border-radius: 4px;
-}
-::-webkit-scrollbar-track {
-    background-color: hsl(var(--container));
-}
-*/
-header, footer {
-    background-color: rgba(0, 0, 0, 0.8);  
-}
-@supports (-webkit-touch-callout: none) {
-    main.safari-fix {
-      padding-top: 64px; /* Adjust this to match your header's height */
+  const setConversationLastRead = useMutation(api.conversations.setConversationLastRead);
+
+  const { selectedConversation, setSelectedConversation, isViewingConversation, setIsViewingConversation } = useConversationStore();
+  
+  const [isSafari, setIsSafari] = useState(false);
+  const [backClicked, setBackClicked] = useState(false);
+
+  // Detect Safari browser
+  useEffect(() => {
+    setIsSafari(/^((?!chrome|android).)*safari/i.test(navigator.userAgent));
+  }, []);
+  
+  const conversationName =
+    selectedConversation?.groupName ||
+    selectedConversation?.name ||
+    "No conversation selected";
+    
+  const conversationImage =
+    selectedConversation?.groupImage ||
+    selectedConversation?.image ||
+    "/default-avatar.png";
+
+  const currentUserId = me?._id;
+
+
+  useEffect(() => {
+    const conversationIds = conversations?.map((conversation) => conversation._id);
+    if (
+      selectedConversation &&
+      conversationIds &&
+      !conversationIds.includes(selectedConversation._id)
+    ) {
+      setSelectedConversation(null);
     }
-}
+  }, [conversations, selectedConversation, setSelectedConversation]);
 
+  if (isLoading) return null;
+  if (!isAuthenticated || !me) return null;
+
+  const handleBackClick = () => {
+    setIsViewingConversation(false);
+    setSelectedConversation(null);
+    // Add padding conditionally for Safari
+    if (isSafari) {
+      setBackClicked(true); // Trigger the class addition
+      setTimeout(() => setBackClicked(false), 300); // Reset after a short delay
+    }
+
+    // window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleConversationClick = async (conversation: ConversationType) => {
+    setSelectedConversation(conversation);
+    setIsViewingConversation(true);
+
+    // Mark conversation as read
+    if (conversation._id) {
+      await setConversationLastRead({ conversationId: conversation._id });
+    } else {
+      console.error("Conversation ID is null");
+    }
+
+
+  };
+
+  // Ensure participants array does not contain null values
+  const conversationParticipantList = selectedConversation?.participants.filter(
+    (participant): participant is UserType => participant !== null
+  ) || [];
+
+  const otherParticipantInChat = conversationParticipantList.find(
+    (participant) => participant._id.toString() !== me._id.toString()
+  ) || null;
+  
+  return (
+    
+    <div className="flex flex-col h-screen relative w-full chat-container">
+      {isViewingConversation && selectedConversation ? (
+        <div className="flex flex-col h-full w-full">
+          {/* Header - Chat View*/}
+          <header className="sticky top-0 left-0 w-full z-50">
+            <div className="flex items-center justify-between p-4 text-white">
+              <div className="flex items-center space-x-2">
+                <button
+                  className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+                  aria-label="Go Back"
+                  onClick={handleBackClick}
+                >
+                  <ArrowLeft className="w-5 h-5 text-white" />
+                </button>
+                {/* Link to Profile Page */}
+
+                {selectedConversation && (
+                <ProfileDialog
+                  user={!selectedConversation.isGroup ? otherParticipantInChat : null}
+                  conversation={selectedConversation.isGroup ? selectedConversation : null}
+                  trigger={
+                    <div className="flex items-center space-x-4 cursor-pointer">
+                      <Avatar className="ml-2 w-6 h-6">
+                        <AvatarImage
+                          src={conversationImage || "/placeholder.png"}
+                          className="object-cover"
+                        />
+                        <AvatarFallback>
+                          <div className="animate-pulse bg-gray-tertiary w-full h-full rounded-full" />
+                        </AvatarFallback>
+                      </Avatar>
+                      <h1 className="text-lg font-sm">{conversationName}</h1>
+                    </div>
+                  }
+                />
+                )}
+                
+                {/* View group members Dialog */}
+                {selectedConversation && selectedConversation.isGroup && (
+                  <GroupMembersDialog selectedConversation={selectedConversation} />
+                )}
+              </div>
+              <div className="flex items-center space-x-6">
+                {/* Create Groups Icon /> */}
+                {/* {isAuthenticated && <UserListDialog />} */}
+
+                {/* <ThemeSwitch /> */}
+              </div>
+            </div>
+          </header>
+          {/* Right Pannel */}
+
+          <main className={`flex-1 overflow-y-auto pb-[0px] ${backClicked ? "pt-[60px]" : ""}`}>
+            <RightPanel conversation={selectedConversation} />
+            {/* // </div> */}
+          </main>
+          <footer>
+
+          </footer>
+
+        </div>
+      ) : currentUserId ? (
+        <div className="flex flex-col h-full w-full">
+          {/* Header - Conversations list*/}
+          <header className="sticky top-0 left-0 w-full z-50">
+            {/* Left: Logged in Profile Picture */}
+            <div className="flex items-center justify-between p-4">
+              <CustomUserButton />
+              <div className="flex-1 ml-4">
+                {/* Search bar now placed next to profile image */}
+                <SearchUsers />
+              </div>
+            </div>
+          </header>
+
+          {/* Conversations List */}
+          <main className={`flex-1 overflow-y-auto pb-[80px] ${backClicked ? "pt-[80px]" : ""}`}>
+            {/** Conversations List */}
+            {conversations?.length > 0 ? (
+              conversations?.map((conversation, index) => (
+                
+                  <div className={index === 0 ? "pt-[0px]" : ""} key={conversation._id}>
+                    <Conversation
+                      key={conversation._id}
+                      conversation={convertConversationTypes(conversation, currentUserId)}
+                      onClick={() => 
+                        handleConversationClick(
+                          convertConversationTypes(conversation, currentUserId)
+                        )
+                      }
+                    />
+                  </div>
+              ))
+            ) : (
+              <>
+                <p className="text-center text-gray-500 text-sm mt-3">
+                  No conversations yet!
+                </p>
+                <p className="text-center text-gray-500 text-sm mt-3">
+                  Select or search a name to start a conversation
+                </p>
+              </>
+            )}
+          </main>
+
+          <footer className="sticky bottom-0 left-0 w-full z-50 pt-0">
+            <div className="p-4 flex space-x-4">
+              {/* Home Button */}
+              <button
+                className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+                aria-label="Home"
+                
+              >
+                <Home className="w-5 h-5 text-primary" />
+              </button>
+              {/* Edit Profile Button */}
+            
+              {/* <Home 
+               
+              /> */}
+
+            </div>
+          </footer> 
+
+        </div>
+      ) : (
+        <p>Loading...</p>
+      )}
+    </div>
+  );
+};
+
+export default LeftPanel;
