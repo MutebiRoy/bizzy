@@ -73,14 +73,18 @@
     body {
         @apply bg-background text-foreground;
         margin: 0; /* Reset default body margins - CRUCIAL */
-        min-height: 100vh; /* Important for mobile viewport handling */
+        max-height: 100vh; /* Important for mobile viewport handling */
         width: 100vw;
         overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
     }
     html,
     body,
     #__next {
         height: 100%; /* Ensure full height */
+        display: flex;
+        flex-direction: column;
     }
 }
 
@@ -125,6 +129,8 @@ body,
 }
 .chat-container {
     padding-bottom: env(safe-area-inset-bottom);
+    position: sticky;
+    bottom: 0;
 }
 
 .message-input-container {
