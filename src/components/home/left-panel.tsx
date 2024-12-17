@@ -178,7 +178,7 @@ const LeftPanel = () => {
           </header>
           {/* Right Pannel */}
 
-          <main ref={mainRef} className="flex-1 overflow-y-auto">{/* Safari padding and bottom padding */}
+          <main ref={mainRef} className={`flex-1 overflow-y-auto ${isSafari ? "safari-main-padding safari-main-padding-bottom" : ""}`}> {/* Safari padding and bottom padding */}
             <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
           </main>
@@ -231,7 +231,7 @@ const LeftPanel = () => {
             )}
           </main>
 
-          <footer className="sticky bottom-0 left-0 w-full z-50 pt-0">
+          <footer className="sticky bottom-0 left-0 w-full z-50 pt-0 bg-footer-bg">
             <div className="p-4 flex space-x-4">
               {/* Home Button */}
               <button
