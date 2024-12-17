@@ -18,7 +18,6 @@ import SearchUsers from "./search_users";
 import EditProfileDialog from "./edit-profile-dialog";
 import ProfileDialog from "./profile-dialog";
 import { convertConversationTypes, ConversationType, UserType} from "@/utils/conversation_utils";
-import { Main } from "next/document";
 
 interface LastMessage {
   _id: string;
