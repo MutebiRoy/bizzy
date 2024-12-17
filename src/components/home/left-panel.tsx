@@ -97,7 +97,7 @@ const LeftPanel = () => {
       setTimeout(() => setBackClicked(false), 300); // Reset after a short delay
     }
 
-    // window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ bottom: 0, behavior: "smooth" });
   };
 
   const handleConversationClick = async (conversation: ConversationType) => {
