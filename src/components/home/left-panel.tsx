@@ -54,21 +54,11 @@ const LeftPanel = () => {
   const { selectedConversation, setSelectedConversation, isViewingConversation, setIsViewingConversation } = useConversationStore();
   
   const [isSafari, setIsSafari] = useState(false);
+  const [backClicked, setBackClicked] = useState(false);
 
   // Detect Safari browser
   useEffect(() => {
     setIsSafari(/^((?!chrome|android).)*safari/i.test(navigator.userAgent));
-  }, []);
-
-  useEffect(() => {
-    const adjustHeight = () => {
-      document.documentElement.style.setProperty("--viewport-height", `${window.innerHeight}px`);
-    };
-
-    window.addEventListener("resize", adjustHeight);
-    adjustHeight();
-
-    return () => window.removeEventListener("resize", adjustHeight);
   }, []);
   
   const conversationName =
@@ -101,13 +91,14 @@ const LeftPanel = () => {
   const handleBackClick = () => {
     setIsViewingConversation(false);
     setSelectedConversation(null);
+    // Add padding conditionally for Safari
+    if (isSafari) {
+      setBackClicked(true); // Trigger the class addition
+      setTimeout(() => setBackClicked(false), 300); // Reset after a short delay
+    }
+
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
-  // const handleConversationClick = (conversation: ConversationType) => {
-  //   setSelectedConversation(conversation);
-  //   setIsViewingConversation(true);
-  // };
 
   const handleConversationClick = async (conversation: ConversationType) => {
     setSelectedConversation(conversation);
@@ -186,9 +177,8 @@ const LeftPanel = () => {
           </header>
           {/* Right Pannel */}
 
-          <main className="flex-1 overflow-y-auto  pb-[0px]" style={{ height: "var(--viewport-height)" }}>
-            {/* // <div className="overflow-auto h-full"> */}
-              <RightPanel conversation={selectedConversation} />
+          <main className={`flex-1 overflow-y-auto pb-[0px] ${backClicked ? "pt-[60px]" : ""}`}>
+            <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
           </main>
           <footer>
@@ -211,7 +201,8 @@ const LeftPanel = () => {
           </header>
 
           {/* Conversations List */}
-          <main className="flex-1 overflow-y-auto pb-[80px]" style={{ height: "var(--viewport-height)" }}>
+          <main className={`flex-1 overflow-y-auto pb-[80px] ${backClicked ? "pt-[80px]" : ""}`}>
+            {/** Conversations List */}
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
                 
