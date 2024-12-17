@@ -52,8 +52,8 @@ const LeftPanel = () => {
 
   const { selectedConversation, setSelectedConversation, isViewingConversation, setIsViewingConversation } = useConversationStore();
   
-  const mainRef = useRef<HTMLDivElement>(null); // Ref for the main element
-    const [isSafari, setIsSafari] = useState(false);
+  const mainRef = useRef<HTMLDivElement>(null);
+  const [isSafari, setIsSafari] = useState(false);
 
   // Detect Safari browser
   useEffect(() => {
@@ -61,11 +61,10 @@ const LeftPanel = () => {
   }, []);
   
   useEffect(() => {
-    // Scroll to top when the component mounts or when isViewingConversation changes to false
     if (!isViewingConversation && mainRef.current) {
         mainRef.current.scrollTo(0, 0);
     }
-}, [isViewingConversation]);
+  }, [isViewingConversation]);
 
   const conversationName =
     selectedConversation?.groupName ||
@@ -99,7 +98,7 @@ const LeftPanel = () => {
     setSelectedConversation(null);
 
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleConversationClick = async (conversation: ConversationType) => {
@@ -131,7 +130,7 @@ const LeftPanel = () => {
       {isViewingConversation && selectedConversation ? (
         <div className="flex flex-col h-full w-full">
           {/* Header - Chat View*/}
-          <header className="sticky top-0 left-0 w-full z-50">
+          <header className="sticky top-0 left-0 w-full z-50 bg-header-bg">
             <div className="flex items-center justify-between p-4 text-white">
               <div className="flex items-center space-x-2">
                 <button
@@ -179,8 +178,8 @@ const LeftPanel = () => {
           </header>
           {/* Right Pannel */}
 
-          <main ref={mainRef} className={`flex-1 overflow-y-auto ${isSafari ? "safari-main-padding" : ""}`}> {/* Added ref */}
-                        <RightPanel conversation={selectedConversation} />
+          <main ref={mainRef} className={`flex-1 overflow-y-auto ${isSafari ? "safari-main-padding safari-main-padding-bottom" : ""}`}> {/* Safari padding and bottom padding */}
+            <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
           </main>
           <footer>
@@ -191,7 +190,7 @@ const LeftPanel = () => {
       ) : currentUserId ? (
         <div className="flex flex-col h-full w-full">
           {/* Header - Conversations list*/}
-          <header className="sticky top-0 left-0 w-full z-50">
+          <header className="sticky top-0 left-0 w-full z-50 bg-header-bg">
             {/* Left: Logged in Profile Picture */}
             <div className="flex items-center justify-between p-4">
               <CustomUserButton />
@@ -203,7 +202,7 @@ const LeftPanel = () => {
           </header>
 
           {/* Conversations List */}
-          <main ref={mainRef} className={`flex-1 overflow-y-auto ${isSafari ? "safari-main-padding" : ""}`}> {/* Added ref */}
+          <main ref={mainRef} className={`flex-1 overflow-y-auto ${isSafari ? "safari-main-padding safari-main-padding-bottom" : ""}`}> {/* Safari padding and bottom padding */}
             {/** Conversations List */}
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
