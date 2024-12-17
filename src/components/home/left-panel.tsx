@@ -58,7 +58,9 @@ const LeftPanel = () => {
   // Detect Safari browser
   useEffect(() => {
     setIsSafari(/^((?!chrome|android).)*safari/i.test(navigator.userAgent));
+    setIsSafari(isSafari);
   }, []);
+  
   
   useEffect(() => {
         if (!isViewingConversation && mainRef.current) {
@@ -231,7 +233,7 @@ const LeftPanel = () => {
             )}
           </main>
 
-          <footer className="sticky bottom-0 left-0 w-full z-50 pt-0 bg-footer-bg">
+          <footer className="sticky bottom-0 left-0 w-full z-50 pt-0">
             <div className="p-4 flex space-x-4">
               {/* Home Button */}
               <button
