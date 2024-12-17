@@ -5,7 +5,7 @@
 @layer base {
     :root {
         --header-height: 64px;
-        --footer-height: 80px;
+        --conversations-footer-height: 80px;
         --background: 48, 8%, 88%;
         --foreground: 222.2 84% 4.9%;
         --container: 0 0 100%;
@@ -165,7 +165,7 @@ header, footer {
 }
 
 header.sticky {
-    height: var(--header-height); /* Set a fixed height for the header */
+    height: var(--header-height);
     background-color: var(--header-bg);
     padding-top: env(safe-area-inset-top);
 }
@@ -177,11 +177,11 @@ footer.sticky{
 
 /* Safari-specific padding for <main> */
 .safari-main-padding {
-    padding-top: calc(var(--header-height) + env(safe-area-inset-top)); /* Use header height + safe area */
+    padding-top: calc(var(--header-height) + env(safe-area-inset-top));  /* Use header height + safe area */
 }
 
 .safari-main-padding-bottom {
-    padding-bottom: var(--footer-height)
+    padding-bottom: var(--conversations-footer-height);
 }
 
 @supports (-webkit-overflow-scrolling: touch) {
@@ -189,6 +189,6 @@ footer.sticky{
         padding-top: calc(var(--header-height) + env(safe-area-inset-top));
     }
     .safari-main-padding-bottom {
-        padding-bottom: calc(var(--footer-height) + env(safe-area-inset-bottom));
+        padding-bottom: calc(var(--conversations-footer-height) + env(safe-area-inset-bottom));
     }
 }
