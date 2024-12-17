@@ -156,8 +156,9 @@ body,
 header, footer {
     background-color: rgba(0, 0, 0, 0.8);  
 }
-@supports (-webkit-touch-callout: none) {
-  main.safari-fix {
-    padding-top: 64px; /* Adjust this to match your header's height */
-  }
+
+
+main {
+    /* Other styles for your main element */
+    -webkit-padding-before: 70px; /* Safari-specific top padding (adjust as needed) */
 }
