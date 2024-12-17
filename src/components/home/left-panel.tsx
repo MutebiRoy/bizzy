@@ -118,7 +118,6 @@ const LeftPanel = () => {
       {isViewingConversation && selectedConversation ? (
         <div className="flex flex-col h-full w-full">
           {/* Header - Chat View*/}
-          <div className="relative">
           <header className="sticky top-0 left-0 w-full z-50">
             <div className="flex items-center justify-between p-4 text-white">
               <div className="flex items-center space-x-2">
@@ -165,7 +164,6 @@ const LeftPanel = () => {
               </div>
             </div>
           </header>
-          </div>
           {/* Right Pannel */}
 
           <main className="flex-1 overflow-y-auto pt-[0px]">
@@ -181,7 +179,6 @@ const LeftPanel = () => {
       ) : currentUserId ? (
         <div className="flex flex-col h-full w-full">
           {/* Header - Conversations list*/}
-          <div className="relative">
           <header className="sticky top-0 left-0 w-full z-50">
             {/* Left: Logged in Profile Picture */}
             <div className="flex items-center justify-between p-4">
@@ -192,7 +189,6 @@ const LeftPanel = () => {
               </div>
             </div>
           </header>
-          </div>
 
           {/* Conversations List */}
           <main className="flex-1 overflow-y-auto pt-[0px] pb-[0px]">
