@@ -57,7 +57,9 @@ const LeftPanel = () => {
 
   // Detect Safari browser
   useEffect(() => {
-    setIsSafari(/^((?!chrome|android).)*safari/i.test(navigator.userAgent));
+    // More robust Safari detection
+    const isReallySafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor);
+    setIsSafari(isReallySafari);
   }, []);
   
   useEffect(() => {
