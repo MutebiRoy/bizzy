@@ -166,7 +166,7 @@ const LeftPanel = () => {
           </header>
           {/* Right Pannel */}
 
-          <main className="flex-1 overflow-y-auto pt-[0px]">
+          <main className="flex-1 overflow-y-auto pt-[80px]">
             {/* // <div className="overflow-auto h-full"> */}
               <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
