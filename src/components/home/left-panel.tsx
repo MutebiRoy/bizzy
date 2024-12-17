@@ -1,7 +1,6 @@
 // src\components\home\left-panel.tsx
 "use client";
-import { useMemo } from "react";
-import { useState, useEffect } from "react";
+import { useMemo, useState, useEffect,  useRef } from "react";
 import { ListFilter, Search, ArrowLeft, Users, Settings, Home } from "lucide-react";
 import { Input } from "../ui/input";
 import Link from 'next/link';
@@ -53,14 +52,21 @@ const LeftPanel = () => {
 
   const { selectedConversation, setSelectedConversation, isViewingConversation, setIsViewingConversation } = useConversationStore();
   
-  const [isSafari, setIsSafari] = useState(false);
-  const [backClicked, setBackClicked] = useState(false);
+  const mainRef = useRef<HTMLDivElement>(null); // Ref for the main element
+    const [isSafari, setIsSafari] = useState(false);
 
   // Detect Safari browser
   useEffect(() => {
     setIsSafari(/^((?!chrome|android).)*safari/i.test(navigator.userAgent));
   }, []);
   
+  useEffect(() => {
+    // Scroll to top when the component mounts or when isViewingConversation changes to false
+    if (!isViewingConversation && mainRef.current) {
+        mainRef.current.scrollTo(0, 0);
+    }
+}, [isViewingConversation]);
+
   const conversationName =
     selectedConversation?.groupName ||
     selectedConversation?.name ||
@@ -91,13 +97,9 @@ const LeftPanel = () => {
   const handleBackClick = () => {
     setIsViewingConversation(false);
     setSelectedConversation(null);
-    // Add padding conditionally for Safari
-    if (isSafari) {
-      setBackClicked(true); // Trigger the class addition
-      setTimeout(() => setBackClicked(false), 300); // Reset after a short delay
-    }
 
-    window.scrollTo({ bottom: 0, behavior: "smooth" });
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleConversationClick = async (conversation: ConversationType) => {
@@ -177,8 +179,8 @@ const LeftPanel = () => {
           </header>
           {/* Right Pannel */}
 
-          <main className={`flex-1 overflow-y-auto pb-[0px] ${backClicked ? "pt-[60px]" : ""}`}>
-            <RightPanel conversation={selectedConversation} />
+          <main ref={mainRef} className={`flex-1 overflow-y-auto ${isSafari ? "safari-main-padding" : ""}`}> {/* Added ref */}
+                        <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
           </main>
           <footer>
@@ -201,7 +203,7 @@ const LeftPanel = () => {
           </header>
 
           {/* Conversations List */}
-          <main className={`flex-1 overflow-y-auto pb-[80px] ${backClicked ? "pt-[80px]" : ""}`}>
+          <main ref={mainRef} className={`flex-1 overflow-y-auto ${isSafari ? "safari-main-padding" : ""}`}> {/* Added ref */}
             {/** Conversations List */}
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
