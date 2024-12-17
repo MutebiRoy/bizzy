@@ -7,6 +7,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
 import ConvexClientProvider from "@/providers/convex-client-provider";
 import { Toaster } from "react-hot-toast";
+import ClientLayout from "@/components/home/client-layout";
 
 const inter = Inter({ subsets: ["latin"] });
 
