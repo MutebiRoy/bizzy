@@ -82,6 +82,7 @@ const LeftPanel = () => {
   const handleBackClick = () => {
     setIsViewingConversation(false);
     setSelectedConversation(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   // const handleConversationClick = (conversation: ConversationType) => {
