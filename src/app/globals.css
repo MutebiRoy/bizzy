@@ -192,3 +192,6 @@ footer.sticky{
         padding-bottom: calc(var(--conversations-footer-height) + env(safe-area-inset-bottom));
     }
 }
+.safari-main-padding-top {
+    padding-bottom: 60px;
+}
