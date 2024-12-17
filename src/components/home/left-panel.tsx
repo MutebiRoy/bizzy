@@ -52,41 +52,25 @@ const LeftPanel = () => {
   const setConversationLastRead = useMutation(api.conversations.setConversationLastRead);
 
   const { selectedConversation, setSelectedConversation, isViewingConversation, setIsViewingConversation } = useConversationStore();
+  
   const [isSafari, setIsSafari] = useState(false);
-  const [shouldAddPadding, setShouldAddPadding] = useState(false);
 
   // Detect Safari browser
   useEffect(() => {
     setIsSafari(/^((?!chrome|android).)*safari/i.test(navigator.userAgent));
   }, []);
 
-  // Listen for keyboard interactions to adjust padding dynamically
   useEffect(() => {
-    const handleFocus = () => {
-      if (isSafari) setShouldAddPadding(true);
+    const adjustHeight = () => {
+      document.documentElement.style.setProperty("--viewport-height", `${window.innerHeight}px`);
     };
 
-    const handleBlur = () => {
-      if (isSafari) {
-        setTimeout(() => setShouldAddPadding(false), 300); // Delay to ensure keyboard is fully dismissed
-      }
-    };
+    window.addEventListener("resize", adjustHeight);
+    adjustHeight();
 
-    const inputElements = document.querySelectorAll("input, textarea");
-
-    inputElements.forEach((input) => {
-      input.addEventListener("focus", handleFocus);
-      input.addEventListener("blur", handleBlur);
-    });
-
-    return () => {
-      inputElements.forEach((input) => {
-        input.removeEventListener("focus", handleFocus);
-        input.removeEventListener("blur", handleBlur);
-      });
-    };
-  }, [isSafari]);
-
+    return () => window.removeEventListener("resize", adjustHeight);
+  }, []);
+  
   const conversationName =
     selectedConversation?.groupName ||
     selectedConversation?.name ||
@@ -154,7 +138,7 @@ const LeftPanel = () => {
       {isViewingConversation && selectedConversation ? (
         <div className="flex flex-col h-full w-full">
           {/* Header - Chat View*/}
-          <header className="sticky top-0 left-0 w-full z-50 h-20">
+          <header className="sticky top-0 left-0 w-full z-50">
             <div className="flex items-center justify-between p-4 text-white">
               <div className="flex items-center space-x-2">
                 <button
@@ -202,7 +186,7 @@ const LeftPanel = () => {
           </header>
           {/* Right Pannel */}
 
-          <main className={`flex-1 overflow-y-auto  pb-[0px] ${shouldAddPadding ? "pt-16" : ""}`}>
+          <main className="flex-1 overflow-y-auto  pb-[0px]" style={{ height: "var(--viewport-height)" }}>
             {/* // <div className="overflow-auto h-full"> */}
               <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
@@ -215,7 +199,7 @@ const LeftPanel = () => {
       ) : currentUserId ? (
         <div className="flex flex-col h-full w-full">
           {/* Header - Conversations list*/}
-          <header className="sticky top-0 left-0 w-full z-50 h-20">
+          <header className="sticky top-0 left-0 w-full z-50">
             {/* Left: Logged in Profile Picture */}
             <div className="flex items-center justify-between p-4">
               <CustomUserButton />
@@ -227,7 +211,7 @@ const LeftPanel = () => {
           </header>
 
           {/* Conversations List */}
-          <main className={`flex-1 overflow-y-auto pb-[80px] ${shouldAddPadding ? "pt-16" : ""}`}>
+          <main className="flex-1 overflow-y-auto pb-[80px]" style={{ height: "var(--viewport-height)" }}>
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
                 
