@@ -54,15 +54,15 @@ const LeftPanel = () => {
   const { selectedConversation, setSelectedConversation, isViewingConversation, setIsViewingConversation } = useConversationStore();
   
   const mainRef = useRef<HTMLDivElement>(null);
-  const [isSafari, setIsSafari] = useState(false);
+  // const [isSafari, setIsSafari] = useState(false);
 
-  // Detect Safari browser
-  useEffect(() => {
-    const isSafariBrowser = isSafari;
+  // // Detect Safari browser
+  // useEffect(() => {
+  //const isSafariBrowser = isSafari;
   
-    alert(`Browser type: ${isSafari ? 'Safari' : 'Not Safari'}`);
-    setIsSafari(isSafari);
-  }, []);
+  //alert(`Browser type: ${isSafari ? 'Safari' : 'Not Safari'}`);
+  //   setIsSafari(isSafari);
+  // }, []);
   
   
   useEffect(() => {
