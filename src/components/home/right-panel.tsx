@@ -33,7 +33,7 @@ const RightPanel = ({ conversation }: RightPanelProps) => {
                 <MessageContainer/>
             </div>
 
-            <div className='sticky bottom-0 left-0 w-full z-20'>
+            <div className='sticky bottom-0 left-0 w-full z-20 pb-[env(safe-area-inset-bottom)]'>
                 <div className="p-0">
                     <MessageInput conversation={conversation} />
                 </div>
