@@ -183,7 +183,6 @@ footer.sticky{
 /* .safari-main-padding-bottom {
     padding-bottom: var(--conversations-footer-height);
 } */
-
-.safari-main-padding-top {
-    padding-top: calc(var(--header-height) + env(safe-area-inset-top));
-}
+/* In your CSS file (e.g., styles.css or a styled-component) */
+.safari-main-padding-top.padding-added {
+  padding-top: 60px !important; /* !important might be necessary depending on your existing 
