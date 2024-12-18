@@ -183,6 +183,15 @@ footer.sticky{
 /* .safari-main-padding-bottom {
     padding-bottom: var(--conversations-footer-height);
 } */
-/* In your CSS file (e.g., styles.css or a styled-component) */
+.safari-main-padding-top { /* Initial padding is 0 */
+    padding-top: 0px;
+}
+
+/* In your CSS file */
+.safari-main-padding-top { /* Initial padding is 0 */
+    padding-top: 0px;
+}
+
 .safari-main-padding-top.padding-added {
-  padding-top: 60px !important; /* !important might be necessary depending on your existing 
+    padding-top: 60px !important; /* Only applies in Safari when the class is added */
+}
