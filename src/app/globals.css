@@ -4,7 +4,7 @@
 
 @layer base {
     :root {
-        --header-height: 64px;
+        --header-height: 70px;
         --conversations-footer-height: 80px;
         --background: 48, 8%, 88%;
         --foreground: 222.2 84% 4.9%;
@@ -176,22 +176,4 @@ footer.sticky{
 }
 
 /* Safari-specific padding for <main> */
-.safari-main-padding {
-    padding-top: calc(var(--header-height) + env(safe-area-inset-top));  /* Use header height + safe area */
-}
 
-.safari-main-padding-bottom {
-    padding-bottom: var(--conversations-footer-height);
-}
-
-@supports (-webkit-overflow-scrolling: touch) {
-    .safari-main-padding {
-        padding-top: calc(var(--header-height) + env(safe-area-inset-top));
-    }
-    .safari-main-padding-bottom {
-        padding-bottom: calc(var(--conversations-footer-height) + env(safe-area-inset-bottom));
-    }
-}
-.safari-main-padding-top {
-    padding-top: 60px;
-}
