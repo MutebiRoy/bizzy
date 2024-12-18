@@ -135,7 +135,7 @@ const LeftPanel = () => {
       {isViewingConversation && selectedConversation ? (
         <div className="flex flex-col h-full w-full">
           {/* Header - Chat View*/}
-          <header className="sticky top-0 left-0 w-full z-50 bg-header-bg h-0">
+          <header className="sticky top-0 left-0 w-full z-50 bg-header-bg" style={{ height: 'var(--header-height)' }}>
             <div className="flex items-center justify-between p-4 text-white">
               <div className="flex items-center space-x-2">
                 <button
@@ -183,7 +183,8 @@ const LeftPanel = () => {
           </header>
           {/* Right Pannel */}
 
-          <main ref={mainRef} className={`flex-1 overflow-y-auto ${isSafari ? "safari-main-padding" : ""}`}> {/* Safari padding and bottom padding */}
+          <main ref={mainRef} className={`flex-1 overflow-y-auto ${isSafari ? "safari-main-padding" : ""}`}>
+          {/* Safari padding and bottom padding */}
             <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
           </main>
