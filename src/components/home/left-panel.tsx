@@ -99,12 +99,16 @@ const LeftPanel = () => {
   if (!isAuthenticated || !me) return null;
 
   const handleBackClick = () => {
-    setIsViewingConversation(false);
-    setSelectedConversation(null);
+        setIsViewingConversation(false);
+        setSelectedConversation(null);
 
-
-    // window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+        if (isSafari) { // Check if it's Safari
+            const safariPaddingElement = document.querySelector('.safari-main-padding-top');
+            if (safariPaddingElement) {
+                safariPaddingElement.classList.add('padding-added');
+            }
+        }
+    };
 
   const handleConversationClick = async (conversation: ConversationType) => {
     setSelectedConversation(conversation);
