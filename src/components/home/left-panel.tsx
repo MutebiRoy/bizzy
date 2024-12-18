@@ -208,7 +208,7 @@ const LeftPanel = () => {
           </header>
 
           {/* Conversations List */}
-          <main ref={mainRef} className={`flex-1 pb-50 overflow-y-auto ${isSafari ? "safari-main-padding-top" : ""}`}>
+          <main ref={mainRef} className="flex-1 pb-50 overflow-y-auto safari-main-padding-top">
             {/** Conversations List */}
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
