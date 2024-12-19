@@ -189,3 +189,6 @@ header { /* Or whatever selector targets your header */
     /* Or */
     padding-bottom: 1rem;
 }
+.padding-added {
+    padding-top: 60px;
+}
