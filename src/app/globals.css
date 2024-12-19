@@ -145,6 +145,7 @@ body,
   
     height: 70px;
     background-color: blue;
+    margin-bottom: 10px;
 }
 
 .conversations-list-view-footers {
@@ -154,5 +155,11 @@ body,
 
 .conversation-list-view-main {
     border-top: 1px solid red;
-    margin-top: 70px;
 }
+
+@media not all and (min-resolution:.001dpcm) { 
+    .conversation-list-view-main {
+      padding-top: 50px;
+      border-top: 1px solid red;
+    }
+  }
