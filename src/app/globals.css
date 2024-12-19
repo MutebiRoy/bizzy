@@ -128,14 +128,14 @@ body,
   height: 100%;
   overflow: hidden; 
 }
-.chat-container {
+/* .chat-container {
     padding-bottom: env(safe-area-inset-bottom);
     position: sticky;
     bottom: 0;
     display: flex;
     flex-direction: column;
     height: 100%;
-}
+} */
 
 .message-input-container {
     width: 100%; /* Make sure input takes full width */
@@ -150,4 +150,8 @@ body,
 .conversations-list-view-footers {
     height: 70px;
     background-color: blue;
+}
+
+.conversation-list-view-main {
+    border-top: 1px solid red
 }
