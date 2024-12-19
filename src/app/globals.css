@@ -196,3 +196,8 @@ header { /* Or whatever selector targets your header */
 .safari-sticky {
   position: -webkit-sticky; /* Safari */
 }
+
+.safari-main-padding-top {
+
+    scroll-margin-top: 60px;
+}
