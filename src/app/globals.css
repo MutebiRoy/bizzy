@@ -193,3 +193,6 @@ header { /* Or whatever selector targets your header */
     padding-top: 60px;
     margin-top: 70px !important;
 }
+.safari-sticky {
+  position: -webkit-sticky; /* Safari */
+}
