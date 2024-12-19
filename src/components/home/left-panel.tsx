@@ -130,7 +130,7 @@ const LeftPanel = () => {
     
     <div className="flex flex-col h-screen relative w-full chat-container">
       {isViewingConversation && selectedConversation ? (
-        <div className="flex flex-col h-full w-full">
+        <div className="flex flex-col h-full w-full relative">
           {/* Header - Chat View*/}
           <header className="sticky top-0 left-0 w-full z-50 bg-blue-500 conversations-list-view-headers">
             <div className="flex items-center justify-between p-4 text-white">
@@ -234,7 +234,7 @@ const LeftPanel = () => {
             )}
           </main>
 
-          <footer className="sticky bottom-0 left-0 w-full z-50">
+          <footer className="sticky bottom-0 left-0 w-full z-50 conversations-list-view-footers">
             <div className="p-4 flex space-x-4">
               {/* Home Button */}
               <button
