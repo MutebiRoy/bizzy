@@ -73,13 +73,6 @@
     body {
         @apply bg-background text-foreground;
     }
-    html,
-    body,
-    #__next {
-        height: 100%; /* Ensure full height */
-        display: flex;
-        flex-direction: column;
-    }
 }
 
 @layer base {
