@@ -142,6 +142,7 @@ body,
 }
 
 .conversations-list-view-headers {
-    min-height: -webkit-fit-content;
-    min-height: fit-content;
+  
+    height: 70px;
+    background-color: blue;
 }
