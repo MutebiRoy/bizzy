@@ -6,6 +6,7 @@
     :root {
         --header-height: 70px;
         --header-bg: 0, 0%, 0%;
+        --footer-bg: 0, 0%, 0%;
         --conversations-footer-height: 80px;
         --background: 48, 8%, 88%;
         --foreground: 222.2 84% 4.9%;
@@ -156,9 +157,7 @@ body,
     background-color: hsl(var(--container));
 }
 */
-header, footer {
-    background-color: rgba(0, 0, 0, 0.8);  
-}
+
 @supports (-webkit-touch-callout: none) {
     main.safari-fix {
       padding-top: 64px; /* Adjust this to match your header's height */
@@ -179,18 +178,6 @@ footer.sticky{
 /* Safari-specific padding for <main> */
 .safari-main-padding {
     padding-top: calc(var(--header-height) + env(safe-area-inset-top));
-}
-
-/* .safari-main-padding-bottom {
-    padding-bottom: var(--conversations-footer-height);
-} */
-.safari-main-padding-top { /* Initial padding is 0 */
-    padding-top: 0px;
-}
-
-/* In your CSS file */
-.safari-main-padding-top { /* Initial padding is 0 */
-    padding-top: 0px;
 }
 
 .safari-main-padding-top.padding-added {
