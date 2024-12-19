@@ -140,3 +140,8 @@ body,
 .message-input-container {
     width: 100%; /* Make sure input takes full width */
 }
+
+.conversations-list-view-headers {
+    min-height: -webkit-fit-content;
+    min-height: fit-content;
+}
