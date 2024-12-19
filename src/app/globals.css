@@ -5,6 +5,7 @@
 @layer base {
     :root {
         --header-height: 70px;
+        --header-bg: 0, 0%, 0%;
         --conversations-footer-height: 80px;
         --background: 48, 8%, 88%;
         --foreground: 222.2 84% 4.9%;
