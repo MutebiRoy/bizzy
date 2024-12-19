@@ -123,10 +123,8 @@ select {
 }
 
 .conversations-list-view-headers {
-  
     height: 70px;
     background-color: blue;
-    margin-bottom: 10px;
 }
 
 .conversations-list-view-footers {
@@ -136,5 +134,5 @@ select {
 
 .conversation-list-view-main {
     border-top: 1px solid red;
-    margin-top: 60px;
+    margin-top: 70px;
 }
