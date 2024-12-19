@@ -195,3 +195,9 @@ footer.sticky{
 .safari-main-padding-top.padding-added {
     padding-top: 60px !important; /* Only applies in Safari when the class is added */
 }
+header { /* Or whatever selector targets your header */
+    /* ... other header styles */
+    margin-bottom: 1rem; /* Or a fixed value like 16px, or use padding-bottom instead */
+    /* Or */
+    padding-bottom: 1rem;
+}
