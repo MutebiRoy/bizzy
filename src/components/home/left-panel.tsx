@@ -193,7 +193,7 @@ const LeftPanel = () => {
       ) : currentUserId ? (
         <div className="flex flex-col h-full w-full">
           {/* Header - Conversations list*/}
-          <header className="sticky top-0 left-0 w-full z-50 bg-blue-500 conversations-list-view-headers">
+          <header className="sticky top-0 left-0 w-full z-50 conversations-list-view-headers">
             {/* Left: Logged in Profile Picture */}
             <div className="flex items-center justify-between p-4">
               <CustomUserButton />
