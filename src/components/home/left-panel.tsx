@@ -99,16 +99,9 @@ const LeftPanel = () => {
   if (!isAuthenticated || !me) return null;
 
   const handleBackClick = () => {
-        setIsViewingConversation(false);
-        setSelectedConversation(null);
-
-        if (isSafari) { // Check if it's Safari
-            const safariPaddingElement = document.querySelector('.safari-main-padding-top');
-            if (safariPaddingElement) {
-                safariPaddingElement.classList.add('padding-added');
-            }
-        }
-    };
+    setIsViewingConversation(false);
+    setSelectedConversation(null);
+  };
 
   const handleConversationClick = async (conversation: ConversationType) => {
     setSelectedConversation(conversation);
@@ -139,7 +132,7 @@ const LeftPanel = () => {
       {isViewingConversation && selectedConversation ? (
         <div className="flex flex-col h-full w-full">
           {/* Header - Chat View*/}
-          <header className="sticky top-0 left-0 w-full z-50 bg-header-bg" style={{ height: 'var(--header-height)' }}>
+          <header className="sticky top-0 left-0 w-full z-50 bg-blue-500 conversations-list-view-headers">
             <div className="flex items-center justify-between p-4 text-white">
               <div className="flex items-center space-x-2">
                 <button
@@ -200,7 +193,7 @@ const LeftPanel = () => {
       ) : currentUserId ? (
         <div className="flex flex-col h-full w-full">
           {/* Header - Conversations list*/}
-          <header className="sticky top-0 left-0 w-full z-50 bg-header-bg" style={{ height: 'var(--header-height)' }}>
+          <header className="sticky top-0 left-0 w-full z-50 bg-blue-500 conversations-list-view-headers">
             {/* Left: Logged in Profile Picture */}
             <div className="flex items-center justify-between p-4">
               <CustomUserButton />
@@ -212,7 +205,7 @@ const LeftPanel = () => {
           </header>
 
           {/* Conversations List */}
-          <main className="flex-1 pb-50 overflow-y-auto safari-main-padding-top">
+          <main ref={mainRef} className={`flex-1 pb-50 overflow-y-auto ${isSafari ? "safari-main-padding-top" : ""}`}>
             {/** Conversations List */}
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
@@ -241,7 +234,7 @@ const LeftPanel = () => {
             )}
           </main>
 
-          <footer className="sticky bottom-0 left-0 w-full z-50 pt-0">
+          <footer className="sticky bottom-0 left-0 w-full z-50">
             <div className="p-4 flex space-x-4">
               {/* Home Button */}
               <button
