@@ -72,6 +72,19 @@
 
     body {
         @apply bg-background text-foreground;
+        margin: 0; /* Reset default body margins - CRUCIAL */
+        max-height: 100vh; /* Important for mobile viewport handling */
+        width: 100vw;
+        overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+    html,
+    body,
+    #__next {
+        height: 100%; /* Ensure full height */
+        display: flex;
+        flex-direction: column;
     }
 }
 
@@ -108,7 +121,13 @@ select {
   @apply text-base;
 }
 
-
+html,
+body,
+#root,
+#__next {
+  height: 100%;
+  overflow: hidden; 
+}
 /* .chat-container {
     padding-bottom: env(safe-area-inset-bottom);
     position: sticky;
@@ -123,6 +142,7 @@ select {
 }
 
 .conversations-list-view-headers {
+  
     height: 70px;
     background-color: blue;
 }
@@ -134,5 +154,7 @@ select {
 
 .conversation-list-view-main {
     border-top: 1px solid red;
+    margin-bottom: 70px;
     margin-top: 70px;
+    background-color: brown;
 }
