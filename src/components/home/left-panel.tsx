@@ -53,7 +53,7 @@ const LeftPanel = () => {
 
   const { selectedConversation, setSelectedConversation, isViewingConversation, setIsViewingConversation } = useConversationStore();
   
-  const mainRef = useRef<HTMLDivElement>(null);
+  // const mainRef = useRef<HTMLDivElement>(null);
   // const [isSafari, setIsSafari] = useState(false);
 
   // // Detect Safari browser
@@ -65,11 +65,11 @@ const LeftPanel = () => {
   // }, []);
   
   
-  useEffect(() => {
-        if (!isViewingConversation && mainRef.current) {
-            mainRef.current.scrollTo(0, 0);
-        }
-    }, [isViewingConversation]);
+  // useEffect(() => {
+  //       if (!isViewingConversation && mainRef.current) {
+  //           mainRef.current.scrollTo(0, 0);
+  //       }
+  //   }, [isViewingConversation]);
 
   const conversationName =
     selectedConversation?.groupName ||
@@ -180,11 +180,11 @@ const LeftPanel = () => {
           </header>
           {/* Right Pannel */}
 
-          <main className="flex-1 overflow-y-auto conversation-list-view-main">
+          <div className="flex-1 overflow-y-auto conversation-list-view-main">
           {/* Safari padding and bottom padding */}
             <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
-          </main>
+          </div>
           <footer className="h-0">
 
           </footer>
@@ -205,7 +205,7 @@ const LeftPanel = () => {
           </header>
 
           {/* Conversations List */}
-          <main className="flex-1 mb-70 overflow-y-auto conversation-list-view-main">
+          <div className="flex-1 mb-70 overflow-y-auto conversation-list-view-main">
             {/** Conversations List */}
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
@@ -232,7 +232,7 @@ const LeftPanel = () => {
                 </p>
               </>
             )}
-          </main>
+          </div>
 
           <footer className="fixed bottom-0 left-0 w-full z-50 conversations-list-view-footers">
             <div className="p-4 flex space-x-4">
