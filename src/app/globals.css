@@ -155,15 +155,6 @@ body,
 .conversation-list-view-main {
     border: 5px dotted rgb(204, 255, 0);
     background-color: brown;
-    flex-direction: column;
-    display: flex;
-}
-.thebosscontainer {
-    width: 100%;
-    margin-left: auto;
-    margin-right: auto;
     margin-top: 70px;
     margin-bottom: 70px;
-    overflow: auto;
-    border: 5px dashed white;
 }
