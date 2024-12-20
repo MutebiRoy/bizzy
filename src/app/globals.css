@@ -150,15 +150,19 @@ body,
 .conversations-list-view-footers {
     height: 70px;
     background-color: blue;
-    position: relative;
-    margin-top:0;
 }
 
 .conversation-list-view-main {
     border: 5px dotted rgb(204, 255, 0);
-    margin-top: 80px;  
     background-color: brown;
+    flex-direction: column;
 }
-.conversation-list-padding-bottom {
-    margin-bottom: 80px;
+.thebosscontainer {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 70px;
+    margin-bottom: 70px;
+    overflow: auto;
+    border: 5px dashed white;
 }
