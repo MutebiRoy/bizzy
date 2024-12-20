@@ -142,7 +142,7 @@ body,
 }
 
 .conversations-list-view-headers {
-  
+   border: 5px dotted rgb(128, 0, 0);
     height: 70px;
     background-color: blue;
 }
@@ -153,7 +153,8 @@ body,
 }
 
 .conversation-list-view-main {
-    border-top: 1px solid red;
+    border: 5px dotted rgb(204, 255, 0);
     margin-bottom: 70px;
+    margin-top: 80px;  
     background-color: brown;
 }
