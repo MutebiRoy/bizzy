@@ -185,6 +185,9 @@ const LeftPanel = () => {
             <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
           </div>
+          <footer className="h-0">
+
+          </footer>
 
         </div>
       ) : currentUserId ? (
@@ -202,7 +205,8 @@ const LeftPanel = () => {
           </header>
 
           {/* Conversations List */}
-          <div className="flex-1 mb-70 overflow-y-auto conversation-list-view-main min-h-0 conversation-list-padding-bottom ">
+          <div className="thebosscontainer">
+          <div className="overflow-y-auto conversation-list-view-main  min-h-0 ">
             {/** Conversations List */}
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
@@ -250,6 +254,7 @@ const LeftPanel = () => {
             </div>
           </footer> 
 
+        </div>
         </div>
       ) : (
         <p>Loading...</p>
