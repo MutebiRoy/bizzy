@@ -154,7 +154,9 @@ body,
 
 .conversation-list-view-main {
     border: 5px dotted rgb(204, 255, 0);
-    margin-bottom: 70px;
     margin-top: 80px;  
     background-color: brown;
+}
+.conversation-list-padding-bottom {
+    margin-bottom: 80px;
 }
