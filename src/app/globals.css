@@ -156,6 +156,7 @@ body,
     border: 5px dotted rgb(204, 255, 0);
     background-color: brown;
     flex-direction: column;
+    display: flex;
 }
 .thebosscontainer {
     width: 100%;
