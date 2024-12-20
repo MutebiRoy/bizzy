@@ -185,9 +185,6 @@ const LeftPanel = () => {
             <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
           </div>
-          <footer className="h-0">
-
-          </footer>
 
         </div>
       ) : currentUserId ? (
