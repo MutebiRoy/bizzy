@@ -128,7 +128,7 @@ const LeftPanel = () => {
   
   return (
     
-    <div className="flex flex-col h-screen relative w-full chat-container">
+    <div className="flex flex-col h-screen overflow-hidden chat-container">
       {isViewingConversation && selectedConversation ? (
         <div className="flex flex-col h-full w-full relative">
           {/* Header - Chat View*/}
@@ -205,8 +205,7 @@ const LeftPanel = () => {
           </header>
 
           {/* Conversations List */}
-          <div className="flex thebosscontainer">
-          <div className="h-full overflow-auto conversation-list-view-main  min-h-0 ">
+          <div className="my-3 flex flex-col gap-0 overflow-auto h-full conversation-list-view-main  min-h-0 ">
             {/** Conversations List */}
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
@@ -254,7 +253,6 @@ const LeftPanel = () => {
             </div>
           </footer> 
 
-        </div>
         </div>
       ) : (
         <p>Loading...</p>
