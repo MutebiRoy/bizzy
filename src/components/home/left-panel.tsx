@@ -180,7 +180,7 @@ const LeftPanel = () => {
           </header>
 
           {/*  View Conversation*/}
-          <div className="flex-1 overflow-auto conversation-list-view-main min-h-0 ">
+          <div className="overflow-auto h-full conversation-list-view-main min-h-0 ">
           {/* Safari padding and bottom padding */}
             <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
@@ -205,8 +205,8 @@ const LeftPanel = () => {
           </header>
 
           {/* Conversations List */}
-          <div className="thebosscontainer">
-          <div className="flex-1 overflow-auto conversation-list-view-main  min-h-0 ">
+          <div className="flex thebosscontainer">
+          <div className="h-full overflow-auto conversation-list-view-main  min-h-0 ">
             {/** Conversations List */}
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
