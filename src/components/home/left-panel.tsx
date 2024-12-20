@@ -202,7 +202,7 @@ const LeftPanel = () => {
           </header>
 
           {/* Conversations List */}
-          <div className="flex-1 mb-70 overflow-y-auto conversation-list-view-main min-h-0 ">
+          <div className="flex-1 mb-70 overflow-y-auto conversation-list-view-main min-h-0 conversation-list-padding-bottom ">
             {/** Conversations List */}
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
