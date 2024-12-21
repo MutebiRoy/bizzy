@@ -112,9 +112,9 @@ const LeftPanel = () => {
   
   return (
     
-    <div className="flex flex-col h-screen overflow-hidden chat-container">
+    <div className="flex flex-col h-screen chat-container">
       {isViewingConversation && selectedConversation ? (
-        <div className="flex flex-col h-full w-full">
+        <div className="flex flex-col h-full w-full relative">
           {/* Header - Chat View*/}
           <header className="sticky top-0 z-50 w-full bg-blue-500 conversations-list-view-headers pb-[env(safe-area-inset-top)]">
             <div className="flex items-center justify-between p-4 text-white">
