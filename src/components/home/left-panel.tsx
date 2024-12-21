@@ -130,7 +130,7 @@ const LeftPanel = () => {
     
     <div className="app-container">
       {isViewingConversation && selectedConversation ? (
-        <div className="">
+        <>
           {/* Header - Chat View*/}
           <header className="app-header fixed top-0 w-full z-50 bg-blue-500">
             <div className="flex items-center justify-between p-4 text-white">
@@ -189,9 +189,9 @@ const LeftPanel = () => {
 
           </footer>
 
-        </div>
+        </>
       ) : currentUserId ? (
-        <div className="">
+        <>
           {/* Header - Conversations list*/}
           <header className="app-header fixed top-0 w-full z-50 bg-blue-500">
             {/* Left: Logged in Profile Picture */}
@@ -205,7 +205,8 @@ const LeftPanel = () => {
           </header>
 
           {/* Conversations List */}
-          <main className="app-main">
+          
+          <main className="app-main -webkit-overflow-scrolling:touch">
             {/** Conversations List */}
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
@@ -253,7 +254,7 @@ const LeftPanel = () => {
             </div>
           </footer> 
 
-        </div>
+        </>
       ) : (
         <p>Loading...</p>
       )}
