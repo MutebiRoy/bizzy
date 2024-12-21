@@ -170,7 +170,7 @@ const LeftPanel = () => {
             {/* // </div> */}
             <footer className="h-0">
 
-          </footer>
+</footer>
           </div>
           
 
@@ -217,7 +217,8 @@ const LeftPanel = () => {
                 </p>
               </>
             )}
-             <footer className="fixed bottom-0 left-0 w-full z-50 conversations-list-view-footers pb-[env(safe-area-inset-bottom)]">
+
+<footer className="sticky bottom-0 left-0 w-full z-50 conversations-list-footer pb-[env(safe-area-inset-bottom)]">
             <div className="p-4 flex space-x-4">
               {/* Home Button */}
               <button
@@ -234,7 +235,7 @@ const LeftPanel = () => {
               /> */}
 
             </div>
-          </footer>
+          </footer> 
           </div>
 
           
