@@ -72,20 +72,18 @@
 
     body {
         @apply bg-background text-foreground;
-        margin: 0; /* Reset default body margins - CRUCIAL */
-        max-height: 100vh;
-        width: 100vw;
-        /* overflow-x: hidden; */
-        display: flex;
-        flex-direction: column;
+        overflow: visible;
+  height: auto;
+  margin: 0;
+  padding: 0;
     }
-    html,
+    /* html,
     body,
     #__next {
-        height: 100%; /* Ensure full height */
+        height: 100%;
         display: flex;
         flex-direction: column;
-    }
+    } */
 }
 
 @layer base {
@@ -121,13 +119,13 @@ select {
   @apply text-base;
 }
 
-html,
+/* html,
 body,
 #root,
 #__next {
   height: 100%;
-  /* overflow: hidden;  */
-}
+  overflow: hidden; 
+} */
 /* .chat-container {
     padding-bottom: env(safe-area-inset-bottom);
     position: sticky;
@@ -141,36 +139,29 @@ body,
     width: 100%; /* Make sure input takes full width */
 }
 
-.conversations-list-view-headers {
-   border: 5px dotted rgb(128, 0, 0);
-    height: 70px;
-    background-color: blue;
-}
-
-.conversations-list-footer {
-    height: 70px;
-    background-color: blue;
-}
-.conversations-view-footer {
-    height: 0px;
-    background-color: blue;
-}
-
-.conversation-list-main {
-    border: 5px dotted rgb(204, 255, 0);
-    background-color: brown;
-    margin-top: 70px;
-    margin-bottom: 0px;
+.app-container {
+    /* A full-height container, so the main can fill remaining space */
+    position: relative;
+    min-height: 100vh;
+    /* no scrolling here, let main handle the scroll */
+  }
+  
+  .app-header,
+  .app-footer {
+    /* Typically a fixed height that you measure with offsetHeight */
+    height: 70px; /* Or however tall your headers/footers are */
+    left: 0;
+    right: 0;
+  }
+  
+  .app-main {
     overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    max-height: 100vh;
-}
-.conversation-view-main {
-    border: 5px dotted rgb(204, 255, 0);
-    background-color: brown;
-    margin-top: 0px;
-    margin-bottom: 0px;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    max-height: 100vh;
-}
+    -webkit-overflow-scrolling: touch; /* for smooth iOS scrolling */
+    background: brown;
+  }
+  .app-header {
+    padding-top: env(safe-area-inset-top);
+  }
+  .app-footer {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
