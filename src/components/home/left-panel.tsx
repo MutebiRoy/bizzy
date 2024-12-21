@@ -164,7 +164,7 @@ const LeftPanel = () => {
           </header>
 
           {/*  View Conversation*/}
-          <div className="overflow-auto h-full conversation-list-main ">
+          <div className="overflow-auto h-full conversation-view-main ">
           {/* Safari padding and bottom padding */}
             <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
@@ -176,7 +176,7 @@ const LeftPanel = () => {
 
         </div>
       ) : currentUserId ? (
-        <div className="flex flex-col h-full w-full overflow-y-auto">
+        <div className="flex flex-col h-full w-full">
           {/* Header - Conversations list*/}
           <header className="fixed top-0 z-50 w-full conversations-list-view-headers pb-[env(safe-area-inset-bottom)]">
             {/* Left: Logged in Profile Picture */}
@@ -190,7 +190,7 @@ const LeftPanel = () => {
           </header>
 
           {/* Conversations List */}
-          <div className="my-3 flex flex-col gap-0 h-full conversation-view-main">
+          <div className="my-3 flex flex-col gap-0 h-full conversation-list-main">
             {/** Conversations List */}
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
