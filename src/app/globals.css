@@ -126,7 +126,6 @@ body,
 #root,
 #__next {
   height: 100%;
-  overflow: hidden; 
 }
 /* .chat-container {
     padding-bottom: env(safe-area-inset-bottom);
