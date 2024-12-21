@@ -195,7 +195,7 @@ const LeftPanel = () => {
       ) : currentUserId ? (
         <>
           {/* Header - Conversations list*/}
-          <header className="sticky top-0 bg-blue-200 z-50">
+          <header className="sticky top-0 bg-blue-900 z-50">
             {/* Left: Logged in Profile Picture */}
             <div className="flex items-center justify-between p-4">
               <CustomUserButton />
@@ -207,7 +207,7 @@ const LeftPanel = () => {
           </header>
 
           {/* Conversations List */}
-          <main className="flex-1 overflow-y-auto">
+          <main className="flex-1 overflow-y-auto bottom-70">
             {/** Conversations List */}
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
@@ -236,7 +236,7 @@ const LeftPanel = () => {
             )}
           </main>
 
-          <footer className="sticky bottom-0 bg-footer-bg z-50">
+          <footer className="sticky bottom-0 bg-blue-900 z-50">
             <div className="p-4 flex space-x-4">
               {/* Home Button */}
               <button
