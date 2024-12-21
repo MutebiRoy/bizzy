@@ -155,6 +155,6 @@ body,
 .conversation-list-view-main {
     border: 5px dotted rgb(204, 255, 0);
     background-color: brown;
-    margin-top: 70px;
-    margin-bottom: 70px;
+    padding-top: 70px;
+    padding-bottom: 70px;
 }
