@@ -147,8 +147,12 @@ body,
     background-color: blue;
 }
 
-.conversations-list-view-footers {
+.conversations-list-footer {
     height: 70px;
+    background-color: blue;
+}
+.conversations-view-footer {
+    height: 0px;
     background-color: blue;
 }
 
