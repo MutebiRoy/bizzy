@@ -177,7 +177,11 @@ const LeftPanel = () => {
         </div>
       ) : currentUserId ? (
         <div className="flex flex-col h-full w-full">
-          {/* Header - Conversations list*/}
+          
+
+          {/* Conversations List */}
+          <div className="my-3 flex flex-col gap-0 h-full conversation-list-main">
+            {/* Header - Conversations list*/}
           <header className="fixed top-0 z-50 w-full conversations-list-view-headers pb-[env(safe-area-inset-top)]">
             {/* Left: Logged in Profile Picture */}
             <div className="flex items-center justify-between p-4">
@@ -188,9 +192,6 @@ const LeftPanel = () => {
               </div>
             </div>
           </header>
-
-          {/* Conversations List */}
-          <div className="my-3 flex flex-col gap-0 h-full conversation-list-main">
             {/** Conversations List */}
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
