@@ -163,7 +163,7 @@ body,
     margin-bottom: 0px;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    height: 100%;
+    max-height: 100vh;
 }
 .conversation-view-main {
     border: 5px dotted rgb(204, 255, 0);
@@ -172,4 +172,5 @@ body,
     margin-bottom: 0px;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    max-height: 100vh;
 }
