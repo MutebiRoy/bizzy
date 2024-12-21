@@ -53,7 +53,23 @@ const LeftPanel = () => {
 
   const { selectedConversation, setSelectedConversation, isViewingConversation, setIsViewingConversation } = useConversationStore();
   
+  const mainRef = useRef<HTMLDivElement>(null);
+  // const [isSafari, setIsSafari] = useState(false);
 
+  // // Detect Safari browser
+  // useEffect(() => {
+  //const isSafariBrowser = isSafari;
+  
+  //alert(`Browser type: ${isSafari ? 'Safari' : 'Not Safari'}`);
+  //   setIsSafari(isSafari);
+  // }, []);
+  
+  
+  useEffect(() => {
+        if (!isViewingConversation && mainRef.current) {
+            mainRef.current.scrollTo(0, 0);
+        }
+    }, [isViewingConversation]);
 
   const conversationName =
     selectedConversation?.groupName ||
@@ -85,6 +101,9 @@ const LeftPanel = () => {
   const handleBackClick = () => {
     setIsViewingConversation(false);
     setSelectedConversation(null);
+
+
+    // window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleConversationClick = async (conversation: ConversationType) => {
@@ -112,11 +131,11 @@ const LeftPanel = () => {
   
   return (
     
-    <div className="flex flex-col h-screen chat-container">
+    <div className="h-screen flex flex-col">
       {isViewingConversation && selectedConversation ? (
-        <div className="flex flex-col h-full w-full relative">
+        <>
           {/* Header - Chat View*/}
-          <header className="sticky top-0 z-50 w-full bg-blue-500 conversations-list-view-headers pb-[env(safe-area-inset-top)]">
+          <header className="sticky top-0 bg-blue-200 z-10">
             <div className="flex items-center justify-between p-4 text-white">
               <div className="flex items-center space-x-2">
                 <button
@@ -162,27 +181,21 @@ const LeftPanel = () => {
               </div>
             </div>
           </header>
+          {/* Right Pannel */}
 
-          {/*  View Conversation*/}
-          <div className="overflow-auto h-full conversation-view-main ">
-          {/* Safari padding and bottom padding */}
+          <main className="flex-1 overflow-y-auto"> 
             <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
-            <footer className="h-0">
+          </main>
+          <footer className="h-0">
 
-</footer>
-          </div>
-          
+          </footer>
 
-        </div>
+        </>
       ) : currentUserId ? (
-        <div className="flex flex-col h-full w-full">
-          
-
-          {/* Conversations List */}
-          <div className="my-3 flex flex-col gap-0 h-full conversation-list-main">
-            {/* Header - Conversations list*/}
-          <header className="fixed top-0 z-50 w-full conversations-list-view-headers pb-[env(safe-area-inset-top)]">
+        <>
+          {/* Header - Conversations list*/}
+          <header className="sticky top-0 bg-blue-200 z-50">
             {/* Left: Logged in Profile Picture */}
             <div className="flex items-center justify-between p-4">
               <CustomUserButton />
@@ -192,6 +205,9 @@ const LeftPanel = () => {
               </div>
             </div>
           </header>
+
+          {/* Conversations List */}
+          <main className="flex-1 overflow-y-auto">
             {/** Conversations List */}
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
@@ -218,8 +234,9 @@ const LeftPanel = () => {
                 </p>
               </>
             )}
-            
-          <footer className="sticky bottom-0 left-0 w-full z-50 conversations-list-footer pb-[env(safe-area-inset-bottom)]">
+          </main>
+
+          <footer className="sticky bottom-0 bg-footer-bg z-50">
             <div className="p-4 flex space-x-4">
               {/* Home Button */}
               <button
@@ -237,11 +254,8 @@ const LeftPanel = () => {
 
             </div>
           </footer> 
-          </div>
 
-          
-
-        </div>
+        </>
       ) : (
         <p>Loading...</p>
       )}
