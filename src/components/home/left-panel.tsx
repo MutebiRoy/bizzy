@@ -184,10 +184,12 @@ const LeftPanel = () => {
           {/* Safari padding and bottom padding */}
             <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
-          </div>
-          <footer className="h-0">
+
+            <footer className="h-0">
 
           </footer>
+          </div>
+          
 
         </div>
       ) : currentUserId ? (
@@ -232,9 +234,7 @@ const LeftPanel = () => {
                 </p>
               </>
             )}
-          </div>
-
-          <footer className="fixed bottom-0 left-0 w-full z-50 conversations-list-view-footers">
+            <footer className="fixed bottom-0 left-0 w-full z-50 conversations-list-view-footers">
             <div className="p-4 flex space-x-4">
               {/* Home Button */}
               <button
@@ -252,6 +252,9 @@ const LeftPanel = () => {
 
             </div>
           </footer> 
+          </div>
+
+          
 
         </div>
       ) : (
