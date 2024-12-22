@@ -219,24 +219,7 @@ const LeftPanel = () => {
             )}
           </main>
 
-          <footer className="app-footer fixed bottom-0 w-full z-50 bg-blue-500">
-            <div className="p-4 flex space-x-4">
-              {/* Home Button */}
-              <button
-                className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
-                aria-label="Home"
-                
-              >
-                <Home className="w-5 h-5 text-primary" />
-              </button>
-              {/* Edit Profile Button */}
-            
-              {/* <Home 
-               
-              /> */}
-
-            </div>
-          </footer> 
+          
           <div className="empty70pixels"></div>
         </>
       ) : (
