@@ -166,8 +166,7 @@ body,
     padding-bottom: env(safe-area-inset-bottom);
   }
 .empty70pixels {
-
-    height: 80px;
-    
+    height: 90px;
+    position: relative;
 }
 
