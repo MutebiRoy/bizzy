@@ -142,31 +142,33 @@ body,
 .app-container {
     /* A full-height container, so the main can fill remaining space */
     position: relative;
-    min-height: 100vh;
+    height: 100%;
     /* no scrolling here, let main handle the scroll */
-  }
+}
   
-  .app-header,
-  .app-footer {
-    /* Typically a fixed height that you measure with offsetHeight */
-    height: 70px; /* Or however tall your headers/footers are */
-    left: 0;
-    right: 0;
-  }
-  
-  .app-main {
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch; /* for smooth iOS scrolling */
-    background: brown;
-  }
-  .app-header {
-    padding-top: env(safe-area-inset-top);
-  }
-  .app-footer {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
+.app-header,
+.app-footer {
+/* Typically a fixed height that you measure with offsetHeight */
+height: 70px; /* Or however tall your headers/footers are */
+left: 0;
+right: 0;
+}
+
+.app-main {
+overflow-y: auto;
+-webkit-overflow-scrolling: touch; /* for smooth iOS scrolling */
+background: brown;
+border: 2px dashed green;
+}
+.app-header {
+padding-top: env(safe-area-inset-top);
+}
+.app-footer {
+padding-bottom: env(safe-area-inset-bottom);
+}
 .empty70pixels {
-    height: 90px;
+    height: 70px;
     position: relative;
+    width: 100%;
 }
 
