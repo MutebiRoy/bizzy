@@ -52,24 +52,6 @@ const LeftPanel = () => {
   const setConversationLastRead = useMutation(api.conversations.setConversationLastRead);
 
   const { selectedConversation, setSelectedConversation, isViewingConversation, setIsViewingConversation } = useConversationStore();
-  
-  // const mainRef = useRef<HTMLDivElement>(null);
-  // const [isSafari, setIsSafari] = useState(false);
-
-  // // Detect Safari browser
-  // useEffect(() => {
-  //const isSafariBrowser = isSafari;
-  
-  //alert(`Browser type: ${isSafari ? 'Safari' : 'Not Safari'}`);
-  //   setIsSafari(isSafari);
-  // }, []);
-  
-  
-  // useEffect(() => {
-  //       if (!isViewingConversation && mainRef.current) {
-  //           mainRef.current.scrollTo(0, 0);
-  //       }
-  //   }, [isViewingConversation]);
 
   const conversationName =
     selectedConversation?.groupName ||
@@ -128,10 +110,10 @@ const LeftPanel = () => {
   
   return (
     
-    <div className="app-container">
+    <div className="app-container relative">
       {isViewingConversation && selectedConversation ? (
-        <div className="">
-          <div className="empty70pixels"></div>
+        <>
+          {/* <div className="empty70pixels"></div> */}
           {/* Header - Chat View*/}
           <header className="app-header fixed top-0 w-full z-50 bg-blue-500">
             <div className="flex items-center justify-between p-4 text-white">
@@ -181,7 +163,7 @@ const LeftPanel = () => {
           </header>
 
           {/*  View Conversation*/}
-          <main className="app-main">
+          <main className="app-main" id="conversationListMain">
           {/* Safari padding and bottom padding */}
             <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
@@ -189,13 +171,13 @@ const LeftPanel = () => {
           <footer className="h-0">
 
           </footer>
-          <div className="empty70pixels"></div>
-        </div>
+          {/* <div className="empty70pixels"></div> */}
+        </>
       ) : currentUserId ? (
-        <div className="">
-          <div className="empty70pixels"></div>
+        <>
+          {/* <div className="empty70pixels"></div> */}
           {/* Header - Conversations list*/}
-          <header className="app-header fixed top-0 w-full z-50 bg-blue-500">
+          <header className="app-header fixed inset-0 top-0 w-full z-50 bg-blue-500">
             {/* Left: Logged in Profile Picture */}
             <div className="flex items-center justify-between p-4">
               <CustomUserButton />
@@ -208,7 +190,7 @@ const LeftPanel = () => {
 
           {/* Conversations List */}
           
-          <main className="app-main -webkit-overflow-scrolling:touch">
+          <main className="app-main" id="conversationListMain">
             {/** Conversations List */}
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
@@ -255,8 +237,8 @@ const LeftPanel = () => {
 
             </div>
           </footer> 
-          <div className="empty70pixels"></div>
-        </div>
+          {/* <div className="empty70pixels"></div> */}
+        </>
       ) : (
         <p>Loading...</p>
       )}
