@@ -131,7 +131,7 @@ const LeftPanel = () => {
     <div className="app-container">
       {isViewingConversation && selectedConversation ? (
         <div className="">
-          <div className="h-70 w-full"></div>
+          <div className="h-100 w-full"></div>
           {/* Header - Chat View*/}
           <header className="app-header fixed top-0 w-full z-50 bg-blue-500">
             <div className="flex items-center justify-between p-4 text-white">
