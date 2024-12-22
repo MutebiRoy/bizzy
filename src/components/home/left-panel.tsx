@@ -186,7 +186,7 @@ const LeftPanel = () => {
             <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
           </main>
-          <footer className="h-0">
+          <footer className="<div className="empty70pixels"></div>">
 
           </footer>
 
@@ -255,7 +255,7 @@ const LeftPanel = () => {
 
             </div>
           </footer> 
-           <div className="h-70 w-full"></div>
+           <div className="empty70pixels"></div>
         </div>
       ) : (
         <p>Loading...</p>
