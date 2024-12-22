@@ -165,3 +165,10 @@ body,
   .app-footer {
     padding-bottom: env(safe-area-inset-bottom);
   }
+.empty70pixels {
+
+    height: 100px;
+    background: yellow;
+    
+}
+
