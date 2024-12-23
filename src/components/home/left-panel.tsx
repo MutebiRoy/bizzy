@@ -108,13 +108,7 @@ const LeftPanel = () => {
     <div className="app-container">
       {isViewingConversation && selectedConversation ? (
         <>
-          <header className="app-header " style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            zIndex: 50,
-          }}>
+          <header className="app-header">
             <div className="flex items-center justify-between p-4 text-white">
               <div className="flex items-center space-x-2">
                 <button
@@ -162,39 +156,20 @@ const LeftPanel = () => {
           </header>
 
           {/*  View Conversation*/}
-          <main className="app-main" id="conversationListMain" style={{
-            position: "absolute",
-            // top & bottom set in page.tsx
-            left: 0,
-            right: 0,
-            overflowY: "auto",
-          }}>
+          <main className="app-main" id="conversationListMain">
           {/* Safari padding and bottom padding */}
             <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
           </main>
 
-          <footer className="app-footer " style={{
-            position: "fixed",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: "0px",
-            zIndex: 50,
-          }}>
+          <footer className="app-footer bg-blue-500" style={{ height: "0px" }}>
 
           </footer>
         </>
       ) : currentUserId ? (
         <>
           {/* Header - Conversations list*/}
-          <header className="app-header" style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 50,
-        }}>
+          <header className="app-header">
             {/* Left: Logged in Profile Picture */}
             <div className="flex items-center justify-between p-4">
               <CustomUserButton />
@@ -207,13 +182,7 @@ const LeftPanel = () => {
 
           {/* Conversations List */}
           
-          <main className="app-main" id="conversationListMain" style={{
-          position: "absolute",
-          // top/bottom set in page.tsx
-          left: 0,
-          right: 0,
-          overflowY: "auto",
-        }}>
+          <main className="app-main" id="conversationListMain">
             {/** Conversations List */}
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
@@ -242,14 +211,7 @@ const LeftPanel = () => {
             )}
           </main>
 
-          <footer className="app-footer footer-height-seventy" style={{
-          position: "fixed",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: "70px",
-          zIndex: 50,
-        }}>
+          <footer className="app-footer footer-height-seventy">
             <div className="p-4 flex space-x-4">
               {/* Home Button */}
               <button
