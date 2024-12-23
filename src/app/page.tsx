@@ -26,6 +26,7 @@ export default function Home() {
 		recalc();
 		window.addEventListener("resize", recalc);
 		window.addEventListener("orientationchange", recalc);
+		
 		return () => {
 		  window.removeEventListener("resize", recalc);
 		  window.removeEventListener("orientationchange", recalc);
