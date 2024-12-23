@@ -28,15 +28,18 @@ const RightPanel = ({ conversation }: RightPanelProps) => {
     }
 
     return (
-        <div className='flex flex-col h-full relative'>
-            <div className='flex-1 min-h-0  overflow-y-auto pb-[80px]'>
+        // <div className='flex flex-col h-full relative'>
+        <div className="flex flex-col h-full">
+            {/* <div className='flex-1 min-h-0  overflow-y-auto'> */}
+            <div className="flex-1 overflow-y-auto">
                 <MessageContainer/>
             </div>
 
-            <div className='sticky bottom-0 left-0 w-full z-20 pb-[env(safe-area-inset-bottom)]'>
-                <div className="p-0">
+            {/* <div className='sticky bottom-0 left-0 w-full z-20 pb-[env(safe-area-inset-bottom)]'> */}
+            <div className="flex-none p-2 bg-white border-t border-gray-300">
+                {/* <div className="p-0"> */}
                     <MessageInput conversation={conversation} />
-                </div>
+                {/* </div> */}
             </div>
         </div>
     );
