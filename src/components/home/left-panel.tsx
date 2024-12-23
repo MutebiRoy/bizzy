@@ -107,7 +107,7 @@ const LeftPanel = () => {
     
     <div className="app-container">
       {isViewingConversation && selectedConversation ? (
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full min-h-full">
           <header className="app-header">
             <div className="flex items-center justify-between p-4 text-white">
               <div className="flex items-center space-x-2">
@@ -156,7 +156,7 @@ const LeftPanel = () => {
           </header>
 
           {/*  View Conversation*/}
-          <main className="app-main" id="conversationListMain">
+          <main className="app-main min-h-0" id="conversationListMain">
           {/* Safari padding and bottom padding */}
             <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
@@ -167,7 +167,7 @@ const LeftPanel = () => {
           </footer>
         </div>
       ) : currentUserId ? (
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full min-h-full">
           {/* Header - Conversations list*/}
           <header className="app-header">
             {/* Left: Logged in Profile Picture */}
@@ -182,7 +182,7 @@ const LeftPanel = () => {
 
           {/* Conversations List */}
           
-          <main className="app-main" id="conversationListMain">
+          <main className="app-main min-h-0" id="conversationListMain">
             {/** Conversations List */}
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
