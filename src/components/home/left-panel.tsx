@@ -105,12 +105,55 @@ const LeftPanel = () => {
   
   return (
     
-    <div className="app-container relative">
+    <div className="app-container">
       {isViewingConversation && selectedConversation ? (
         <>
-          <div className="empty70pixels"></div>
-          {/* Header - Chat View*/}
+          <header className="app-header">
+            <div className="flex items-center justify-between p-4 text-white">
+              <div className="flex items-center space-x-2">
+                <button
+                  className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+                  aria-label="Go Back"
+                  onClick={handleBackClick}
+                >
+                  <ArrowLeft className="w-5 h-5 text-white" />
+                </button>
+                {/* Link to Profile Page */}
 
+                {selectedConversation && (
+                <ProfileDialog
+                  user={!selectedConversation.isGroup ? otherParticipantInChat : null}
+                  conversation={selectedConversation.isGroup ? selectedConversation : null}
+                  trigger={
+                    <div className="flex items-center space-x-4 cursor-pointer">
+                      <Avatar className="ml-2 w-6 h-6">
+                        <AvatarImage
+                          src={conversationImage || "/placeholder.png"}
+                          className="object-cover"
+                        />
+                        <AvatarFallback>
+                          <div className="animate-pulse bg-gray-tertiary w-full h-full rounded-full" />
+                        </AvatarFallback>
+                      </Avatar>
+                      <h1 className="text-lg font-sm">{conversationName}</h1>
+                    </div>
+                  }
+                />
+                )}
+                
+                {/* View group members Dialog */}
+                {selectedConversation && selectedConversation.isGroup && (
+                  <GroupMembersDialog selectedConversation={selectedConversation} />
+                )}
+              </div>
+              <div className="flex items-center space-x-6">
+                {/* Create Groups Icon /> */}
+                {/* {isAuthenticated && <UserListDialog />} */}
+
+                {/* <ThemeSwitch /> */}
+              </div>
+            </div>
+          </header>
 
           {/*  View Conversation*/}
           <main className="app-main" id="conversationListMain">
@@ -121,13 +164,20 @@ const LeftPanel = () => {
           <footer className="h-0">
 
           </footer>
-          <div className="empty70pixels"></div>
         </>
       ) : currentUserId ? (
         <>
-          <div className="empty70pixels"></div>
           {/* Header - Conversations list*/}
-          
+          <header className="app-header">
+            {/* Left: Logged in Profile Picture */}
+            <div className="flex items-center justify-between p-4">
+              <CustomUserButton />
+              <div className="flex-1 ml-4">
+                {/* Search bar now placed next to profile image */}
+                <SearchUsers />
+              </div>
+            </div>
+          </header>
 
           {/* Conversations List */}
           
@@ -160,8 +210,24 @@ const LeftPanel = () => {
             )}
           </main>
 
-          
-          <div className="empty70pixels"></div>
+          <footer className="app-footer">
+            <div className="p-4 flex space-x-4">
+              {/* Home Button */}
+              <button
+                className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+                aria-label="Home"
+                
+              >
+                <Home className="w-5 h-5 text-primary" />
+              </button>
+              {/* Edit Profile Button */}
+            
+              {/* <Home 
+               
+              /> */}
+
+            </div>
+          </footer>
         </>
       ) : (
         <p>Loading...</p>
