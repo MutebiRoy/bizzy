@@ -9,7 +9,7 @@ export default function Home() {
     // Safari fix: measure header + footer, set <main> to the exact leftover height
     function recalc() {
       const headerEl = document.querySelector<HTMLElement>(".app-header");
-      const footerEl = document.querySelector<HTMLElement>(".app-footer");
+      const footerEl = document.querySelector<HTMLElement>("footerJs");
       // We'll share the same <main> for both conversation list + chat
       const mainEl = document.querySelector<HTMLElement>("#conversationListMain");
 
