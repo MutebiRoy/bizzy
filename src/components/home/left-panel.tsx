@@ -161,7 +161,7 @@ const LeftPanel = () => {
             <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
           </main>
-          <footer className="h-0 footerJs">
+          <footer className="app-footer bg-blue-500" style={{ height: "0px" }}>
 
           </footer>
         </>
@@ -210,7 +210,7 @@ const LeftPanel = () => {
             )}
           </main>
 
-          <footer className="app-footer footerJs">
+          <footer className="app-footer">
             <div className="p-4 flex space-x-4">
               {/* Home Button */}
               <button
