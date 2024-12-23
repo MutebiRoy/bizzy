@@ -151,16 +151,15 @@ body,
     display: flex;
     flex-direction: column; /* Essential for correct layout */
     height: 100vh; /* Ensure container takes full viewport height */
-    margin: 0;
-    padding: 0;
 }
   
+
 .app-header,
 .app-footer {
-    height: 70px;
     flex-shrink: 0;
     background-color: #bfdbfe;
     display: flex;
+    height: 70px;
 }
 
 .app-main {
