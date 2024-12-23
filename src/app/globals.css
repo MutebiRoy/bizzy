@@ -138,6 +138,7 @@ body,
     display: flex;
     flex-direction: column; /* Essential for correct layout */
     height: 100vh; /* Ensure container takes full viewport height */
+    -webkit-transform: translateZ(0);
 }
   
 
