@@ -169,12 +169,7 @@ body,
     background: brown;
     border: 2px dashed green;
 }
-.app-header {
-    padding-top: env(safe-area-inset-top);
-}
-.app-footer {
-    padding-bottom: env(safe-area-inset-bottom);
-}
+
 .empty70pixels {
     display: none;
 }
