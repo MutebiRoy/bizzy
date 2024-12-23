@@ -158,7 +158,6 @@ flex-shrink: 0;
 }
 
 .app-main {
-    flex-grow: 1;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch; /* for smooth iOS scrolling */
     background: brown;
