@@ -1,9 +1,7 @@
 // src\components\home\left-panel.tsx
 "use client";
 import { useMemo, useState, useEffect,  useRef } from "react";
-import { ListFilter, Search, ArrowLeft, Users, Settings, Home } from "lucide-react";
-import { Input } from "../ui/input";
-import Link from 'next/link';
+import { ArrowLeft, Home } from "lucide-react";
 import Conversation from "./conversation";
 import CustomUserButton from "./custom-user-button";
 import { useConvexAuth, useQuery, useMutation } from "convex/react";
@@ -12,12 +10,9 @@ import { useConversationStore } from "@/store/chat-store";
 import RightPanel from "./right-panel";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import GroupMembersDialog from "./group-members-dialog";
-import { Id } from "../../../convex/_generated/dataModel";
 import SearchUsers from "./search_users";
-import EditProfileDialog from "./edit-profile-dialog";
 import ProfileDialog from "./profile-dialog";
 import { convertConversationTypes, ConversationType, UserType} from "@/utils/conversation_utils";
-import { isSafari } from 'react-device-detect';
 
 interface LastMessage {
   _id: string;
@@ -177,7 +172,7 @@ const LeftPanel = () => {
         <>
           <div className="empty70pixels"></div>
           {/* Header - Conversations list*/}
-          <header className="app-header fixed inset-0 top-0 w-full z-50 bg-blue-500">
+          <header className="app-header fixed top-0 w-full z-50 bg-blue-500">
             {/* Left: Logged in Profile Picture */}
             <div className="flex items-center justify-between p-4">
               <CustomUserButton />
@@ -219,7 +214,24 @@ const LeftPanel = () => {
             )}
           </main>
 
-          
+          <footer className="app-footer fixed bottom-0 w-full z-50 bg-blue-500">
+            <div className="p-4 flex space-x-4">
+              {/* Home Button */}
+              <button
+                className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+                aria-label="Home"
+                
+              >
+                <Home className="w-5 h-5 text-primary" />
+              </button>
+              {/* Edit Profile Button */}
+            
+              {/* <Home 
+               
+              /> */}
+
+            </div>
+          </footer> 
           <div className="empty70pixels"></div>
         </>
       ) : (
