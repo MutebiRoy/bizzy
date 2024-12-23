@@ -171,7 +171,7 @@ const LeftPanel = () => {
           {/* Header - Conversations list*/}
           <header className="app-header">
             {/* Left: Logged in Profile Picture */}
-            <div className="flex items-center justify-between p-4">
+            <div className="flex items-center justify-between p-4 w-full">
               <CustomUserButton />
               <div className="flex-1 ml-4">
                 {/* Search bar now placed next to profile image */}
