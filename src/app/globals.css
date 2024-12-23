@@ -143,24 +143,25 @@ body,
     /* A full-height container, so the main can fill remaining space */
     display: flex;
     flex-direction: column; /* Essential for correct layout */
-    min-height: 90vh; /* Ensure container takes full viewport height */
-    overflow: hidden;
-    /* no scrolling here, let main handle the scroll */
+    height: 100vh; /* Ensure container takes full viewport height */
+    margin: 0;
+    padding: 0;
 }
   
 .app-header,
 .app-footer {
     height: 70px;
     flex-shrink: 0;
+    background-color: #bfdbfe;
+    display: flex;
 }
 
 .app-main {
-    flex-grow: 1;
+    flex: 1;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch; /* for smooth iOS scrolling */
     background: brown;
     border: 2px dashed green;
-  
 }
 .app-header {
     padding-top: env(safe-area-inset-top);
@@ -169,7 +170,5 @@ body,
     padding-bottom: env(safe-area-inset-bottom);
 }
 .empty70pixels {
-  height: 70px !important;
-  background-color: green;
+    display: none;
 }
-
