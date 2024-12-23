@@ -160,6 +160,7 @@ body,
     background-color: #bfdbfe;
     display: flex;
     height: 70px;
+    z-index: 50;
 }
 
 .app-main {
