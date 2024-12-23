@@ -91,6 +91,14 @@ body {
   padding: 0;
   /* Prevent body from scrolling behind <main> in Safari */
   overflow: hidden;
+  height: 100%; /* Important for viewport height to work correctly */
+    width: 100%;
+    overflow: hidden;
+}
+#root,
+#__next {
+    height: 100%;
+    width: 100%;
 }
 
 @layer base {
@@ -151,6 +159,7 @@ body,
     display: flex;
     flex-direction: column; /* Essential for correct layout */
     height: 100vh; /* Ensure container takes full viewport height */
+    width: 100vw;
 }
   
 
@@ -160,6 +169,7 @@ body,
     background-color: #bfdbfe;
     display: flex;
     height: 70px;
+    width: 100%;
 }
 
 .app-main {
@@ -167,7 +177,7 @@ body,
     overflow-y: auto;
     -webkit-overflow-scrolling: touch; /* for smooth iOS scrolling */
     background: brown;
-    border: 2px dashed green;
+    width: 100%;
 }
 .app-header {
     padding-top: env(safe-area-inset-top);
