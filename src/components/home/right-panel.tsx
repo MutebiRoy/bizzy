@@ -36,7 +36,7 @@ const RightPanel = ({ conversation }: RightPanelProps) => {
             </div>
 
             {/* <div className='sticky bottom-0 left-0 w-full z-20 pb-[env(safe-area-inset-bottom)]'> */}
-            <div className="flex-none p-2 bg-white border-t border-gray-300">
+            <div className="flex-none">
                 {/* <div className="p-0"> */}
                     <MessageInput conversation={conversation} />
                 {/* </div> */}
