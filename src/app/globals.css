@@ -70,7 +70,20 @@
         --foreground: 210 40% 98%;
     }
 
-   
+    body {
+        @apply bg-background text-foreground;
+        overflow: visible;
+  height: auto;
+  margin: 0;
+  padding: 0;
+    }
+    /* html,
+    body,
+    #__next {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    } */
 }
 html,
 body {
@@ -134,25 +147,25 @@ body,
 }
 
 .app-container {
-    /* A full-height container, so the main can fill remaining space */
-    display: flex;
-    flex-direction: column; /* Essential for correct layout */
-    height: 100vh; /* Ensure container takes full viewport height */
-    -webkit-transform: translateZ(0);
-    overflow-y: hidden;
+    position: relative;
+  width: 100%;
+  height: 100vh;
 }
   
 
 .app-header,
 .app-footer {
-    flex-shrink: 0;
-    background-color: #bfdbfe;
-    display: flex;
-    height: 70px;
+    background-color: #3b82f6; /* or override w/ .bg-blue-500 in JSX */
+  color: white;
 }
 
 .app-main {
-    flex: 1;
+    position: absolute; /* top/bottom set in script */
     overflow-y: auto;
-    background: brown;
+    -webkit-overflow-scrolling: touch;
+    background-color: brown; /* just for clarity, or remove if you have tailwind classes */
+  }
+
+.empty70pixels {
+    display: none;
 }
