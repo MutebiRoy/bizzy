@@ -89,11 +89,8 @@ html,
 body {
   margin: 0;
   padding: 0;
-  /* Prevent body from scrolling behind <main> in Safari */
-  overflow: hidden;
   height: 100%; /* Important for viewport height to work correctly */
     width: 100%;
-    overflow: hidden;
 }
 #root,
 #__next {
