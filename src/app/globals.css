@@ -143,7 +143,7 @@ body,
     /* A full-height container, so the main can fill remaining space */
     display: flex;
     flex-direction: column; /* Essential for correct layout */
-    min-height: 100vh; /* Ensure container takes full viewport height */
+    min-height: 90vh; /* Ensure container takes full viewport height */
     overflow: hidden;
     /* no scrolling here, let main handle the scroll */
 }
