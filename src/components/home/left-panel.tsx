@@ -156,7 +156,7 @@ const LeftPanel = () => {
           </header>
 
           {/*  View Conversation*/}
-          <main className="app-main">
+          <main className="app-main" id="conversationListMain">
           {/* Safari padding and bottom padding */}
             <RightPanel conversation={selectedConversation} />
             {/* // </div> */}
@@ -181,7 +181,7 @@ const LeftPanel = () => {
 
           {/* Conversations List */}
           
-          <main className="app-main" >
+          <main className="app-main" id="conversationListMain">
             {/** Conversations List */}
             {conversations?.length > 0 ? (
               conversations?.map((conversation, index) => (
