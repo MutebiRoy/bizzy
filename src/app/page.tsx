@@ -9,11 +9,15 @@ export default function Home() {
       const headerEl = document.querySelector<HTMLElement>(".app-header");
       const footerEl = document.querySelector<HTMLElement>(".app-footer");
       const mainEl = document.querySelector<HTMLElement>("#conversationListMain");
-
       if (!headerEl || !footerEl || !mainEl) return;
 
-      const totalHF = headerEl.offsetHeight + footerEl.offsetHeight;
-      mainEl.style.height = `calc(100vh - ${totalHF}px)`;
+      const headerHeight = headerEl.offsetHeight || 0;
+      const footerHeight = footerEl.offsetHeight || 0;
+      // Position <main> absolutely between them
+      mainEl.style.top = `${headerHeight}px`;
+      mainEl.style.bottom = `${footerHeight}px`;
+
+      // For smooth iOS scrolling
       (mainEl.style as any).webkitOverflowScrolling = "touch";
       mainEl.style.overflowY = "auto";
     }
@@ -29,8 +33,8 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen">
-      <LeftPanel />
+    <div>
+        <LeftPanel />
     </div>
   );
 }
