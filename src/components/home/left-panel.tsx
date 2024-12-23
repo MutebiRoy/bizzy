@@ -107,7 +107,7 @@ const LeftPanel = () => {
     
     <div className="app-container">
       {isViewingConversation && selectedConversation ? (
-        <>
+        <div className="flex flex-col h-full">
           <header className="app-header">
             <div className="flex items-center justify-between p-4 text-white">
               <div className="flex items-center space-x-2">
@@ -165,9 +165,9 @@ const LeftPanel = () => {
           <footer className="app-footer bg-blue-500" style={{ height: "0px" }}>
 
           </footer>
-        </>
+        </div>
       ) : currentUserId ? (
-        <>
+        <div className="flex flex-col h-full">
           {/* Header - Conversations list*/}
           <header className="app-header">
             {/* Left: Logged in Profile Picture */}
@@ -229,7 +229,7 @@ const LeftPanel = () => {
 
             </div>
           </footer>
-        </>
+        </div>
       ) : (
         <p>Loading...</p>
       )}
