@@ -44,7 +44,9 @@ const CustomUserButton = () => {
         </DropdownMenuTrigger>
         <DropdownMenuContent className="dropdown-full-width">
           {/* People Online */}
-          <DropdownMenuItem onClick={() => {
+          <DropdownMenuItem 
+          className="px-3 py-2" 
+          onClick={() => {
             router.push("/online");
           }}>
             <Users className="mr-2 h-4 w-4" />
@@ -53,19 +55,25 @@ const CustomUserButton = () => {
 
           {/* Create Groups */}
           {isAuthenticated && (
-            <DropdownMenuItem onClick={() => setIsUserListOpen(true)}>
+            <DropdownMenuItem
+            className="px-3 py-2" 
+            onClick={() => setIsUserListOpen(true)}>
               <Plus className="mr-2 h-4 w-4" />
               <span>Create Groups</span>
             </DropdownMenuItem>
           )}
 
-          <DropdownMenuItem onClick={() => setIsEditProfileOpen(true)}>
+          <DropdownMenuItem 
+          className="px-3 py-2"
+          onClick={() => setIsEditProfileOpen(true)}>
             <Pencil className="mr-2 h-4 w-4" />
             <span>Edit Profile</span>
           </DropdownMenuItem>
 
           {/* view My Profile */}
-          <DropdownMenuItem onClick={() => {
+          <DropdownMenuItem
+          className="px-3 py-2" 
+          onClick={() => {
             router.push(`/${me.username}`)
           }}>
             <Share className="mr-2 h-4 w-4" />
@@ -78,6 +86,7 @@ const CustomUserButton = () => {
           
 
           <DropdownMenuItem
+            className="px-3 py-2"
             onClick={() => {
               signOut();
               router.push("/"); // Redirect to login page
