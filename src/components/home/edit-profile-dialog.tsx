@@ -310,7 +310,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="mt-1 text-base text-gray-500"
+              className="mt-1 text-base"
             />
             {name.trim().length > 0 && (name.trim().length < 2 || name.trim().length > 20) && (
               <p className="text-sm text-red-500">
@@ -352,7 +352,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
                   }}
                   className="mt-1 text-base text-gray-500"
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs mt-1">
                   {customGender.length}/25 characters
                 </p>
               </div>
@@ -366,7 +366,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
               value={username}
               maxLength={25}
               onChange={(e) => setUsername(e.target.value)}
-              className="mt-1 text-base text-gray-500"
+              className="mt-1 text-base "
             />
             {username.trim().length === 0 && (
               <p className="text-sm text-red-500">Username is required.</p>
@@ -385,7 +385,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
               value={instagramHandle}
               maxLength={25}
               onChange={(e) => setInstagramHandle(e.target.value)}
-              className="mt-1 text-base text-gray-500"
+              className="mt-1 text-base"
             />
             {instagramHandle.length > 25 && (
               <p className="text-sm text-red-500">
@@ -401,7 +401,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
               value={tiktokHandle}
               maxLength={25}
               onChange={(e) => setTiktokHandle(e.target.value)}
-              className="mt-1 text-base text-gray-500"
+              className="mt-1 text-base"
             />
             {tiktokHandle.length > 25 && (
               <p className="text-sm text-red-500">
@@ -417,7 +417,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
               value={youtubeHandle}
               maxLength={30}
               onChange={(e) => setYoutubeHandle(e.target.value)}
-              className="mt-1 text-base text-gray-500"
+              className="mt-1 text-base"
             />
             {youtubeHandle.length > 30 && (
               <p className="text-sm text-red-500">
@@ -450,7 +450,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
               {tags.map((tag) => (
                 <div
                   key={tag}
-                  className="flex items-center space-x-1 bg-gray-200 px-2 py-1 rounded-full text-sm"
+                  className="flex items-center space-x-1 px-2 py-1 rounded-full text-sm"
                 >
                   <span>{tag}</span>
                   <button
@@ -493,7 +493,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
                       setCustomPreferredGender(e.target.value);
                     }
                   }}
-                  className="mt-1 text-base text-gray-500"
+                  className="mt-1 text-base "
                 />
                 <p className="text-xs text-gray-500 mt-1">
                   {customPreferredGender.length}/25 characters
