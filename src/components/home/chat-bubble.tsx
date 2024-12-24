@@ -81,7 +81,7 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 							<Image 
 								src={message.content} 
 								alt="Image" 
-								layout="fill"  
+								layout="fill"
 							/>
 							</DialogDescription>
 						</DialogContent>
@@ -105,8 +105,8 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
 							<DialogDescription style={{ width: '100vw', height: '90vh' }}>
 							<ReactPlayer
 								url={message.content}
-								width="80%"
-    							height="100%"
+								width="100%"
+    							height="80%"
 								controls={true}
 								light={true}
 							/>
