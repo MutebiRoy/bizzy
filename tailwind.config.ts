@@ -1,3 +1,4 @@
+// tailwind.config.ts
 import type { Config } from "tailwindcss";
 
 const config = {
@@ -47,6 +48,15 @@ const config = {
 					DEFAULT: "hsl(var(--card))",
 					foreground: "hsl(var(--card-foreground))",
 				},
+
+				/* Additional references for your new variables if you like: */
+				"gray-primary": "hsl(var(--gray-primary))",
+				"gray-secondary": "hsl(var(--gray-secondary))",
+				"gray-tertiary": "hsl(var(--gray-tertiary))",
+				"green-primary": "hsl(var(--green-primary))",
+				"green-secondary": "hsl(var(--green-secondary))",
+				"green-chat": "hsl(var(--green-chat))",
+				"chat-hover": "hsl(var(--chat-hover))",
 			},
 			backgroundColor: {
 				container: "hsl(var(--container))",
