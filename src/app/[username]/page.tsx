@@ -70,7 +70,7 @@ export default function UserProfilePage() {
       {/* Main content area with flex-grow to push the footer down */}
     <div className="flex flex-col items-center p-4 space-y-4 flex-grow">
         <div className="flex flex-col items-center space-y-4 mt-10">
-            <div className="relative w-32 h-32 rounded-full overflow-hidden bg-gray-200">
+            <div className="relative w-32 h-32 rounded-full overflow-hidden">
                 <Image
                     src={user.image || "/placeholder.png"}
                     alt={user.name || "User Profile Picture"}
@@ -82,12 +82,12 @@ export default function UserProfilePage() {
             <div className="flex flex-col items-center space-y-2">
             {user.username && (
                 <div className="flex items-center space-x-2">
-                <p className="text-gray-400">@{user.username}</p>
+                <p className="">@{user.username}</p>
                 <button
                     onClick={handleCopyLink}
                     className="text-sm"
                 >
-                    <Link className="text-gray-300" />
+                    <Link className="" />
                 </button>
                 </div>
             )}
@@ -99,7 +99,7 @@ export default function UserProfilePage() {
                     href={`https://instagram.com/${user.instagramHandle}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-300"
+                    className=""
                 >
                     @{user.instagramHandle}
                 </a>
@@ -113,7 +113,7 @@ export default function UserProfilePage() {
                     href={`https://tiktok.com/@${user.tiktokHandle}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-300"
+                    className=""
                 >
                     @{user.tiktokHandle}
                 </a>
@@ -127,7 +127,7 @@ export default function UserProfilePage() {
                     href={`https://youtube.com/@${user.youtubeHandle}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-300"
+                    className=""
                 >
                     @{user.youtubeHandle}
                 </a>
