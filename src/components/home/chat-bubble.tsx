@@ -1,3 +1,4 @@
+// src/components/home/chat-bubble.tsx
 import React, { useState } from "react";
 import { MessageSeenSvg } from "@/lib/svgs";
 import { IMessage, useConversationStore } from "@/store/chat-store";
@@ -34,7 +35,9 @@ const ChatBubble = ({ me, message, previousMessage }: ChatBubbleProps) => {
   	const isMember = participantIds.includes(message.sender?._id);
 	const isGroup = selectedConversation?.isGroup;
 	const fromMe = message.sender?._id === me._id;
-	const bgClass = fromMe ? "bg-green-chat" : "bg-white dark:bg-gray-primary";
+	const bgClass = fromMe
+    ? "bg-[color:var(--bubble-outgoing)]"
+    : "bg-white dark:bg-gray-primary";
 
 	console.log(message.sender);
 	
@@ -243,7 +246,7 @@ const OtherMessageIndicator = () => (
 );
 
 const SelfMessageIndicator = () => (
-	<div className='absolute bg-green-chat top-0 -right-[3px] w-3 h-3 rounded-br-full overflow-hidden' />
+	<div className='absolute bg-[color:var(--bubble-outgoing)]  top-0 -right-[3px] w-3 h-3 rounded-br-full overflow-hidden' />
 );
 
 const TextMessage = ({ message }: { message: IMessage }) => {
