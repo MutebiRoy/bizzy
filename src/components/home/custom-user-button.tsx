@@ -42,7 +42,7 @@ const CustomUserButton = () => {
             </Avatar>
           </div>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="ml-3">
+        <DropdownMenuContent className="dropdown-full-width">
           {/* People Online */}
           <DropdownMenuItem onClick={() => {
             router.push("/online");
