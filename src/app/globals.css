@@ -5,54 +5,56 @@
 @layer base {
   :root {
     /* ===== FUTURISTIC LIGHT MODE COLORS ===== */
-    --background: 210, 20%, 98%;          /* near-white background */
-    --foreground: 210, 15%, 15%;          /* darker text */
-    --container: 210, 20%, 98%;           /* container backgrounds */
-    --left-panel: 210, 20%, 98%;
-    --gray-primary: 210, 16%, 90%;
-    --gray-secondary: 210, 12%, 85%;
-    --gray-tertiary: 210, 10%, 75%;
+    --background: 50, 20%, 95%;         /* a soft, beige-ish background, not pure white */
+    --foreground: 30, 10%, 20%;         /* a gentle brownish text color to complement */
+    --container: 50, 18%, 96%;          /* slightly lighter or darker than background to differentiate sections */
+    --left-panel: 50, 20%, 95%;
+    --gray-primary: 50, 10%, 88%;       /* mild gray/beige for subtle surfaces */
+    --gray-secondary: 50, 8%, 82%;
+    --gray-tertiary: 50, 8%, 70%;
 
     /* A subtle accent green for futuristic style */
-    --green-primary: 160, 70%, 45%;
-    --green-secondary: 160, 70%, 93%;
-    --green-chat: 160, 70%, 98%;
+    --green-primary: 140, 35%, 44%;
+    --green-secondary: 140, 40%, 88%;
+    --green-chat: 140, 40%, 95%;
 
     /* Chat hover or highlight */
-    --chat-hover: 210, 16%, 90%;
+    --chat-hover: 50, 10%, 90%;
 
-    /* Card/popover surfaces */
-    --card: 0, 0%, 100%;
-    --card-foreground: 210, 15%, 15%;
-    --popover: 0, 0%, 100%;
-    --popover-foreground: 210, 15%, 15%;
+    --card: 50, 20%, 96%;
+    --card-foreground: 30, 10%, 20%;
+    --popover: 50, 20%, 96%;
+    --popover-foreground: 30, 10%, 20%;
 
-    /* Primary accent or brand color */
-    --primary: 210, 47.4%, 11.2%;
-    --primary-foreground: 210, 40%, 98%;
+    /* For your brand or primary accent */
+    --primary: 140, 35%, 44%;
+    --primary-foreground: 0, 0%, 100%;
 
     /* Secondary color for mild accents */
-    --secondary: 210, 40%, 96.1%;
-    --secondary-foreground: 210, 47.4%, 11.2%;
+    --secondary: 50, 15%, 92%;
+    --secondary-foreground: 30, 10%, 20%;
 
     /* Muted + accent usage */
-    --muted: 210, 40%, 96.1%;
-    --muted-foreground: 215.4, 16.3%, 46.9%;
-    --accent: 210, 40%, 96.1%;
-    --accent-foreground: 210, 47.4%, 11.2%;
+    --muted: 50, 10%, 90%;
+    --muted-foreground: 30, 8%, 35%;
+    --accent: 140, 35%, 44%;
+    --accent-foreground: 0, 0%, 100%;
 
     /* Destructive color (e.g., error) */
-    --destructive: 0, 84.2%, 60.2%;
-    --destructive-foreground: 210, 40%, 98%;
+    --destructive: 0, 70%, 60%;
+    --destructive-foreground: 0, 0%, 100%;
 
     /* Borders & inputs */
-    --border: 210, 15%, 85%;
-    --input: 214.3, 31.8%, 91.4%;
+    --border: 50, 10%, 80%;
+    --input: 50, 10%, 80%;
 
     /* Focus ring, etc. */
-    --ring: 210, 90%, 40%;
+    --ring: 140, 35%, 44%;
 
     --radius: 0.5rem;
+
+    /* Outgoing chat bubble color (light mode) */
+    --bubble-outgoing: 140, 40%, 85%;  /* or adjust to your taste */
   }
 
   /* ===== DARK MODE (SLIGHT BROWNISH) ===== */
@@ -64,6 +66,8 @@
     --gray-primary: 30, 8%, 18%;
     --gray-secondary: 30, 8%, 22%;
     --gray-tertiary: 30, 8%, 25%;
+
+    --bubble-outgoing: 160, 40%, 25%;
 
     /* Keep a consistent green accent, but shift slightly darker for dark mode */
     --green-primary: 160, 70%, 45%;
