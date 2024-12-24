@@ -123,8 +123,8 @@ const SearchUsers = () => {
 
   return (
     <div className="relative">
-      <div className="overflow-hidden">
-        <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
+      <div className="overflow-hidden ">
+        <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
         <Input
           type="text"
           placeholder="Search users..."
@@ -147,7 +147,7 @@ const SearchUsers = () => {
                 <Avatar className="mr-2">
                   <AvatarImage src={user.image || "/placeholder.png"} alt={user.name} />
                   <AvatarFallback>
-                    <div className="animate-pulse bg-gray-tertiary w-full h-full rounded-full" />
+                    <div className="animate-pulse w-full h-full rounded-full" />
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">
@@ -189,7 +189,7 @@ const SearchUsers = () => {
                 {tagResults.slice(0, 5).map((tag: string, index: number) => (
                   <span 
                     key={index} 
-                    className="mr-1 mt-1 px-2 py-1 bg-gray-800 text-sm rounded-full cursor-pointer hover:bg-accent"
+                    className="mr-1 mt-1 px-2 py-1 text-sm rounded-full cursor-pointer hover:bg-accent"
                     onClick={() => handleTagClick(tag)}
                   >
                     #{tag}
