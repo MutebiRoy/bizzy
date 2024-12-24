@@ -109,14 +109,14 @@ const LeftPanel = () => {
       {isViewingConversation && selectedConversation ? (
         <>
           <header className="app-header">
-            <div className="flex items-center justify-between p-4 text-white">
+            <div className="flex items-center justify-between p-4">
               <div className="flex items-center space-x-2">
                 <button
-                  className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+                  className="p-2 rounded-full focus:outline-none"
                   aria-label="Go Back"
                   onClick={handleBackClick}
                 >
-                  <ArrowLeft className="w-5 h-5 text-white" />
+                  <ArrowLeft className="w-5 h-5" />
                 </button>
                 {/* Link to Profile Page */}
 
@@ -132,7 +132,7 @@ const LeftPanel = () => {
                           className="object-cover"
                         />
                         <AvatarFallback>
-                          <div className="animate-pulse bg-gray-tertiary w-full h-full rounded-full" />
+                          <div className="animate-pulse w-full h-full rounded-full" />
                         </AvatarFallback>
                       </Avatar>
                       <h1 className="text-lg font-sm">{conversationName}</h1>
@@ -201,10 +201,10 @@ const LeftPanel = () => {
               ))
             ) : (
               <>
-                <p className="text-center text-gray-500 text-sm mt-3">
+                <p className="text-center  text-sm mt-3">
                   No conversations yet!
                 </p>
-                <p className="text-center text-gray-500 text-sm mt-3">
+                <p className="text-center text-sm mt-3">
                   Select or search a name to start a conversation
                 </p>
               </>
@@ -215,7 +215,7 @@ const LeftPanel = () => {
             <div className="p-4 flex space-x-4">
               {/* Home Button */}
               <button
-                className="p-2 rounded-full hover:bg-gray-200 focus:outline-none"
+                className="p-2 rounded-full focus:outline-none"
                 aria-label="Home"
                 
               >
