@@ -1,5 +1,5 @@
 // src\app\layout.tsx"
-import { useEffect } from "react";
+import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import type { Viewport } from 'next'
 import { Inter } from "next/font/google";
@@ -32,17 +32,19 @@ export default function RootLayout({
 	return (
 		<html lang='en'>
 			<body className={inter.className}>
-				<ThemeProvider 
-					attribute='class' 
-					defaultTheme='system' 
-					enableSystem 
-					disableTransitionOnChange>
+				
+					<ThemeProvider 
+						attribute='class' 
+						defaultTheme='system' 
+						enableSystem 
+						disableTransitionOnChange>
 
-					<ConvexClientProvider>
-						{children}
-						<Toaster />
-					</ConvexClientProvider>
-				</ThemeProvider>
+						<ConvexClientProvider>
+							{children}
+							<Toaster />
+						</ConvexClientProvider>
+					</ThemeProvider>
+				
 			</body>
 		</html>
 	);
