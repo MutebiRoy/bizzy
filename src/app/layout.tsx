@@ -1,5 +1,4 @@
 // src\app\layout.tsx"
-import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import type { Viewport } from 'next'
 import { Inter } from "next/font/google";
@@ -30,24 +29,22 @@ export default function RootLayout({
 }) {
   
 	return (
-		<ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
-			<html lang='en'>
-				<body className={inter.className}>
-					
-						<ThemeProvider 
-							attribute='class' 
-							defaultTheme='system' 
-							enableSystem 
-							disableTransitionOnChange>
+		<html lang='en'>
+			<body className={inter.className}>
+				
+					<ThemeProvider 
+						attribute='class' 
+						defaultTheme='system' 
+						enableSystem 
+						disableTransitionOnChange>
 
-							<ConvexClientProvider>
-								{children}
-								<Toaster />
-							</ConvexClientProvider>
-						</ThemeProvider>
-					
-				</body>
-			</html>
-		</ClerkProvider>
+						<ConvexClientProvider>
+							{children}
+							<Toaster />
+						</ConvexClientProvider>
+					</ThemeProvider>
+				
+			</body>
+		</html>
 	);
 }
