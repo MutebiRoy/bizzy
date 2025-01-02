@@ -8,7 +8,7 @@ export default function SignUpPage() {
         path="/sign-up"
         routing="path"
         signInUrl="/sign-in"
-        forceRedirectUrl="/" // Always go to the homepage after sign up
+        // forceRedirectUrl="/" // Always go to the homepage after sign up
       />
     </main>
   );
