@@ -4,7 +4,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'tremendous-platypus-138.convex.site',
+        hostname: 'tremendous-platypus-138.convex.cloud',
         port: '',
         pathname: '/api/storage/**',
       },
