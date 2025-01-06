@@ -4,7 +4,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'good-anteater-372.convex.site',
+        hostname: 'https://tremendous-platypus-138.convex.site',
         port: '',
         pathname: '/api/storage/**',
       },
