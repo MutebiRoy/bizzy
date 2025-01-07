@@ -2,8 +2,8 @@
 const authConfig = {
 	providers: [
 	  {
-		//domain: process.env.CLERK_ISSUER_URL,
-		domain: "https://clerk.bizmous.com",
+		domain: process.env.CLERK_ISSUER_URL,
+		//process.env.CLERK_JWT_ISSUER_DOMAIN
 		applicationID: "convex",
 	  },
 	]
