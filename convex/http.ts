@@ -1,5 +1,3 @@
-
-
 // convex\http.ts
 import { httpRouter } from "convex/server";
 import { httpAction } from "./_generated/server";
@@ -57,6 +55,7 @@ http.route({
 					}
 
 					await ctx.runMutation(internal.users.createUser, {
+						//tokenIdentifier: `${process.env.CLERK_APP_DOMAIN}|${result.data.id}`,
 						tokenIdentifier: result.data.id,
 						email: email,
 						name: name,
@@ -65,17 +64,20 @@ http.route({
 					break;
 				case "user.updated":
 					await ctx.runMutation(internal.users.updateUser, {
+						//tokenIdentifier: `${process.env.CLERK_APP_DOMAIN}|${result.data.id}`,
 						tokenIdentifier: result.data.id,
 						image: result.data.image_url,
 					});
 					break;
 				case "session.created":
 					await ctx.runMutation(internal.users.setUserOnline, {
+						//tokenIdentifier: `${process.env.CLERK_APP_DOMAIN}|${result.data.user_id}`,
 						tokenIdentifier: result.data.id,
 					});
 					break;
 				case "session.ended":
 					await ctx.runMutation(internal.users.setUserOffline, {
+						//tokenIdentifier: `${process.env.CLERK_APP_DOMAIN}|${result.data.user_id}`,
 						tokenIdentifier: result.data.id,
 					});
 					break;
