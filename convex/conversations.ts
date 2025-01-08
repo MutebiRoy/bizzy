@@ -47,12 +47,18 @@ export const setConversationLastRead = mutation({
 		if (!identity) {
 			throw new Error("Authentication required");
 		}
+		let rawId = identity.tokenIdentifier;
+		// If it has a pipe, split it
+		if (rawId.includes("|")) {
+		const parts = rawId.split("|");
+		rawId = parts[parts.length - 1]; // take the last piece, e.g. "user_abc123"
+		}
   
 	  	// Fetch the authenticated user
 		const user = await ctx.db
 		.query("users")
 		.withIndex("by_tokenIdentifier", (q) =>
-			q.eq("tokenIdentifier", identity.tokenIdentifier)
+			q.eq("tokenIdentifier", rawId)
 		)
 		.unique();
 			
@@ -100,11 +106,17 @@ export const createConversation = mutation({
 		const identity = await ctx.auth.getUserIdentity();
 		if (!identity) throw new ConvexError("Unauthorized");
 
+		let rawId = identity.tokenIdentifier;
+		// If it has a pipe, split it
+		if (rawId.includes("|")) {
+			const parts = rawId.split("|");
+			rawId = parts[parts.length - 1]; // take the last piece, e.g. "user_abc123"
+		}
 		// Fetch the authenticated user
 		const user = await ctx.db
 		.query("users")
 		.withIndex("by_tokenIdentifier", (q) =>
-		  q.eq("tokenIdentifier", identity.tokenIdentifier)
+			q.eq("tokenIdentifier", rawId)
 		)
 		.unique();
   
@@ -256,13 +268,14 @@ export const getMyConversations = query(async ({ db, auth, storage }) => {
 	let rawId = identity.tokenIdentifier;
 	// If it has a pipe, split it
 	if (rawId.includes("|")) {
-	const parts = rawId.split("|");
-	rawId = parts[parts.length - 1]; // take the last piece, e.g. "user_abc123"
+		const parts = rawId.split("|");
+		rawId = parts[parts.length - 1]; // take the last piece, e.g. "user_abc123"
 	}
 	// Fetch the user from the 'users' table
 	const user = await db
 	.query("users")
-	.withIndex("by_tokenIdentifier", q => q.eq("tokenIdentifier", rawId))
+	.withIndex("by_tokenIdentifier", q => 
+	q.eq("tokenIdentifier", rawId))
 	.unique();
 
 	if (!user) {
@@ -481,12 +494,17 @@ export const kickUser = mutation({
 		
 		if (!conversation) throw new ConvexError("Conversation not found");
 
+		let rawId = identity.tokenIdentifier;
+		// If it has a pipe, split it
+		if (rawId.includes("|")) {
+			const parts = rawId.split("|");
+			rawId = parts[parts.length - 1]; // take the last piece, e.g. "user_abc123"
+		}
 		// Check if the current user is the admin
 		const user = await ctx.db
 		.query("users")
 		.withIndex("by_tokenIdentifier", (q) =>
-		  q.eq("tokenIdentifier", identity.tokenIdentifier)
-		)
+		  q.eq("tokenIdentifier", rawId))
 		.unique();
 
 		if (!user || conversation.admin !== user._id) {
