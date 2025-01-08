@@ -16,11 +16,17 @@ export const sendTextMessage = mutation({
 			throw new ConvexError("Not authenticated");
 		}
 
+		let rawId = identity.tokenIdentifier;
+		// If it has a pipe, split it
+		if (rawId.includes("|")) {
+			const parts = rawId.split("|");
+			rawId = parts[parts.length - 1]; // take the last piece, e.g. "user_abc123"
+		}
+
 		const user = await ctx.db
 			.query("users")
 			.withIndex("by_tokenIdentifier", (q) => 
-				q.eq("tokenIdentifier", identity.tokenIdentifier)
-			)
+				q.eq("tokenIdentifier", rawId))
 			.unique();
 
 		if (!user) {
@@ -106,12 +112,18 @@ export const sendImage = mutation({
       throw new ConvexError("Unauthorized");
     }
 
+	let rawId = identity.tokenIdentifier;
+	// If it has a pipe, split it
+	if (rawId.includes("|")) {
+		const parts = rawId.split("|");
+		rawId = parts[parts.length - 1]; // take the last piece, e.g. "user_abc123"
+	}
+
     // Fetch the authenticated user
     const user = await ctx.db
       .query("users")
       .withIndex("by_tokenIdentifier", (q) => 
-		q.eq("tokenIdentifier", identity.tokenIdentifier)
-	)
+		q.eq("tokenIdentifier", rawId))
     .unique();
 
     if (!user) {
@@ -161,13 +173,20 @@ export const sendVideo = mutation({
 	  if (!identity) {
 		throw new ConvexError("Unauthorized");
 	  }
+
+	  let rawId = identity.tokenIdentifier;
+		// If it has a pipe, split it
+		if (rawId.includes("|")) {
+			const parts = rawId.split("|");
+			rawId = parts[parts.length - 1]; // take the last piece, e.g. "user_abc123"
+		}
+
   
 	  // Fetch the authenticated user
 	  const user = await ctx.db
 		.query("users")
 		.withIndex("by_tokenIdentifier", (q) => 
-		q.eq("tokenIdentifier", identity.tokenIdentifier)
-		)
+			q.eq("tokenIdentifier", rawId))
 		.unique();
   
 		if (!user) {
