@@ -481,7 +481,7 @@ export const getMe = query(async ({ db, auth, storage }) => {
 	const identity = await auth.getUserIdentity();
 	if (!identity) throw new Error("Unauthorized");
   
-	const user: CustomUser | null = await db
+	const user = await db
 	  .query("users")
 	  .withIndex("by_tokenIdentifier", (q) =>
 		q.eq("tokenIdentifier", identity.tokenIdentifier)
