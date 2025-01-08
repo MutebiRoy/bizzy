@@ -253,17 +253,12 @@ export const getMyConversations = query(async ({ db, auth, storage }) => {
 		console.error("Authentication required: identity is null");
 	  	throw new Error("Authentication required");
 	}
-	let rawId = identity.tokenIdentifier;
-// If it has a pipe, split it
-if (rawId.includes("|")) {
-  const parts = rawId.split("|");
-  rawId = parts[parts.length - 1]; // take the last piece, e.g. "user_abc123"
-}
-	// Fetch the user from the 'users' table
 	const user = await db
-  .query("users")
-  .withIndex("by_tokenIdentifier", q => q.eq("tokenIdentifier", rawId))
-  .unique();
+    .query("users")
+    .withIndex("by_tokenIdentifier", (q) =>
+      q.eq("tokenIdentifier", identity.tokenIdentifier)
+    )
+    .unique();
 
 	if (!user) {
 		throw new Error("User not found");
