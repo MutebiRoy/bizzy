@@ -247,7 +247,8 @@ export const updateProfile = mutation({
 		// Fetch the user from the 'users' table
 			const user = await db
 			.query("users")
-			.withIndex("by_tokenIdentifier", q => q.eq("tokenIdentifier", rawId))
+			.withIndex("by_tokenIdentifier", q => 
+				q.eq("tokenIdentifier", rawId))
 			.unique();
   
 	  if (!user) throw new Error("User not found");
@@ -399,9 +400,17 @@ export const updateUser = internalMutation({
 		image: v.string() 
 	},
 	async handler(ctx, args) {
+
+		let rawId = args.tokenIdentifier;
+		if (rawId.includes("|")) {
+			const parts = rawId.split("|");
+			rawId = parts[parts.length - 1];
+		}
+
 		const user = await ctx.db
 			.query("users")
-			.withIndex("by_tokenIdentifier", (q) => q.eq("tokenIdentifier", args.tokenIdentifier))
+			.withIndex("by_tokenIdentifier", (q) => 
+				q.eq("tokenIdentifier", rawId))
 			.unique();
 
 		if (!user) {
@@ -417,9 +426,16 @@ export const updateUser = internalMutation({
 export const setUserOnline = internalMutation({
 	args: { tokenIdentifier: v.string() },
 	handler: async (ctx, args) => {
+
+		let rawId = args.tokenIdentifier;
+		if (rawId.includes("|")) {
+			const parts = rawId.split("|");
+			rawId = parts[parts.length - 1];
+		}
 		const user = await ctx.db
 			.query("users")
-			.withIndex("by_tokenIdentifier", (q) => q.eq("tokenIdentifier", args.tokenIdentifier))
+			.withIndex("by_tokenIdentifier", (q) => 
+				q.eq("tokenIdentifier", rawId))
 			.unique();
 
 		if (!user) {
@@ -433,9 +449,15 @@ export const setUserOnline = internalMutation({
 export const setUserOffline = internalMutation({
 	args: { tokenIdentifier: v.string() },
 	handler: async (ctx, args) => {
+		let rawId = args.tokenIdentifier;
+		if (rawId.includes("|")) {
+			const parts = rawId.split("|");
+			rawId = parts[parts.length - 1];
+		}
 		const user = await ctx.db
 			.query("users")
-			.withIndex("by_tokenIdentifier", (q) => q.eq("tokenIdentifier", args.tokenIdentifier))
+			.withIndex("by_tokenIdentifier", (q) => 
+				q.eq("tokenIdentifier", rawId))
 			.unique();
 
 		if (!user) {
@@ -453,9 +475,15 @@ export const getUsers = query({
 	  if (!identity) {
 		throw new ConvexError("Unauthorized");
 	  }
+
+	  let rawId = identity.tokenIdentifier;
+		if (rawId.includes("|")) {
+		const parts = rawId.split("|");
+		rawId = parts[parts.length - 1];
+		}
   
 	  const users = await ctx.db.query("users").collect();
-	  const filteredUsers = users.filter((user) => user.tokenIdentifier !== identity.tokenIdentifier);
+	  const filteredUsers = users.filter((user) => user.tokenIdentifier !== rawId);
   
 	  // Fetch updated image URLs for each user
 	  const usersWithImages = await Promise.all(
