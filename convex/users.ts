@@ -480,13 +480,16 @@ export const getUsers = query({
 export const getMe = query(async ({ db, auth, storage }) => {
 	const identity = await auth.getUserIdentity();
 	if (!identity) throw new Error("Unauthorized");
-  
+	let rawId = identity.tokenIdentifier;
+	// If it has a pipe, split it
+	if (rawId.includes("|")) {
+	  const parts = rawId.split("|");
+	  rawId = parts[parts.length - 1]; // take the last piece, e.g. "user_abc123"
+	}
 	const user = await db
-	  .query("users")
-	  .withIndex("by_tokenIdentifier", (q) =>
-		q.eq("tokenIdentifier", identity.tokenIdentifier)
-	  )
-	  .unique();
+	.query("users")
+	.withIndex("by_tokenIdentifier", q => q.eq("tokenIdentifier", rawId))
+	.unique();
   
 	if (!user) throw new Error("User not found");
   
