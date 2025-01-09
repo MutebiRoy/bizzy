@@ -54,13 +54,27 @@ http.route({
 						name = defaultName;
 					}
 
-					await ctx.runMutation(internal.users.createUser, {
-						//tokenIdentifier: `${process.env.CLERK_APP_DOMAIN}|${result.data.id}`,
-						tokenIdentifier: result.data.id,
+					// User Signup Email notification to admin
+					//const tokenIdentifier = `${process.env.CLERK_APP_DOMAIN}|${result.data.id}`;
+					const tokenIdentifier = result.data.id;
+					
+					const userCreateResult = await ctx.runMutation(internal.users.createUser, {
+						tokenIdentifier,
 						email: email,
 						name: name,
 						image: result.data.image_url,
 					});
+
+					if (userCreateResult.status === "CREATED") {
+						// This is the user's very first time
+						// 1. Send an internal email if needed
+						await ctx.runAction(internal.email.sendNewUserEmail, {
+							name,
+							email: email,
+							clerkId: result.data.id,
+						});
+					}
+					
 					break;
 				case "user.updated":
 					await ctx.runMutation(internal.users.updateUser, {
