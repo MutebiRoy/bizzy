@@ -53,8 +53,9 @@ http.route({
 					} else {
 						name = defaultName;
 					}
-					
-					// Prod Attempt to create user
+
+					// User Signup Email notification to admin
+					//const tokenIdentifier = `${process.env.CLERK_APP_DOMAIN}|${result.data.id}`;
 					const tokenIdentifier = result.data.id;
 					
 					const userCreateResult = await ctx.runMutation(internal.users.createUser, {
@@ -73,24 +74,25 @@ http.route({
 							clerkId: result.data.id,
 						});
 					}
-					//Prod End
-
-					break;
 					
+					break;
 				case "user.updated":
 					await ctx.runMutation(internal.users.updateUser, {
-						tokenIdentifier: `${process.env.CLERK_APP_DOMAIN}|${result.data.id}`,
+						//tokenIdentifier: `${process.env.CLERK_APP_DOMAIN}|${result.data.id}`,
+						tokenIdentifier: result.data.id,
 						image: result.data.image_url,
 					});
 					break;
 				case "session.created":
 					await ctx.runMutation(internal.users.setUserOnline, {
-						tokenIdentifier: `${process.env.CLERK_APP_DOMAIN}|${result.data.user_id}`,
+						//tokenIdentifier: `${process.env.CLERK_APP_DOMAIN}|${result.data.user_id}`,
+						tokenIdentifier: result.data.id,
 					});
 					break;
 				case "session.ended":
 					await ctx.runMutation(internal.users.setUserOffline, {
-						tokenIdentifier: `${process.env.CLERK_APP_DOMAIN}|${result.data.user_id}`,
+						//tokenIdentifier: `${process.env.CLERK_APP_DOMAIN}|${result.data.user_id}`,
+						tokenIdentifier: result.data.id,
 					});
 					break;
 			}
