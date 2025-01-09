@@ -3,6 +3,7 @@ import { httpRouter } from "convex/server";
 import { httpAction } from "./_generated/server";
 import { internal } from "./_generated/api";
 import * as signupemail from "./signupemail";
+import {sendNewUserEmail} from "./signupemail"
 
 const http = httpRouter();
 
