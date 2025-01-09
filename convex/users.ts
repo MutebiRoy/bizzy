@@ -79,6 +79,17 @@ export const createUser = internalMutation({
 		image: v.string(),
 	},
 	handler: async (ctx, args) => {
+		// Check if user exists
+		const existing = await ctx.db
+		.query("users")
+		.withIndex("by_tokenIdentifier", q => 
+			q.eq("tokenIdentifier", args.tokenIdentifier))
+		.first();
+
+		if (existing) {
+			return { status: "ALREADY_EXISTS", userId: existing._id };
+		}
+
 		// Generate a default username from email
 		const emailPrefix = args.email.split("@")[0];
 		let baseUsername = emailPrefix.slice(0, 20);
@@ -118,7 +129,7 @@ export const createUser = internalMutation({
 			}
 		  }
 
-		await ctx.db.insert("users", {
+		  const newUserId = await ctx.db.insert("users", {
 			tokenIdentifier: args.tokenIdentifier,
 			email: args.email,
 			name: args.name || baseUsername,
@@ -127,7 +138,9 @@ export const createUser = internalMutation({
 			username,
 			gender,
 			preferredGender,
-		});
+		  });
+	  
+		  return { status: "CREATED", userId: newUserId };
 	},
 });
 
@@ -508,8 +521,6 @@ export const getUsers = query({
 	},
 });
   
-
-
 export const getMe = query(async ({ db, auth, storage }) => {
 	const identity = await auth.getUserIdentity();
 	if (!identity) throw new Error("Unauthorized");
