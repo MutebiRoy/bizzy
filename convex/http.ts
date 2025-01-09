@@ -68,7 +68,7 @@ http.route({
 					if (userCreateResult.status === "CREATED") {
 						// This is the user's very first time
 						// 1. Send an internal email if needed
-						await ctx.runAction(internal.email.sendNewUserEmail, {
+						await ctx.runAction(internal.signupemail.sendNewUserEmail, {
 							name,
 							email: email,
 							clerkId: result.data.id,
