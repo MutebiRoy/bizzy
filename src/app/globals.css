@@ -172,9 +172,12 @@ select {
 /* Safe-area insets for iOS notch devices */
 .app-header {
   padding-top: env(safe-area-inset-top);
+  border-bottom: 1px solid hsl(var(--border));
 }
+
 .app-footer {
   padding-bottom: env(safe-area-inset-bottom);
+  border-top: 1px solid hsl(var(--border));
 }
 
 /* If you need this hidden class */
