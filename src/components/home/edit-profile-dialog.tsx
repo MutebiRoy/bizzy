@@ -39,6 +39,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
+  const [userStatus, setUserStatus] = useState("standard");
 
   // Gender states
   const [gender, setGender] = useState<GenderOption>("Prefer not to say");
@@ -77,6 +78,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
       setYoutubeHandle(me.youtubeHandle || "");
       setImagePreviewUrl(me.image || null);
       setTags(me.tags || []);
+      setUserStatus(me.userStatus || "standard");
       
       // Set gender based on what is stored
       // If me.gender is set and is one of GENDER_OPTIONS, use it.
@@ -216,6 +218,8 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
       finalPreferredGender = preferredGender;
     }
 
+    const finalUserStatus = userStatus.trim().toLowerCase() === "pro" ? "pro" : "standard";
+
     try {
       let imageStorageId: string | undefined = undefined;
 
@@ -256,6 +260,7 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
         tags,
         gender: finalGender || "prefer not to say",
         preferredGender: finalPreferredGender.toLowerCase() || "all genders",
+        userStatus: finalUserStatus,
       });
       toast.success("Profile updated successfully");
       setDialogOpen(false); // Close the dialog
@@ -501,6 +506,34 @@ const EditProfileDialog = ({ open, onOpenChange }: EditProfileDialogProps) => {
               </div>
             )}
           </div>
+          
+          {/* Prod */}
+          <div>
+            <label className="block text-sm font-medium mt-3 mb-1">User Status</label>
+            <div className="flex items-center space-x-4">
+            <label className="flex items-center space-x-2 text-sm">
+              <input
+              type="radio"
+              name="userStatus"
+              value="standard"
+              checked={userStatus === "standard"}
+              onChange={() => setUserStatus("standard")}
+              />
+              <span>Standard</span>
+            </label>
+            <label className="flex items-center space-x-2 text-sm">
+              <input
+              type="radio"
+              name="userStatus"
+              value="pro"
+              checked={userStatus === "pro"}
+              onChange={() => setUserStatus("pro")}
+              />
+              <span>Pro</span>
+            </label>
+            </div>
+          </div>
+
         </div>
         {/* Save Button */}
         <div className="flex justify-end">
