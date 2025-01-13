@@ -17,6 +17,7 @@ export default defineSchema({
     tags: v.optional(v.array(v.string())),
     gender: v.optional(v.string()),
     preferredGender: v.optional(v.string()),
+    userStatus: v.optional(v.string()),
   })
     .index("by_tokenIdentifier", ["tokenIdentifier"])
     .index("by_username", ["username"])
