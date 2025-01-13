@@ -1,4 +1,4 @@
-//"C:\Users\mutebi\Desktop\bizmous\src\utils\conversation_utils.ts"
+// src\utils\conversation_utils.ts"
 import { Id } from "../../convex/_generated/dataModel";
 
 export type UserType = {
@@ -17,6 +17,7 @@ export type UserType = {
   tags?: string[];
   gender?: string;
 	preferredGender?: string;
+  userStatus?: string;
 };
 
 // Define the Conversation type as returned from the backend
@@ -50,6 +51,7 @@ export type Conversation = {
 	tags?: string[];
 	gender?: string;
 	preferredGender?: string;
+  userStatus?: string;
 };
 
 // Define the ConversationType expected in the frontend
@@ -83,6 +85,7 @@ export type ConversationType = {
 	tags?: string[];
 	gender?: string;
 	preferredGender?: string;
+  userStatus?: string;
 };
 
 export function convertConversationTypes(
@@ -148,6 +151,7 @@ interface SharedConversation {
 	tags?: string[];
 	gender?: string;
 	preferredGender?: string;
+  userStatus?: string;
     lastMessage?: {
       _id: Id<"messages">;
       _creationTime: number;
@@ -175,6 +179,7 @@ interface User {
 	tags?: string[];
 	gender?: string;
 	preferredGender?: string;
+  userStatus?: string;
 }
 
 // interface ConversationWithParticipants extends Conversation {
