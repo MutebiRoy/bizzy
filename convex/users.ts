@@ -21,6 +21,7 @@ interface CustomUser {
 	tags?: string[];
 	gender?: string;
 	preferredGender?: string;
+	userStatus?: string;
 }
 
 export const getUserById = query({
@@ -138,6 +139,7 @@ export const createUser = internalMutation({
 			username,
 			gender,
 			preferredGender,
+			userStatus: "standard",
 		  });
 	  
 		  return { status: "CREATED", userId: newUserId };
@@ -232,6 +234,7 @@ export const updateProfile = mutation({
 	  tags: v.optional(v.array(v.string())),
 	  gender: v.optional(v.string()),
 	  preferredGender: v.optional(v.string()),
+	  userStatus: v.optional(v.string()),
 	},
 	handler: async (
 	  ctx,
@@ -245,6 +248,7 @@ export const updateProfile = mutation({
 		tags,
 		gender,
 		preferredGender,
+		userStatus,
 	  }
 	) => {
 	  const { db, auth } = ctx;
@@ -335,6 +339,7 @@ export const updateProfile = mutation({
 		youtubeHandle: youtubeHandle?.trim() || undefined,
 		gender: finalGender,
 		preferredGender: finalPreferredGender,
+		userStatus: userStatus?.trim().toLowerCase() || "standard",
 	  };
   
 	  if (imageStorageId) {
@@ -491,8 +496,8 @@ export const getUsers = query({
 
 	  let rawId = identity.tokenIdentifier;
 		if (rawId.includes("|")) {
-		const parts = rawId.split("|");
-		rawId = parts[parts.length - 1];
+			const parts = rawId.split("|");
+			rawId = parts[parts.length - 1];
 		}
   
 	  const users = await ctx.db.query("users").collect();
@@ -524,6 +529,7 @@ export const getUsers = query({
 export const getMe = query(async ({ db, auth, storage }) => {
 	const identity = await auth.getUserIdentity();
 	if (!identity) throw new Error("Unauthorized");
+
 	let rawId = identity.tokenIdentifier;
 	// If it has a pipe, split it
 	if (rawId.includes("|")) {
